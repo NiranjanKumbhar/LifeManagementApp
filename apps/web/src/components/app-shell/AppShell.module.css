@@ -1,0 +1,71 @@
+.shell {
+  position: relative;
+  z-index: 1;
+  min-height: 100dvh;
+}
+
+.main {
+  min-height: 100dvh;
+}
+
+.content {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: var(--ls-space-8) var(--ls-space-6) var(--ls-space-16);
+}
+
+/* Floating quick-capture button — desktop only (mobile uses the bottom-bar FAB). */
+.fab {
+  position: fixed;
+  right: var(--ls-space-8);
+  bottom: var(--ls-space-8);
+  z-index: 40;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  border: none;
+  border-radius: var(--ls-radius-full);
+  background: linear-gradient(135deg, var(--ls-primary-500), var(--ls-primary-700));
+  color: var(--ls-text-inverse);
+  box-shadow: var(--ls-shadow-lg);
+  cursor: pointer;
+  transition:
+    transform var(--ls-duration-micro) var(--ls-ease-standard),
+    box-shadow var(--ls-duration-micro) var(--ls-ease-standard);
+}
+
+.fab:hover {
+  transform: translateY(-2px) scale(1.03);
+  box-shadow: var(--ls-shadow-xl);
+}
+.fab:active {
+  transform: translateY(0) scale(0.98);
+}
+.fab:focus-visible {
+  box-shadow: var(--ls-shadow-focus), var(--ls-shadow-lg);
+}
+
+@media (min-width: 880px) {
+  .main {
+    padding-left: 248px;
+  }
+  .fab {
+    display: inline-flex;
+  }
+}
+
+@media (max-width: 879px) {
+  .content {
+    padding: var(--ls-space-6) var(--ls-space-4) 6rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fab,
+  .fab:hover,
+  .fab:active {
+    transform: none;
+  }
+}

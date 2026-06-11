@@ -1,0 +1,29 @@
+.wrap {
+  position: relative;
+  z-index: 1;
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: var(--ls-space-6);
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--ls-space-2);
+}
+
+.brand {
+  font-family: var(--ls-font-display);
+  font-size: var(--ls-text-3xl);
+  font-weight: 600;
+  color: var(--ls-primary-700);
+  letter-spacing: -0.02em;
+}
+
+.tagline {
+  font-size: var(--ls-text-sm);
+  color: var(--ls-text-secondary);
+  margin-bottom: var(--ls-space-4);
+}

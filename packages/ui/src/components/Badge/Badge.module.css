@@ -1,0 +1,40 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: var(--ls-font-body);
+  font-size: var(--ls-text-xs);
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--ls-radius-full);
+  white-space: nowrap;
+}
+
+.dot {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: var(--ls-radius-full);
+  background-color: currentColor;
+}
+
+.neutral {
+  background-color: var(--ls-surface-sunken);
+  color: var(--ls-text-secondary);
+}
+.primary {
+  background-color: var(--ls-primary-50);
+  color: var(--ls-primary-700);
+}
+.overdue {
+  background-color: var(--ls-urgency-overdue-soft);
+  color: var(--ls-urgency-overdue);
+}
+.soon {
+  background-color: var(--ls-urgency-soon-soft);
+  color: #B26B04;
+}
+.completed {
+  background-color: var(--ls-urgency-completed-soft);
+  color: #157F3B;
+}

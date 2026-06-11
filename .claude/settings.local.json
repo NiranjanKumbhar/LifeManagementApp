@@ -1,0 +1,26 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm --filter=@lifesync/shared-types build)",
+      "Bash(Get-ChildItem -Recurse dist)",
+      "Bash(Select-Object -ExpandProperty FullName)",
+      "Bash(pnpm --filter=api typecheck)",
+      "Bash(pnpm --filter=api lint)",
+      "Bash(pnpm --filter=api build)",
+      "Bash(node -e \"console.log\\('loadEnvFile:', typeof process.loadEnvFile\\)\")",
+      "Bash(node -e \"const p=require\\('D:/Development/Cursor Dev/Test/node_modules/drizzle-kit/package.json'\\); console.log\\(JSON.stringify\\(p.dependencies,null,1\\)\\)\")",
+      "Bash(pnpm --filter=api db:migrate)",
+      "Bash(pnpm --filter=api db:seed)",
+      "Bash(node -e \"process.chdir\\('D:/Development/Cursor Dev/Test/apps/api'\\); require\\('./dist/load-env.js'\\); const { appRouter } = require\\('./dist/routers/index.js'\\); const paths = Object.keys\\(appRouter._def.procedures\\).sort\\(\\); console.log\\('Procedures wired \\(' + paths.length + '\\):'\\); console.log\\(paths.join\\('\\\\n'\\)\\);\")",
+      "Bash(pnpm --filter=@lifesync/ui test)",
+      "Bash(pnpm --filter=web typecheck)",
+      "Bash(pnpm --filter=web test)",
+      "Bash(pnpm --filter=@lifesync/ui build)",
+      "Bash(pnpm --filter=web build)",
+      "Bash(node dist/index.js)",
+      "Bash(node -e ' *)",
+      "PowerShell(Get-NetTCPConnection *)",
+      "Bash(pnpm --filter=api test)"
+    ]
+  }
+}

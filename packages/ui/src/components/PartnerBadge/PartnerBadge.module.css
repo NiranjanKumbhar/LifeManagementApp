@@ -1,0 +1,36 @@
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-family: var(--ls-font-body);
+  font-size: var(--ls-text-xs);
+  font-weight: 600;
+  padding: 0.15rem 0.55rem 0.15rem 0.45rem;
+  border-radius: var(--ls-radius-full);
+  background-color: var(--ls-surface-sunken);
+}
+
+.dot {
+  width: 0.45rem;
+  height: 0.45rem;
+  border-radius: var(--ls-radius-full);
+}
+
+.mine {
+  color: var(--ls-partner-self);
+}
+.mine .dot {
+  background-color: var(--ls-partner-self);
+}
+.partner {
+  color: var(--ls-partner-partner);
+}
+.partner .dot {
+  background-color: var(--ls-partner-partner);
+}
+.shared {
+  color: var(--ls-partner-shared);
+}
+.shared .dot {
+  background-color: var(--ls-partner-shared);
+}

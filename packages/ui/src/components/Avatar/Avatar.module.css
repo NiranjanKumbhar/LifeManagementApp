@@ -1,0 +1,47 @@
+.avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--ls-radius-full);
+  font-family: var(--ls-font-body);
+  font-weight: 600;
+  color: var(--ls-text-inverse);
+  overflow: hidden;
+  flex-shrink: 0;
+  box-shadow: inset 0 0 0 2px var(--ls-surface-elevated);
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.sm {
+  width: 1.75rem;
+  height: 1.75rem;
+  font-size: var(--ls-text-xs);
+}
+.md {
+  width: 2.25rem;
+  height: 2.25rem;
+  font-size: var(--ls-text-sm);
+}
+.lg {
+  width: 3rem;
+  height: 3rem;
+  font-size: var(--ls-text-lg);
+}
+
+.self {
+  background-color: var(--ls-partner-self);
+}
+.partner {
+  background-color: var(--ls-partner-partner);
+}
+.shared {
+  background-color: var(--ls-partner-shared);
+}
+.neutral {
+  background-color: var(--ls-text-tertiary);
+}

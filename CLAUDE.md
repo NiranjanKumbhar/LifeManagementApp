@@ -6,6 +6,42 @@ This is **LifeSync**, a shared life management app for couples that combines fas
 
 **Read the full product blueprint:** `life-management-app-blueprint.md`
 
+## Development Status
+
+> **Last updated:** 2026-06-11. Keep this section current when finishing a chunk of work.
+> Full suite: `pnpm test` → 79 tests passing (api 50, web 14, ui 15; mobile passWithNoTests).
+
+### Done ✅
+- **Monorepo + tooling** — Turborepo, pnpm workspaces, tsconfig base, ESLint 9 flat config, Prettier. `pnpm install` / `pnpm build` / `pnpm test` all green.
+- **Database** (`apps/api/src/db/`) — Drizzle schema (12 tables), initial migration `0000_initial_schema.sql`, seeds (Alex + Jordan, projects across all 6 types), `db:reset`, query helpers (dashboard/search/urgency). Runs against Supabase (Session pooler).
+- **Shared types** (`packages/shared-types`) — all entities, enums, and API input/output types.
+- **Backend API** (`apps/api`) — 13 tRPC routers / 50 procedures (workspace, project, task, reminder, household, person, notification, resource, template, search, activity, user, **inbox**). Thin routers + Result-returning services, Zod validation, 3-tier visibility filtering, workspace-membership checks, activity logging.
+- **Quick capture / Inbox** — `inbox_items` table (migration `0001`), `inbox` router (capture / list / assignToProject / dismiss). Web QuickCapture modal persists; `/inbox` page triages items into projects (creates a task) or dismisses. Per-item visibility (private captures stay private).
+- **Auth + user sync** — Clerk JWT middleware, workspace middleware, **JIT user provisioning** on first request, and a Svix-verified **`POST /webhooks/clerk`** endpoint. Server runs tRPC + webhook via `createHTTPHandler` + Node http.
+- **Web** (`apps/web`) — Clerk auth (`middleware.ts`, sign-in/up), tRPC client + React Query providers, **app shell** (sidebar, mobile bottom nav, quick-capture FAB/modal), the **Dashboard** page (all 7 blueprint blocks), and the **Inbox** page (`/inbox`, triage). Design tokens + 8 UI components in `packages/ui` (Button, Card, Badge, UrgencyIndicator, Avatar, PartnerBadge, EmptyState, LoadingSpinner). Aesthetic: warm "paper", Fraunces + Inter, teal/coral/amber/sage.
+- **Tests** — pglite-based integration tests + faker factories in `apps/api/src/__tests__/`; project service/router/urgency covered; web + ui component tests.
+
+### Env / running
+- `apps/api/.env` and `apps/web/.env.local` exist (gitignored). API on :3001, web on :3000.
+- Dev works without a public webhook URL thanks to JIT provisioning; new Clerk users auto-join `DEFAULT_WORKSPACE_ID` (the seeded "Our Home").
+
+### Remaining 🔭 (roughly prioritized)
+1. **Web screens beyond Dashboard + Inbox** — Projects list, Project detail, Household/grocery, Calendar, People, Settings. Missing shared components: Input, Modal, Toast, TaskItem, ProjectCard.
+2. **Inngest background jobs** (`apps/api/src/jobs/` is empty) — reminder delivery, weekly digest, recurring tasks, escalation, cleanup. **Reminders are written to the DB but never delivered**, and nothing creates `notifications` rows yet.
+3. **Supabase Storage** — `resource.upload` only stores metadata; no real upload/download or storage-object deletion.
+4. **Tests for the other routers/services** (workspace, task, reminder, household, person, notification, resource, template, search, activity, user) + Playwright E2E (none yet).
+5. **Mobile app** (`apps/mobile`) — scaffolding only (3 stub files). Entire RN/Expo app, tRPC client, RxDB, PowerSync, notifications, haptics.
+6. **Local-first sync** — RxDB + PowerSync not set up anywhere (core architectural pillar).
+7. **Middleware** — `rateLimit`, `logging` not built (only `auth` + `workspace`).
+8. **DevOps** — no CI/CD (`.github/` empty), no deploy config (Vercel/EAS/API host), no monitoring.
+
+### Known stubs / shortcuts to revisit
+- `workspace.invite` → throws `NOT_IMPLEMENTED` (needs Clerk Organizations; replaces the `DEFAULT_WORKSPACE_ID` auto-join shortcut for real multi-couple use).
+- `person.get` returns `projects: []` (no person↔project FK yet).
+- `activity.feed` applies visibility filtering after the DB limit (page can under-fill).
+- No tRPC transformer (superjson): `Date` fields cross the wire as ISO strings.
+- API integration tests boot a fresh pglite per test (~1s each) — switch to shared instance + tx rollback if the suite gets slow.
+
 ## Tech Stack
 
 | Layer | Technology | Purpose |
@@ -110,7 +146,7 @@ lifesync/
 ├── turbo.json                         # Turborepo pipeline configuration
 ├── package.json                       # Root workspace package.json
 ├── tsconfig.base.json                 # Base TypeScript configuration
-├── .eslintrc.js                       # Root ESLint configuration
+├── eslint.config.js                   # Root ESLint configuration (ESLint 9 flat config)
 ├── .prettierrc                        # Prettier formatting rules
 ├── .gitignore
 └── .claudeignore                      # Files Claude should ignore

@@ -1,0 +1,94 @@
+/* LifeSync design tokens as CSS custom properties.
+   Mirrors packages/ui/src/tokens. Font families are injected by next/font
+   in the root layout as --ls-font-display and --ls-font-body. */
+
+:root {
+  /* Primary — calm teal */
+  --ls-primary-50: #f0fdfa;
+  --ls-primary-100: #ccfbf1;
+  --ls-primary-200: #99f6e4;
+  --ls-primary-300: #5eead4;
+  --ls-primary-400: #2dd4bf;
+  --ls-primary-500: #14b8a6;
+  --ls-primary-600: #0d9488;
+  --ls-primary-700: #0f766e;
+  --ls-primary-800: #115e59;
+  --ls-primary-900: #134e4a;
+
+  /* Urgency */
+  --ls-urgency-overdue: #f97066;
+  --ls-urgency-overdue-soft: #fef0ee;
+  --ls-urgency-soon: #f59e0b;
+  --ls-urgency-soon-soft: #fef6e7;
+  --ls-urgency-on-track: #0d9488;
+  --ls-urgency-on-track-soft: #ecfdf8;
+  --ls-urgency-completed: #22c55e;
+  --ls-urgency-completed-soft: #eefbf1;
+
+  /* Surfaces — warm */
+  --ls-surface-background: #f5f3f0;
+  --ls-surface-card: #fcfbf9;
+  --ls-surface-elevated: #ffffff;
+  --ls-surface-sunken: #efede8;
+  --ls-surface-border: #e8e5e0;
+  --ls-surface-border-strong: #d9d5ce;
+  --ls-surface-overlay: rgba(28, 25, 23, 0.32);
+
+  /* Text — warm dark */
+  --ls-text-primary: #1c1917;
+  --ls-text-secondary: #57534e;
+  --ls-text-tertiary: #8a857e;
+  --ls-text-inverse: #fafaf9;
+
+  /* Partner indicators */
+  --ls-partner-self: #0d9488;
+  --ls-partner-partner: #8b5cf6;
+  --ls-partner-shared: #b68a2e;
+
+  /* Typography scale */
+  --ls-text-xs: 0.75rem;
+  --ls-text-sm: 0.875rem;
+  --ls-text-base: 1rem;
+  --ls-text-lg: 1.125rem;
+  --ls-text-xl: 1.25rem;
+  --ls-text-2xl: 1.5rem;
+  --ls-text-3xl: 1.875rem;
+  --ls-text-4xl: 2.25rem;
+  --ls-text-5xl: 3rem;
+
+  /* Spacing */
+  --ls-space-1: 0.25rem;
+  --ls-space-2: 0.5rem;
+  --ls-space-3: 0.75rem;
+  --ls-space-4: 1rem;
+  --ls-space-5: 1.25rem;
+  --ls-space-6: 1.5rem;
+  --ls-space-8: 2rem;
+  --ls-space-10: 2.5rem;
+  --ls-space-12: 3rem;
+  --ls-space-16: 4rem;
+
+  /* Radii */
+  --ls-radius-sm: 0.375rem;
+  --ls-radius-md: 0.625rem;
+  --ls-radius-lg: 0.875rem;
+  --ls-radius-xl: 1.25rem;
+  --ls-radius-2xl: 1.75rem;
+  --ls-radius-full: 9999px;
+
+  /* Shadows — warm-tinted */
+  --ls-shadow-xs: 0 1px 2px rgba(60, 45, 30, 0.06);
+  --ls-shadow-sm: 0 1px 3px rgba(60, 45, 30, 0.07), 0 1px 2px rgba(60, 45, 30, 0.05);
+  --ls-shadow-md: 0 4px 12px rgba(60, 45, 30, 0.08), 0 2px 4px rgba(60, 45, 30, 0.05);
+  --ls-shadow-lg: 0 12px 28px rgba(60, 45, 30, 0.1), 0 4px 8px rgba(60, 45, 30, 0.06);
+  --ls-shadow-xl: 0 24px 48px rgba(60, 45, 30, 0.14), 0 8px 16px rgba(60, 45, 30, 0.08);
+  --ls-shadow-focus: 0 0 0 3px rgba(13, 148, 136, 0.32);
+
+  /* Motion */
+  --ls-duration-micro: 150ms;
+  --ls-duration-standard: 250ms;
+  --ls-duration-emphasis: 400ms;
+  --ls-ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --ls-ease-entrance: cubic-bezier(0.16, 1, 0.3, 1);
+  --ls-ease-exit: cubic-bezier(0.4, 0, 1, 1);
+}

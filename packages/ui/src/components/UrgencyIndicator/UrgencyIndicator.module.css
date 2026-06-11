@@ -1,0 +1,40 @@
+.root {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--ls-font-body);
+  font-size: var(--ls-text-xs);
+  font-weight: 600;
+}
+
+.dot {
+  width: 0.55rem;
+  height: 0.55rem;
+  border-radius: var(--ls-radius-full);
+  background-color: currentColor;
+  flex-shrink: 0;
+}
+
+.pulse {
+  animation: urgency-pulse 1.8s var(--ls-ease-standard) infinite;
+}
+
+.label {
+  color: currentColor;
+}
+
+@keyframes urgency-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in srgb, currentColor 45%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 0 4px color-mix(in srgb, currentColor 0%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pulse {
+    animation: none;
+  }
+}
