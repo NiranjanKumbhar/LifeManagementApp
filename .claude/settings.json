@@ -1,0 +1,45 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pnpm install*)",
+      "Bash(pnpm dev*)",
+      "Bash(pnpm test*)",
+      "Bash(pnpm lint*)",
+      "Bash(pnpm format*)",
+      "Bash(pnpm build*)",
+      "Bash(pnpm typecheck*)",
+      "Bash(pnpm db:migrate*)",
+      "Bash(pnpm db:seed*)",
+      "Bash(pnpm db:reset*)",
+      "Bash(npx prisma*)",
+      "Bash(npx turbo*)",
+      "Bash(npx expo*)",
+      "Bash(npx next*)",
+      "Bash(npx tsc*)",
+      "Bash(npx eslint*)",
+      "Bash(npx prettier*)",
+      "Bash(npx vitest*)",
+      "Bash(npx playwright*)",
+      "Bash(npx drizzle-kit*)",
+      "Bash(npx supabase*)",
+      "Bash(npx eas*)",
+      "Bash(git status*)",
+      "Bash(git diff*)",
+      "Bash(git log*)",
+      "Bash(git add*)",
+      "Bash(git commit*)",
+      "Bash(git branch*)",
+      "Bash(git checkout*)",
+      "Bash(git merge*)",
+      "Bash(git push*)",
+      "Bash(git pull*)",
+      "Bash(docker*)",
+      "Bash(fly*)"
+    ],
+    "deny": [
+      "Bash(rm -rf /*)",
+      "Bash(pnpm publish*)",
+      "Bash(npx supabase db reset --linked*)"
+    ]
+  }
+}

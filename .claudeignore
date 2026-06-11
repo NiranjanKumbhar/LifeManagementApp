@@ -1,0 +1,44 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build outputs
+.next/
+dist/
+build/
+.turbo/
+.expo/
+
+# Environment files
+.env
+.env.local
+.env.production
+.env.*.local
+
+# IDE & Editor
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Test coverage
+coverage/
+.nyc_output/
+
+# Generated files
+*.generated.ts
+prisma/generated/
+
+# Binary & media assets (large)
+public/assets/images/*.png
+public/assets/images/*.jpg
+public/assets/videos/
+
+# Lock files (large, not useful for context)
+pnpm-lock.yaml
+package-lock.json
+yarn.lock
