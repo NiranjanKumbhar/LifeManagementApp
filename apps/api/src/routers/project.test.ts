@@ -79,4 +79,19 @@ describe('projectRouter — member flows', () => {
       code: 'NOT_FOUND',
     });
   });
+
+  it('returns task counts on list rows', async () => {
+    const caller = callerFor(ctx.db, world.alex.clerkId);
+    const project = await caller.project.create(
+      createProjectInput({ workspaceId: world.workspace.id, title: 'Counts' }),
+    );
+    const a = await caller.task.create({ projectId: project.id, title: 'A' });
+    await caller.task.create({ projectId: project.id, title: 'B' });
+    await caller.task.complete({ id: a.id });
+
+    const list = await caller.project.list({ workspaceId: world.workspace.id });
+    const row = list.find((p) => p.id === project.id);
+    expect(row).toBeDefined();
+    expect(row).toMatchObject({ taskCount: 2, completedCount: 1 });
+  });
 });

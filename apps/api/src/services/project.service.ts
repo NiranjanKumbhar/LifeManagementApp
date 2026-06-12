@@ -17,6 +17,7 @@ import {
 import { forbidden, internal, notFound, ok, type AppError, type Result } from '../utils/errors';
 import { addDays, daysUntilAnnualDate, startOfDay, toISODateString } from '../utils/dates';
 import { assertWorkspaceMembership } from '../middleware/workspace';
+import type { ProjectListItem } from '@lifesync/shared-types';
 import type {
   createProjectSchema,
   listProjectsSchema,
@@ -119,7 +120,7 @@ export class ProjectService {
     db: Database,
     userId: string,
     input: ListProjectsInput,
-  ): Promise<Result<ProjectRow[], AppError>> {
+  ): Promise<Result<ProjectListItem[], AppError>> {
     const conditions = [
       eq(projects.workspaceId, input.workspaceId),
       projectVisibilityCondition(userId),
@@ -129,12 +130,18 @@ export class ProjectService {
     if (input.ownerId) conditions.push(eq(projects.ownerId, input.ownerId));
 
     const rows = await db
-      .select()
+      .select({
+        project: projects,
+        taskCount: sql<number>`count(${tasks.id})`.mapWith(Number),
+        completedCount: sql<number>`count(${tasks.id}) filter (where ${tasks.status} = 'completed')`.mapWith(Number),
+      })
       .from(projects)
+      .leftJoin(tasks, eq(tasks.projectId, projects.id))
       .where(and(...conditions))
+      .groupBy(projects.id)
       .orderBy(sql`${projects.dueDate} asc nulls last`, desc(projects.createdAt));
 
-    return ok(rows);
+    return ok(rows.map((r) => ({ ...r.project, taskCount: r.taskCount, completedCount: r.completedCount } as ProjectListItem)));
   }
 
   /** Get a single project with its nested task tree. */

@@ -27,6 +27,12 @@ export interface MemberWithUser extends WorkspaceMember {
 
 // ── Project ───────────────────────────────────────────────────────────────────
 
+/** A project list row enriched with task progress counts. */
+export interface ProjectListItem extends Project {
+  taskCount: number;
+  completedCount: number;
+}
+
 export interface ProjectWithTasks extends Project {
   tasks: TaskNode[];
 }

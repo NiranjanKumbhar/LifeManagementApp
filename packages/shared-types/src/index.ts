@@ -81,6 +81,7 @@ export type {
 export type {
   WorkspaceInvite,
   MemberWithUser,
+  ProjectListItem,
   ProjectWithTasks,
   ProjectWithUrgency,
   PersonWithProjects,
