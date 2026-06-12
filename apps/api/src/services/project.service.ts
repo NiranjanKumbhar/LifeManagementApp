@@ -1,5 +1,6 @@
 import { and, asc, desc, eq, gte, inArray, isNotNull, ne, or, sql } from 'drizzle-orm';
 import type { z } from 'zod';
+import type { ProjectListItem } from '@lifesync/shared-types';
 import type { Database } from '../db/client';
 import {
   activityEvents,
@@ -14,10 +15,9 @@ import {
   type Priority,
   type ProjectType,
 } from '../db/schema';
+import { assertWorkspaceMembership } from '../middleware/workspace';
 import { forbidden, internal, notFound, ok, type AppError, type Result } from '../utils/errors';
 import { addDays, daysUntilAnnualDate, startOfDay, toISODateString } from '../utils/dates';
-import { assertWorkspaceMembership } from '../middleware/workspace';
-import type { ProjectListItem } from '@lifesync/shared-types';
 import type {
   createProjectSchema,
   listProjectsSchema,
@@ -132,7 +132,8 @@ export class ProjectService {
     const rows = await db
       .select({
         project: projects,
-        taskCount: sql<number>`count(${tasks.id})`.mapWith(Number),
+        // taskCount excludes cancelled tasks so progress reflects actionable work
+        taskCount: sql<number>`count(${tasks.id}) filter (where ${tasks.status} <> 'cancelled')`.mapWith(Number),
         completedCount: sql<number>`count(${tasks.id}) filter (where ${tasks.status} = 'completed')`.mapWith(Number),
       })
       .from(projects)
@@ -141,6 +142,7 @@ export class ProjectService {
       .groupBy(projects.id)
       .orderBy(sql`${projects.dueDate} asc nulls last`, desc(projects.createdAt));
 
+    // cast reconciles Drizzle's inferred recurrenceRule shape with shared-types RecurrenceRule
     return ok(rows.map((r) => ({ ...r.project, taskCount: r.taskCount, completedCount: r.completedCount } as ProjectListItem)));
   }
 

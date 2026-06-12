@@ -94,4 +94,16 @@ describe('projectRouter — member flows', () => {
     expect(row).toBeDefined();
     expect(row).toMatchObject({ taskCount: 2, completedCount: 1 });
   });
+
+  it('returns zero task counts for a project with no tasks', async () => {
+    const caller = callerFor(ctx.db, world.alex.clerkId);
+    const empty = await caller.project.create(
+      createProjectInput({ workspaceId: world.workspace.id, title: 'Empty' }),
+    );
+
+    const list = await caller.project.list({ workspaceId: world.workspace.id });
+    const row = list.find((p) => p.id === empty.id);
+    expect(row).toBeDefined();
+    expect(row).toMatchObject({ taskCount: 0, completedCount: 0 });
+  });
 });
