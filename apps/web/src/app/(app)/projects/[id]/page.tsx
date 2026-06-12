@@ -10,6 +10,7 @@ import { formatRelativeDate } from '@lifesync/ui';
 import { trpc } from '@/lib/trpc';
 import { PROJECT_TYPE_META } from '@/lib/projects/project-meta';
 import { PROJECT_FIELD_REGISTRY } from '@/lib/projects/field-registry';
+import { ProjectForm } from '@/components/projects/ProjectForm';
 import styles from './project-detail.module.css';
 
 type ProjectDetail = inferRouterOutputs<AppRouter>['project']['get'];
@@ -41,6 +42,7 @@ export default function ProjectDetailPage() {
   const id = params.id;
   const utils = trpc.useUtils();
   const [newTask, setNewTask] = useState('');
+  const [editing, setEditing] = useState(false);
 
   const query = trpc.project.get.useQuery({ id }, { enabled: Boolean(id) });
 
@@ -100,6 +102,9 @@ export default function ProjectDetailPage() {
           {project.title}
         </h1>
         <div className={styles.actions}>
+          <Button variant="ghost" size="sm" onClick={() => setEditing(true)}>
+            Edit
+          </Button>
           <Button variant="ghost" size="sm" onClick={() => archiveProject.mutate({ id: project.id })}>
             Archive
           </Button>
@@ -197,6 +202,13 @@ export default function ProjectDetailPage() {
           </Button>
         </form>
       </section>
+
+      <ProjectForm
+        mode="edit"
+        isOpen={editing}
+        onClose={() => setEditing(false)}
+        project={project}
+      />
     </div>
   );
 }

@@ -1,10 +1,12 @@
 import { describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
+import { ToastProvider } from '@lifesync/ui';
 
 vi.mock('@/lib/hooks/useWorkspaceId', () => ({ useWorkspaceId: () => 'ws-1' }));
 vi.mock('@/lib/trpc', () => ({
   trpc: {
-    useUtils: () => ({ project: { list: { invalidate: vi.fn() } } }),
+    useUtils: () => ({ project: { list: { invalidate: vi.fn() }, get: { invalidate: vi.fn() } } }),
+    template: { list: { useQuery: () => ({ data: [] }) } },
     project: {
       list: {
         useQuery: () => ({
@@ -34,15 +36,25 @@ vi.mock('@/lib/trpc', () => ({
           ],
         }),
       },
+      create: { useMutation: () => ({ mutate: vi.fn(), isPending: false }) },
+      update: { useMutation: () => ({ mutate: vi.fn(), isPending: false }) },
     },
   },
 }));
 
 import ProjectsPage from './page';
 
+function renderPage() {
+  return render(
+    <ToastProvider>
+      <ProjectsPage />
+    </ToastProvider>,
+  );
+}
+
 describe('ProjectsPage', () => {
   it('groups projects under their type headings', () => {
-    render(<ProjectsPage />);
+    renderPage();
     expect(screen.getByRole('heading', { name: /Occasions/ })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: /Travel/ })).toBeInTheDocument();
     expect(screen.getByText('Mum 60th')).toBeInTheDocument();
@@ -50,7 +62,7 @@ describe('ProjectsPage', () => {
   });
 
   it('omits type sections that have no projects', () => {
-    render(<ProjectsPage />);
+    renderPage();
     expect(screen.queryByRole('heading', { name: /Compliance/ })).not.toBeInTheDocument();
   });
 });

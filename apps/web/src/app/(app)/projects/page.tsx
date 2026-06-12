@@ -8,6 +8,7 @@ import { trpc } from '@/lib/trpc';
 import { useWorkspaceId } from '@/lib/hooks/useWorkspaceId';
 import { PROJECT_TYPE_META, PROJECT_TYPE_ORDER } from '@/lib/projects/project-meta';
 import { PlusIcon } from '@/components/icons';
+import { ProjectForm } from '@/components/projects/ProjectForm';
 import styles from './projects.module.css';
 
 type ProjectListItem = inferRouterOutputs<AppRouter>['project']['list'][number];
@@ -103,8 +104,7 @@ export default function ProjectsPage() {
         </div>
       )}
 
-      {/* Task 11 replaces this with <ProjectForm mode="create" … /> */}
-      {showForm ? null : null}
+      <ProjectForm mode="create" isOpen={showForm} onClose={() => setShowForm(false)} />
     </div>
   );
 }

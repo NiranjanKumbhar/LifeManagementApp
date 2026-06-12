@@ -4,6 +4,7 @@ import { useState, type ReactNode } from 'react';
 import { ClerkProvider, useAuth } from '@clerk/nextjs';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { httpBatchLink } from '@trpc/client';
+import { ToastProvider } from '@lifesync/ui';
 import { trpc } from './trpc';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001';
@@ -50,7 +51,9 @@ function TRPCProvider({ children }: { children: ReactNode }) {
 export function Providers({ children }: { children: ReactNode }) {
   return (
     <ClerkProvider>
-      <TRPCProvider>{children}</TRPCProvider>
+      <TRPCProvider>
+        <ToastProvider>{children}</ToastProvider>
+      </TRPCProvider>
     </ClerkProvider>
   );
 }
