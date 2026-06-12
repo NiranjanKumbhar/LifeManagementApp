@@ -134,3 +134,30 @@ export const CheckCircleIcon = (p: IconProps) => (
     <path d="m8.5 12 2.5 2.5 4.5-5" />
   </Icon>
 );
+
+export const ShieldIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M12 3 5 6v6c0 4 3 6.5 7 9 4-2.5 7-5 7-9V6l-7-3Z" />
+  </Icon>
+);
+
+export const PlaneIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M10.5 13.5 3 12l8-5 2-4 1.5 1L13 8l5 1.5L21 8l1 1-3 3 1 6-2 1-3-5-3 5-2-1 1-4.5Z" />
+  </Icon>
+);
+
+export const StethoscopeIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <path d="M5 3v5a4 4 0 0 0 8 0V3" />
+    <path d="M9 14a6 6 0 0 0 6 6 4 4 0 0 0 4-4v-2" />
+    <circle cx="19" cy="11" r="2" />
+  </Icon>
+);
+
+export const CompassIcon = (p: IconProps) => (
+  <Icon {...p}>
+    <circle cx="12" cy="12" r="9" />
+    <path d="m15.5 8.5-2 5-5 2 2-5 5-2Z" />
+  </Icon>
+);
