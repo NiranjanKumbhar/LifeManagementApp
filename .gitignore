@@ -40,3 +40,6 @@ npm-debug.log*
 pnpm-debug.log*
 
 # Lock files are committed — do not ignore pnpm-lock.yaml
+
+# Superpowers brainstorm companion
+.superpowers/
