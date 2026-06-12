@@ -116,7 +116,14 @@ export default function ProjectDetailPage() {
         ) : null}
       </div>
 
-      <div className={styles.track}>
+      <div
+        className={styles.track}
+        role="progressbar"
+        aria-valuenow={pct}
+        aria-valuemin={0}
+        aria-valuemax={100}
+        aria-label="Task completion"
+      >
         <div className={styles.fill} style={{ width: `${pct}%` }} />
       </div>
 
@@ -185,7 +192,7 @@ export default function ProjectDetailPage() {
             placeholder="Add a task…"
             aria-label="Add a task"
           />
-          <Button type="submit" size="sm" variant="secondary" disabled={!newTask.trim()}>
+          <Button type="submit" size="sm" variant="secondary" disabled={!newTask.trim() || createTask.isPending}>
             Add
           </Button>
         </form>
