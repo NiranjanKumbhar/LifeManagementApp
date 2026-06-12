@@ -1,3 +1,5 @@
+'use client';
+
 import { useId, type ChangeEvent, type ReactNode } from 'react';
 import { cn } from '../../utils/cn';
 import styles from './Input.module.css';
