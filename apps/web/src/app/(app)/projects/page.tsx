@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import type { inferRouterOutputs } from '@trpc/server';
 import type { AppRouter } from 'api';
 import { Button, EmptyState, LoadingSpinner, ProjectCard } from '@lifesync/ui';
@@ -87,6 +88,7 @@ export default function ProjectsPage() {
                 {group.projects.map((p) => (
                   <ProjectCard
                     key={p.id}
+                    as={Link}
                     href={`/projects/${p.id}`}
                     icon={group.meta.icon}
                     project={{

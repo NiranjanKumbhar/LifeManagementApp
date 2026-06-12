@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { ElementType, ReactNode } from 'react';
 import { cn } from '../../utils/cn';
 import { formatRelativeDate, daysUntil } from '../../utils/format-date';
 import { urgencyStyle, urgencyFromDays } from '../../utils/urgency-color';
@@ -16,15 +16,16 @@ export interface ProjectCardProps {
   project: ProjectCardData;
   href: string;
   icon?: ReactNode;
+  as?: ElementType;
 }
 
-export function ProjectCard({ project, href, icon }: ProjectCardProps) {
+export function ProjectCard({ project, href, icon, as: Component = 'a' }: ProjectCardProps) {
   const { title, dueDate, ownerName, taskCount, completedCount } = project;
   const urgency = urgencyStyle(urgencyFromDays(daysUntil(dueDate)));
   const pct = taskCount > 0 ? Math.round((completedCount / taskCount) * 100) : 0;
 
   return (
-    <a className={styles.card} href={href}>
+    <Component className={styles.card} href={href}>
       <div className={styles.head}>
         {icon ? (
           <span className={styles.icon} aria-hidden="true">
@@ -58,6 +59,6 @@ export function ProjectCard({ project, href, icon }: ProjectCardProps) {
       ) : (
         <span className={styles.noTasks}>No tasks</span>
       )}
-    </a>
+    </Component>
   );
 }

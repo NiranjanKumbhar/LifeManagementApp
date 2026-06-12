@@ -8,6 +8,7 @@ import type { AppRouter } from 'api';
 import { Button, EmptyState, LoadingSpinner, TaskItem } from '@lifesync/ui';
 import { formatRelativeDate } from '@lifesync/ui';
 import { trpc } from '@/lib/trpc';
+import { useWorkspaceId } from '@/lib/hooks/useWorkspaceId';
 import { PROJECT_TYPE_META } from '@/lib/projects/project-meta';
 import { PROJECT_FIELD_REGISTRY } from '@/lib/projects/field-registry';
 import { ProjectForm } from '@/components/projects/ProjectForm';
@@ -21,8 +22,10 @@ function countTasks(nodes: TaskNode[]): { total: number; done: number } {
   let done = 0;
   const walk = (list: TaskNode[]) => {
     for (const n of list) {
-      total += 1;
-      if (n.status === 'completed') done += 1;
+      if (n.status !== 'cancelled') {
+        total += 1;
+        if (n.status === 'completed') done += 1;
+      }
       if (n.children?.length) walk(n.children);
     }
   };
@@ -40,6 +43,7 @@ function fieldDisplay(value: unknown): string {
 export default function ProjectDetailPage() {
   const params = useParams<{ id: string }>();
   const id = params.id;
+  const workspaceId = useWorkspaceId();
   const utils = trpc.useUtils();
   const [newTask, setNewTask] = useState('');
   const [editing, setEditing] = useState(false);
@@ -47,6 +51,10 @@ export default function ProjectDetailPage() {
   const query = trpc.project.get.useQuery({ id }, { enabled: Boolean(id) });
 
   const refresh = () => void utils.project.get.invalidate({ id });
+  const refreshAll = () => {
+    void utils.project.get.invalidate({ id });
+    if (workspaceId) void utils.project.list.invalidate({ workspaceId });
+  };
   const completeTask = trpc.task.complete.useMutation({ onSuccess: refresh });
   const createTask = trpc.task.create.useMutation({
     onSuccess: () => {
@@ -54,8 +62,8 @@ export default function ProjectDetailPage() {
       refresh();
     },
   });
-  const completeProject = trpc.project.complete.useMutation({ onSuccess: refresh });
-  const archiveProject = trpc.project.archive.useMutation({ onSuccess: refresh });
+  const completeProject = trpc.project.complete.useMutation({ onSuccess: refreshAll });
+  const archiveProject = trpc.project.archive.useMutation({ onSuccess: refreshAll });
 
   if (query.isLoading) {
     return (
