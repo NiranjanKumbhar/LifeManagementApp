@@ -168,7 +168,7 @@ export function ProjectForm({ mode, isOpen, onClose, project }: ProjectFormProps
           />
         ) : null}
 
-        <Input label="Title" value={title} onChange={setTitle} />
+        <Input label="Title" value={title} onChange={setTitle} required />
         <Input as="textarea" label="Description" value={description} onChange={setDescription} />
         <Input type="date" label="Due date" value={dueDate} onChange={setDueDate} />
         <Input as="select" label="Priority" value={priority} onChange={(v) => setPriority(v as Priority)} options={PRIORITIES} />

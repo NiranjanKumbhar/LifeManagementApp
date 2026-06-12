@@ -29,7 +29,7 @@ function renderForm() {
 describe('ProjectForm', () => {
   it('shows core fields', () => {
     renderForm();
-    expect(screen.getByLabelText('Title')).toBeInTheDocument();
+    expect(screen.getByLabelText(/Title/)).toBeInTheDocument();
     expect(screen.getByLabelText('Type')).toBeInTheDocument();
   });
 
