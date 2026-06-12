@@ -1,0 +1,21 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ls-space-3);
+}
+.fieldset {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ls-space-3);
+  border: 1px solid var(--ls-surface-border);
+  border-radius: var(--ls-radius-md);
+  padding: var(--ls-space-3);
+  margin: 0;
+}
+.legend {
+  font-size: var(--ls-text-xs);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--ls-text-tertiary);
+  padding: 0 var(--ls-space-2);
+}
