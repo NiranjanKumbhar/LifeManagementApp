@@ -36,3 +36,8 @@ export {
   type TaskItemProps,
   type TaskItemData,
 } from './components/TaskItem/TaskItem';
+export {
+  ProjectCard,
+  type ProjectCardProps,
+  type ProjectCardData,
+} from './components/ProjectCard/ProjectCard';
