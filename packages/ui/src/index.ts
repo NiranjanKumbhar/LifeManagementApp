@@ -31,3 +31,8 @@ export {
 } from './components/LoadingSpinner/LoadingSpinner';
 export { Modal, type ModalProps } from './components/Modal/Modal';
 export { ToastProvider, useToast } from './components/Toast/Toast';
+export {
+  TaskItem,
+  type TaskItemProps,
+  type TaskItemData,
+} from './components/TaskItem/TaskItem';
