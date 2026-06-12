@@ -29,3 +29,4 @@ export {
   LoadingSpinner,
   type LoadingSpinnerProps,
 } from './components/LoadingSpinner/LoadingSpinner';
+export { Modal, type ModalProps } from './components/Modal/Modal';
