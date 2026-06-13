@@ -1,0 +1,28 @@
+.panel {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.heading {
+  margin: 0;
+  font-family: var(--ls-font-display);
+  font-size: var(--ls-text-lg);
+  color: var(--ls-text-primary);
+}
+
+.preview {
+  margin: 0;
+  font-size: var(--ls-text-sm);
+  color: var(--ls-text-secondary);
+}
+
+.preview strong {
+  color: var(--ls-text-primary);
+}
+
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
