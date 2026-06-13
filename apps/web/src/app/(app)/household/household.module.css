@@ -1,0 +1,80 @@
+.page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+  padding: 1.5rem;
+  max-width: 56rem;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.heading {
+  font-family: var(--font-display, 'Fraunces', serif);
+  font-size: 1.6rem;
+  margin: 0;
+  color: var(--color-text, #2b2620);
+}
+
+.subhead {
+  margin: 0.25rem 0 0;
+  color: var(--color-text-muted, #6b6258);
+}
+
+.addbar {
+  width: 100%;
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+  padding: 3rem 0;
+}
+
+.groups {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.groupHead {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--color-text-muted, #6b6258);
+  margin: 0;
+}
+
+.groupIcon {
+  display: inline-flex;
+  color: var(--color-primary, #0f766e);
+}
+
+.groupCount {
+  font-size: 0.8rem;
+  font-weight: 500;
+  color: var(--color-text-muted, #6b6258);
+  background: var(--color-surface-sunken, #efe9e1);
+  border-radius: 999px;
+  padding: 0.05rem 0.5rem;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+}
