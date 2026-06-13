@@ -128,7 +128,7 @@ export default function HouseholdPage() {
       )}
 
       {editing ? (
-        <HouseholdItemForm isOpen item={editing} onClose={() => setEditing(null)} />
+        <HouseholdItemForm key={editing.id} isOpen item={editing} onClose={() => setEditing(null)} />
       ) : null}
     </div>
   );
