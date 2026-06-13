@@ -1,5 +1,5 @@
 import { describe, expect, it, vi, beforeEach } from 'vitest';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 
 const { captureMutate, addMutate, taskMutate, projectMutate } = vi.hoisted(() => ({
@@ -77,7 +77,7 @@ describe('QuickCapture', () => {
     const onClose = vi.fn();
     render(<QuickCapture open onClose={onClose} />);
     await openPicker();
-    await userEvent.click(screen.getByRole('menuitem', { name: 'Japan trip' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Japan trip' }));
     const input = screen.getByLabelText("What's on your mind?");
     await userEvent.type(input, 'book the ryokan{Enter}');
     expect(taskMutate).toHaveBeenCalledWith({ projectId: 'p1', title: 'book the ryokan' });
@@ -89,7 +89,7 @@ describe('QuickCapture', () => {
     render(<QuickCapture open onClose={() => {}} />);
     await userEvent.type(screen.getByLabelText("What's on your mind?"), 'call the caterer');
     await openPicker();
-    await userEvent.click(screen.getByRole('menuitem', { name: '+ New project…' }));
+    await userEvent.click(screen.getByRole('button', { name: '+ New project…' }));
     await userEvent.type(screen.getByLabelText(/Name/), 'Party');
     await userEvent.click(screen.getByRole('button', { name: 'Create' }));
     expect(projectMutate).toHaveBeenCalledWith({ workspaceId: 'ws-1', type: 'general', title: 'Party' });
@@ -99,7 +99,16 @@ describe('QuickCapture', () => {
   it('shows the shopping placeholder when Shopping list is chosen', async () => {
     render(<QuickCapture open onClose={() => {}} />);
     await openPicker();
-    await userEvent.click(screen.getByRole('menuitem', { name: 'Shopping list' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Shopping list' }));
     expect(screen.getByPlaceholderText('Add to shopping list…')).toBeInTheDocument();
+  });
+
+  it('falls back to Inbox when the sticky project is no longer active', async () => {
+    window.localStorage.setItem('lifesync.capture.destination', 'project:gone');
+    render(<QuickCapture open onClose={() => {}} />);
+    expect(await screen.findByRole('button', { name: /To: Inbox/ })).toBeInTheDocument();
+    await waitFor(() =>
+      expect(window.localStorage.getItem('lifesync.capture.destination')).toBe('inbox'),
+    );
   });
 });

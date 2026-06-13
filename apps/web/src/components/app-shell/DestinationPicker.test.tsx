@@ -29,29 +29,29 @@ describe('DestinationPicker', () => {
     setup();
     expect(screen.getByRole('button', { name: /To: Inbox/ })).toBeInTheDocument();
     await userEvent.click(screen.getByRole('button', { name: /To:/ }));
-    expect(screen.getByRole('menuitem', { name: 'Inbox' })).toBeInTheDocument();
-    expect(screen.getByRole('menuitem', { name: 'Shopping list' })).toBeInTheDocument();
-    expect(screen.getByRole('menuitem', { name: 'Japan trip' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Inbox' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Shopping list' })).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Japan trip' })).toBeInTheDocument();
   });
 
   it('selecting a project reports the project destination', async () => {
     const { onSelect } = setup();
     await userEvent.click(screen.getByRole('button', { name: /To:/ }));
-    await userEvent.click(screen.getByRole('menuitem', { name: 'Japan trip' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Japan trip' }));
     expect(onSelect).toHaveBeenCalledWith({ kind: 'project', projectId: 'p1' });
   });
 
   it('selecting Shopping list reports the shopping destination', async () => {
     const { onSelect } = setup();
     await userEvent.click(screen.getByRole('button', { name: /To:/ }));
-    await userEvent.click(screen.getByRole('menuitem', { name: 'Shopping list' }));
+    await userEvent.click(screen.getByRole('button', { name: 'Shopping list' }));
     expect(onSelect).toHaveBeenCalledWith({ kind: 'shopping' });
   });
 
   it('+ New project triggers onNewProject', async () => {
     const { onNewProject } = setup();
     await userEvent.click(screen.getByRole('button', { name: /To:/ }));
-    await userEvent.click(screen.getByRole('menuitem', { name: '+ New project…' }));
+    await userEvent.click(screen.getByRole('button', { name: '+ New project…' }));
     expect(onNewProject).toHaveBeenCalled();
   });
 });

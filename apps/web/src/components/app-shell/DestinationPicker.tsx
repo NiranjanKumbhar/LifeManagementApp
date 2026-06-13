@@ -57,7 +57,7 @@ export function DestinationPicker({ value, label, projects, onSelect, onNewProje
       <button
         type="button"
         className={styles.trigger}
-        aria-haspopup="menu"
+        aria-haspopup="true"
         aria-expanded={open}
         onClick={() => setOpen((v) => !v)}
       >
@@ -69,10 +69,9 @@ export function DestinationPicker({ value, label, projects, onSelect, onNewProje
         </span>
       </button>
       {open ? (
-        <div className={styles.menu} role="menu">
+        <div className={styles.menu} aria-label="Capture destinations">
           <button
             type="button"
-            role="menuitem"
             aria-current={value.kind === 'inbox' ? 'true' : undefined}
             className={styles.item}
             onClick={() => choose({ kind: 'inbox' })}
@@ -81,7 +80,6 @@ export function DestinationPicker({ value, label, projects, onSelect, onNewProje
           </button>
           <button
             type="button"
-            role="menuitem"
             aria-current={value.kind === 'shopping' ? 'true' : undefined}
             className={styles.item}
             onClick={() => choose({ kind: 'shopping' })}
@@ -103,7 +101,6 @@ export function DestinationPicker({ value, label, projects, onSelect, onNewProje
             <button
               key={p.id}
               type="button"
-              role="menuitem"
               aria-current={value.kind === 'project' && value.projectId === p.id ? 'true' : undefined}
               className={styles.item}
               onClick={() => choose({ kind: 'project', projectId: p.id })}
@@ -114,7 +111,6 @@ export function DestinationPicker({ value, label, projects, onSelect, onNewProje
           <div className={styles.divider} />
           <button
             type="button"
-            role="menuitem"
             className={styles.newItem}
             onClick={() => {
               onNewProject();
