@@ -20,7 +20,7 @@ export interface StockItemRowProps {
 export function StockItemRow({ item, tab, onPrimary, onSetStatus, onEdit }: StockItemRowProps) {
   const measure = [item.quantity != null ? String(item.quantity) : null, item.unit]
     .filter(Boolean)
-    .join(' ');
+    .join(' · ');
 
   return (
     <div className={styles.row}>

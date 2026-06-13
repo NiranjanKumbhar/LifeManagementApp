@@ -46,4 +46,11 @@ describe('StockItemRow', () => {
     await userEvent.click(screen.getByRole('button', { name: /Bananas/ }));
     expect(onEdit).toHaveBeenCalledWith(item);
   });
+
+  it('renders the quantity and unit with a middot separator', () => {
+    render(
+      <StockItemRow item={item} tab="shopping" onPrimary={() => {}} onSetStatus={() => {}} onEdit={() => {}} />,
+    );
+    expect(screen.getByText('2 · bunch')).toBeInTheDocument();
+  });
 });
