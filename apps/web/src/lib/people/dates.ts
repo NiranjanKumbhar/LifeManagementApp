@@ -14,7 +14,9 @@ function startOfDay(d: Date): Date {
 
 /** The next annual occurrence of a YYYY-MM-DD date, on/after `from` (today counts). */
 export function nextOccurrence(dateStr: string, from: Date = new Date()): Date {
-  const [, month, day] = dateStr.split('-').map(Number);
+  const parts = dateStr.split('-').map(Number);
+  const month = parts[1] ?? 1;
+  const day = parts[2] ?? 1;
   const today = startOfDay(from);
   let occ = new Date(today.getFullYear(), month - 1, day);
   if (occ.getTime() < today.getTime()) occ = new Date(today.getFullYear() + 1, month - 1, day);
@@ -39,5 +41,5 @@ export function nextKeyDate(
 
   if (candidates.length === 0) return null;
   candidates.sort((a, b) => a.daysUntil - b.daysUntil);
-  return candidates[0];
+  return candidates[0] ?? null;
 }
