@@ -9,24 +9,28 @@ describe('useStickyDestination', () => {
 
   it('defaults to inbox when nothing is stored', () => {
     const { result } = renderHook(() => useStickyDestination());
-    expect(result.current[0]).toBe('inbox');
+    expect(result.current[0]).toEqual({ kind: 'inbox' });
   });
 
-  it('persists the chosen destination and re-reads it on a fresh mount', () => {
+  it('persists shopping and re-reads it on a fresh mount', () => {
     const first = renderHook(() => useStickyDestination());
-    act(() => {
-      first.result.current[1]('shopping');
-    });
-    expect(first.result.current[0]).toBe('shopping');
+    act(() => first.result.current[1]({ kind: 'shopping' }));
     expect(window.localStorage.getItem(CAPTURE_DESTINATION_KEY)).toBe('shopping');
-
     const second = renderHook(() => useStickyDestination());
-    expect(second.result.current[0]).toBe('shopping');
+    expect(second.result.current[0]).toEqual({ kind: 'shopping' });
   });
 
-  it('ignores an invalid stored value and falls back to inbox', () => {
+  it('round-trips a project destination', () => {
+    const first = renderHook(() => useStickyDestination());
+    act(() => first.result.current[1]({ kind: 'project', projectId: 'p1' }));
+    expect(window.localStorage.getItem(CAPTURE_DESTINATION_KEY)).toBe('project:p1');
+    const second = renderHook(() => useStickyDestination());
+    expect(second.result.current[0]).toEqual({ kind: 'project', projectId: 'p1' });
+  });
+
+  it('falls back to inbox for an invalid stored value', () => {
     window.localStorage.setItem(CAPTURE_DESTINATION_KEY, 'garbage');
     const { result } = renderHook(() => useStickyDestination());
-    expect(result.current[0]).toBe('inbox');
+    expect(result.current[0]).toEqual({ kind: 'inbox' });
   });
 });
