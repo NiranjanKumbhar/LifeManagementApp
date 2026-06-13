@@ -25,4 +25,8 @@ export const personRouter = router({
   update: protectedProcedure.input(updatePersonSchema).mutation(async ({ ctx, input }) => {
     return unwrap(await PersonService.update(ctx.db, ctx.userId, input));
   }),
+
+  delete: protectedProcedure.input(personIdSchema).mutation(async ({ ctx, input }) => {
+    return unwrap(await PersonService.delete(ctx.db, ctx.userId, input.id));
+  }),
 });

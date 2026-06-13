@@ -1,0 +1,92 @@
+.wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.empty {
+  margin: 0;
+  color: var(--ls-text-tertiary);
+  font-size: var(--ls-text-sm);
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.35rem 0.4rem;
+  border-radius: var(--ls-radius-sm);
+}
+
+.row:hover {
+  background: var(--ls-surface-sunken);
+}
+
+.check {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex: 1 1 auto;
+  cursor: pointer;
+}
+
+.done {
+  text-decoration: line-through;
+  color: var(--ls-text-tertiary);
+}
+
+.budget {
+  font-size: var(--ls-text-sm);
+  color: var(--ls-text-secondary);
+}
+
+.link {
+  font-size: var(--ls-text-sm);
+  color: var(--ls-primary-700);
+}
+
+.remove {
+  background: transparent;
+  border: none;
+  color: var(--ls-text-tertiary);
+  cursor: pointer;
+  font-size: var(--ls-text-sm);
+}
+
+.add {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.ideaInput,
+.budgetInput,
+.urlInput {
+  padding: 0.4rem 0.5rem;
+  border: 1px solid var(--ls-surface-border);
+  border-radius: var(--ls-radius-sm);
+  font: inherit;
+  font-size: var(--ls-text-sm);
+}
+
+.ideaInput {
+  flex: 2 1 10rem;
+}
+
+.budgetInput {
+  width: 5rem;
+}
+
+.urlInput {
+  flex: 1 1 8rem;
+}
