@@ -55,7 +55,7 @@ export function QuickCapture({ open, onClose }: QuickCaptureProps) {
 
   if (!open) return null;
 
-  const isShopping = destination === 'shopping';
+  const isShopping = destination.kind === 'shopping';
   const busy = capture.isPending || add.isPending;
   const isError = isShopping ? add.isError : capture.isError;
 
@@ -82,9 +82,9 @@ export function QuickCapture({ open, onClose }: QuickCaptureProps) {
         <div className={styles.toggle}>
           <SegmentedControl
             ariaLabel="Capture destination"
-            value={destination}
+            value={destination.kind === 'shopping' ? 'shopping' : 'inbox'}
             onChange={(v) => {
-              setDestination(v as 'inbox' | 'shopping');
+              setDestination(v === 'shopping' ? { kind: 'shopping' } : { kind: 'inbox' });
               setJustAdded(false);
             }}
             options={[
