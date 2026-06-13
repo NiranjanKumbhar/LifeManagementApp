@@ -24,7 +24,9 @@ export function SegmentedControl({ options, value, onChange, ariaLabel }: Segmen
     e.preventDefault();
     const dir = e.key === 'ArrowRight' ? 1 : -1;
     const next = (index + dir + options.length) % options.length;
-    onChange(options[next].value);
+    const target = options[next];
+    if (!target) return;
+    onChange(target.value);
     refs.current[next]?.focus();
   };
 
