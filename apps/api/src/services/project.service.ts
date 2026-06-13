@@ -18,6 +18,7 @@ import {
 import { assertWorkspaceMembership } from '../middleware/workspace';
 import { forbidden, internal, notFound, ok, type AppError, type Result } from '../utils/errors';
 import { addDays, daysUntilAnnualDate, startOfDay, toISODateString } from '../utils/dates';
+import { compareTasks } from '../utils/task-order';
 import type {
   createProjectSchema,
   listProjectsSchema,
@@ -102,7 +103,7 @@ function buildTaskTree(rows: TaskRow[]): TaskTreeNode[] {
   }
 
   const sortRec = (nodes: TaskTreeNode[]): void => {
-    nodes.sort((a, b) => a.sortOrder - b.sortOrder);
+    nodes.sort(compareTasks);
     for (const n of nodes) sortRec(n.children);
   };
   sortRec(roots);
@@ -165,7 +166,7 @@ export class ProjectService {
       .select()
       .from(tasks)
       .where(eq(tasks.projectId, id))
-      .orderBy(asc(tasks.sortOrder));
+      .orderBy(asc(tasks.sortOrder), asc(tasks.createdAt), asc(tasks.id));
 
     return ok({ ...project, tasks: buildTaskTree(taskRows) });
   }

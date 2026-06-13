@@ -5,6 +5,7 @@ import { tasks, type ActivityAction } from '../db/schema';
 import { forbidden, internal, notFound, ok, type AppError, type Result } from '../utils/errors';
 import { loadReadableProject, loadWritableProject } from './authz';
 import { logActivity } from './activity';
+import { compareTasks } from '../utils/task-order';
 import type { createTaskSchema, updateTaskSchema } from '../utils/validation';
 
 type TaskRow = typeof tasks.$inferSelect;
@@ -29,7 +30,7 @@ function buildTaskTree(rows: TaskRow[]): TaskTreeNode[] {
   }
 
   const sortRec = (nodes: TaskTreeNode[]): void => {
-    nodes.sort((a, b) => a.sortOrder - b.sortOrder);
+    nodes.sort(compareTasks);
     for (const n of nodes) sortRec(n.children);
   };
   sortRec(roots);
@@ -54,7 +55,7 @@ export class TaskService {
       .select()
       .from(tasks)
       .where(eq(tasks.projectId, projectId))
-      .orderBy(asc(tasks.sortOrder));
+      .orderBy(asc(tasks.sortOrder), asc(tasks.createdAt), asc(tasks.id));
     return ok(buildTaskTree(rows));
   }
 
