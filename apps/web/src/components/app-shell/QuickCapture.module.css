@@ -58,6 +58,16 @@
   font-weight: 600;
 }
 
+.toggle {
+  display: flex;
+  margin-bottom: var(--ls-space-3);
+}
+
+.added {
+  color: var(--ls-urgency-on-track);
+  font-weight: 600;
+}
+
 @keyframes overlay-in {
   from {
     opacity: 0;
