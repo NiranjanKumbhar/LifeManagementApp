@@ -58,7 +58,7 @@
   font-weight: 600;
 }
 
-.toggle {
+.picker {
   display: flex;
   margin-bottom: var(--ls-space-3);
 }
