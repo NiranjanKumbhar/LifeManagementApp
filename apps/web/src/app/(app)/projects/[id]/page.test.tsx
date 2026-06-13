@@ -1,9 +1,10 @@
-import { describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ToastProvider } from '@lifesync/ui';
 
 const completeMutate = vi.fn();
+const reopenMutate = vi.fn();
 
 vi.mock('next/navigation', () => ({ useParams: () => ({ id: 'p1' }) }));
 vi.mock('@/lib/hooks/useWorkspaceId', () => ({ useWorkspaceId: () => 'ws-1' }));
@@ -40,6 +41,7 @@ vi.mock('@/lib/trpc', () => ({
     },
     task: {
       complete: { useMutation: (o: { onSuccess?: () => void }) => ({ mutate: (v: unknown) => { completeMutate(v); o.onSuccess?.(); }, isPending: false }) },
+      reopen: { useMutation: (o: { onSuccess?: () => void }) => ({ mutate: (v: unknown) => { reopenMutate(v); o.onSuccess?.(); }, isPending: false }) },
       create: { useMutation: () => ({ mutate: vi.fn(), isPending: false }) },
     },
   },
@@ -56,6 +58,11 @@ function renderPage() {
 }
 
 describe('ProjectDetailPage', () => {
+  beforeEach(() => {
+    completeMutate.mockClear();
+    reopenMutate.mockClear();
+  });
+
   it('renders the project title and its tasks', () => {
     renderPage();
     expect(screen.getByRole('heading', { name: /Mum 60th/ })).toBeInTheDocument();
@@ -63,9 +70,17 @@ describe('ProjectDetailPage', () => {
     expect(screen.getByText('Send invites')).toBeInTheDocument();
   });
 
-  it('completes a task when its checkbox is toggled', async () => {
+  it('completes a pending task when its checkbox is toggled', async () => {
     renderPage();
     await userEvent.click(screen.getByRole('checkbox', { name: /send invites/i }));
     expect(completeMutate).toHaveBeenCalledWith({ id: 't2' });
+    expect(reopenMutate).not.toHaveBeenCalled();
+  });
+
+  it('reopens a completed task when its checkbox is unchecked', async () => {
+    renderPage();
+    await userEvent.click(screen.getByRole('checkbox', { name: /book restaurant/i }));
+    expect(reopenMutate).toHaveBeenCalledWith({ id: 't1' });
+    expect(completeMutate).not.toHaveBeenCalled();
   });
 });

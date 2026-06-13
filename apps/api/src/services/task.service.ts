@@ -202,6 +202,30 @@ export class TaskService {
     );
   }
 
+  /** Reverse a completion: back to pending and clear the completion metadata. */
+  static async reopen(
+    db: Database,
+    userId: string,
+    id: string,
+  ): Promise<Result<TaskRow, AppError>> {
+    const existing = await db.query.tasks.findFirst({ where: eq(tasks.id, id) });
+    if (!existing) return { success: false, error: notFound('Task not found') };
+
+    const access = await loadWritableProject(db, userId, existing.projectId);
+    if (!access.success) return access;
+
+    return this.persist(
+      db,
+      existing.projectId,
+      userId,
+      id,
+      { status: 'pending', completedAt: null, completedBy: null, updatedAt: new Date() },
+      undefined,
+      'updated',
+      access.data.workspaceId,
+    );
+  }
+
   static async reorder(
     db: Database,
     userId: string,

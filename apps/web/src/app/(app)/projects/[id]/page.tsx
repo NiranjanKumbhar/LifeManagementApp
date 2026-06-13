@@ -56,6 +56,11 @@ export default function ProjectDetailPage() {
     if (workspaceId) void utils.project.list.invalidate({ workspaceId });
   };
   const completeTask = trpc.task.complete.useMutation({ onSuccess: refresh });
+  const reopenTask = trpc.task.reopen.useMutation({ onSuccess: refresh });
+  const toggleTask = (t: { id: string; status: string }) => {
+    if (t.status === 'completed') reopenTask.mutate({ id: t.id });
+    else completeTask.mutate({ id: t.id });
+  };
   const createTask = trpc.task.create.useMutation({
     onSuccess: () => {
       setNewTask('');
@@ -172,7 +177,7 @@ export default function ProjectDetailPage() {
                 ownerName: null,
               }}
               depth={0}
-              onToggleComplete={(taskId) => completeTask.mutate({ id: taskId })}
+              onToggleComplete={() => toggleTask(task)}
             />
             {(task.children ?? []).map((child) => (
               <TaskItem
@@ -185,7 +190,7 @@ export default function ProjectDetailPage() {
                   ownerName: null,
                 }}
                 depth={1}
-                onToggleComplete={(taskId) => completeTask.mutate({ id: taskId })}
+                onToggleComplete={() => toggleTask(child)}
               />
             ))}
           </div>
