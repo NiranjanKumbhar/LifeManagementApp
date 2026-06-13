@@ -2,8 +2,8 @@
   display: inline-flex;
   gap: 0.25rem;
   padding: 0.25rem;
-  background: var(--color-surface-sunken, #efe9e1);
-  border-radius: var(--radius-lg, 0.75rem);
+  background: var(--ls-surface-sunken);
+  border-radius: var(--ls-radius-lg);
 }
 
 .segment {
@@ -11,23 +11,23 @@
   border: none;
   background: transparent;
   padding: 0.4rem 0.9rem;
-  border-radius: var(--radius-md, 0.5rem);
+  border-radius: var(--ls-radius-md);
   font: inherit;
   font-weight: 500;
-  color: var(--color-text-muted, #6b6258);
+  color: var(--ls-text-secondary);
   cursor: pointer;
   transition: background 150ms ease, color 150ms ease;
 }
 
 .segment:focus-visible {
-  outline: 2px solid var(--color-primary, #0f766e);
+  outline: 2px solid var(--ls-primary-600);
   outline-offset: 2px;
 }
 
 .selected {
-  background: var(--color-surface, #fff);
-  color: var(--color-text, #2b2620);
-  box-shadow: var(--shadow-sm, 0 1px 2px rgba(0, 0, 0, 0.08));
+  background: var(--ls-surface-elevated);
+  color: var(--ls-text-primary);
+  box-shadow: var(--ls-shadow-sm);
 }
 
 @media (prefers-reduced-motion: reduce) {

@@ -1,9 +1,10 @@
 'use client';
 
 import { useEffect, useRef, useState, type FormEvent } from 'react';
-import { Button } from '@lifesync/ui';
+import { Button, SegmentedControl } from '@lifesync/ui';
 import { trpc } from '@/lib/trpc';
 import { useWorkspaceId } from '@/lib/hooks/useWorkspaceId';
+import { useStickyDestination } from '@/lib/hooks/useStickyDestination';
 import styles from './QuickCapture.module.css';
 
 export interface QuickCaptureProps {
@@ -11,8 +12,13 @@ export interface QuickCaptureProps {
   onClose: () => void;
 }
 
+const INBOX_PLACEHOLDER = 'Capture anything — a task, a reminder, an idea…';
+const SHOPPING_PLACEHOLDER = 'Add to shopping list…';
+
 export function QuickCapture({ open, onClose }: QuickCaptureProps) {
   const [text, setText] = useState('');
+  const [justAdded, setJustAdded] = useState(false);
+  const [destination, setDestination] = useStickyDestination();
   const inputRef = useRef<HTMLInputElement>(null);
   const workspaceId = useWorkspaceId();
   const utils = trpc.useUtils();
@@ -22,6 +28,15 @@ export function QuickCapture({ open, onClose }: QuickCaptureProps) {
       if (workspaceId) void utils.inbox.list.invalidate({ workspaceId });
       setText('');
       onClose();
+    },
+  });
+
+  const add = trpc.household.add.useMutation({
+    onSuccess: () => {
+      if (workspaceId) void utils.household.list.invalidate({ workspaceId });
+      setText('');
+      setJustAdded(true);
+      inputRef.current?.focus();
     },
   });
 
@@ -40,11 +55,19 @@ export function QuickCapture({ open, onClose }: QuickCaptureProps) {
 
   if (!open) return null;
 
+  const isShopping = destination === 'shopping';
+  const busy = capture.isPending || add.isPending;
+  const isError = isShopping ? add.isError : capture.isError;
+
   const submit = (e: FormEvent) => {
     e.preventDefault();
     const value = text.trim();
-    if (!value || !workspaceId || capture.isPending) return;
-    capture.mutate({ workspaceId, content: value });
+    if (!value || !workspaceId || busy) return;
+    if (isShopping) {
+      add.mutate({ workspaceId, name: value, status: 'on_list' });
+    } else {
+      capture.mutate({ workspaceId, content: value });
+    }
   };
 
   return (
@@ -56,26 +79,47 @@ export function QuickCapture({ open, onClose }: QuickCaptureProps) {
       aria-label="Quick capture"
     >
       <div className={styles.sheet} onClick={(e) => e.stopPropagation()}>
+        <div className={styles.toggle}>
+          <SegmentedControl
+            ariaLabel="Capture destination"
+            value={destination}
+            onChange={(v) => {
+              setDestination(v as 'inbox' | 'shopping');
+              setJustAdded(false);
+            }}
+            options={[
+              { value: 'inbox', label: 'Inbox' },
+              { value: 'shopping', label: 'Shopping list' },
+            ]}
+          />
+        </div>
         <form onSubmit={submit}>
           <input
             ref={inputRef}
             className={styles.input}
             value={text}
-            onChange={(e) => setText(e.target.value)}
-            placeholder="Capture anything — a task, a reminder, an idea…"
+            onChange={(e) => {
+              setText(e.target.value);
+              if (justAdded) setJustAdded(false);
+            }}
+            placeholder={isShopping ? SHOPPING_PLACEHOLDER : INBOX_PLACEHOLDER}
             aria-label="What's on your mind?"
             autoComplete="off"
           />
           <div className={styles.row}>
             <span className={styles.hint}>
-              {capture.isError ? (
+              {isError ? (
                 <span className={styles.error}>Couldn&rsquo;t save — try again.</span>
+              ) : justAdded && isShopping ? (
+                <span className={styles.added}>✓ Added to shopping list</span>
+              ) : isShopping ? (
+                'Enter to add · Esc to close'
               ) : (
                 'Press Enter to save · Esc to close'
               )}
             </span>
-            <Button type="submit" size="sm" disabled={!text.trim() || capture.isPending}>
-              {capture.isPending ? 'Saving…' : 'Add'}
+            <Button type="submit" size="sm" disabled={!text.trim() || busy}>
+              {busy ? 'Saving…' : isShopping ? 'Add to list' : 'Add'}
             </Button>
           </div>
         </form>
