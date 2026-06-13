@@ -1,0 +1,30 @@
+.bar {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem 0.75rem;
+  background: var(--color-surface, #fff);
+  border: 1px solid var(--color-border, #e3dccf);
+  border-radius: var(--radius-md, 0.5rem);
+}
+
+.bar:focus-within {
+  border-color: var(--color-primary, #0f766e);
+}
+
+.icon {
+  display: inline-flex;
+  color: var(--color-text-muted, #6b6258);
+}
+
+.input {
+  flex: 1 1 auto;
+  border: none;
+  background: transparent;
+  font: inherit;
+  color: var(--color-text, #2b2620);
+}
+
+.input:focus {
+  outline: none;
+}

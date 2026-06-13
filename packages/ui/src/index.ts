@@ -41,3 +41,8 @@ export {
   type ProjectCardProps,
   type ProjectCardData,
 } from './components/ProjectCard/ProjectCard';
+export {
+  SegmentedControl,
+  type SegmentedControlProps,
+  type SegmentedControlOption,
+} from './components/SegmentedControl/SegmentedControl';
