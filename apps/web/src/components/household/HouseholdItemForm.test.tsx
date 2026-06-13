@@ -37,7 +37,7 @@ describe('HouseholdItemForm', () => {
         <HouseholdItemForm isOpen item={item} onClose={() => {}} />
       </ToastProvider>,
     );
-    const name = screen.getByLabelText('Name');
+    const name = screen.getByLabelText(/Name/);
     await userEvent.clear(name);
     await userEvent.type(name, 'Plantains');
     await userEvent.click(screen.getByRole('button', { name: 'Save' }));

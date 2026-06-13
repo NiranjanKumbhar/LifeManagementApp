@@ -73,7 +73,7 @@ export function HouseholdItemForm({ isOpen, item, onClose }: HouseholdItemFormPr
       }
     >
       <div className={styles.form}>
-        <Input label="Name" value={name} onChange={setName} />
+        <Input label="Name" value={name} onChange={setName} required />
         <Input as="select" label="Category" value={category} onChange={setCategory} options={CATEGORY_OPTIONS} />
         <Input
           as="select"
