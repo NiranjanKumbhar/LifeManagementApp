@@ -57,7 +57,7 @@ export function QuickCapture({ open, onClose }: QuickCaptureProps) {
 
   const isShopping = destination === 'shopping';
   const busy = capture.isPending || add.isPending;
-  const isError = capture.isError || add.isError;
+  const isError = isShopping ? add.isError : capture.isError;
 
   const submit = (e: FormEvent) => {
     e.preventDefault();
