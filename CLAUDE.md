@@ -8,8 +8,8 @@ This is **LifeSync**, a shared life management app for couples that combines fas
 
 ## Development Status
 
-> **Last updated:** 2026-06-12. Keep this section current when finishing a chunk of work.
-> Full suite: `pnpm test` → 101 tests passing (api 52, web 20, ui 29; mobile passWithNoTests).
+> **Last updated:** 2026-06-13. Keep this section current when finishing a chunk of work.
+> Full suite: `pnpm test` → 123 tests passing (api 52, web 39, ui 32; mobile passWithNoTests).
 
 ### Done ✅
 - **Monorepo + tooling** — Turborepo, pnpm workspaces, tsconfig base, ESLint 9 flat config, Prettier. `pnpm install` / `pnpm build` / `pnpm test` all green.
@@ -18,7 +18,7 @@ This is **LifeSync**, a shared life management app for couples that combines fas
 - **Backend API** (`apps/api`) — 13 tRPC routers / 50 procedures (workspace, project, task, reminder, household, person, notification, resource, template, search, activity, user, **inbox**). Thin routers + Result-returning services, Zod validation, 3-tier visibility filtering, workspace-membership checks, activity logging.
 - **Quick capture / Inbox** — `inbox_items` table (migration `0001`), `inbox` router (capture / list / assignToProject / dismiss). Web QuickCapture modal persists; `/inbox` page triages items into projects (creates a task) or dismisses. Per-item visibility (private captures stay private).
 - **Auth + user sync** — Clerk JWT middleware, workspace middleware, **JIT user provisioning** on first request, and a Svix-verified **`POST /webhooks/clerk`** endpoint. Server runs tRPC + webhook via `createHTTPHandler` + Node http.
-- **Web** (`apps/web`) — Clerk auth (`middleware.ts`, sign-in/up), tRPC client + React Query providers, **app shell** (sidebar, mobile bottom nav, quick-capture FAB/modal), the **Dashboard** page (all 7 blueprint blocks), the **Inbox** page (`/inbox`, triage), and the **Projects** screens (`/projects` list grouped by type with progress bars; `/projects/[id]` single-column detail with task list + inline complete/add, one subtask level; template-driven create/edit modal with per-type custom fields). `ToastProvider` mounted in providers. Design tokens + 13 UI components in `packages/ui` (Button, Card, Badge, UrgencyIndicator, Avatar, PartnerBadge, EmptyState, LoadingSpinner, **Input, Modal, Toast, TaskItem, ProjectCard**). Aesthetic: warm "paper", Fraunces + Inter, teal/coral/amber/sage.
+- **Web** (`apps/web`) — Clerk auth (`middleware.ts`, sign-in/up), tRPC client + React Query providers, **app shell** (sidebar, mobile bottom nav, quick-capture FAB/modal), the **Dashboard** page (all 7 blueprint blocks), the **Inbox** page (`/inbox`, triage), and the **Projects** screens (`/projects` list grouped by type with progress bars; `/projects/[id]` single-column detail with task list + inline complete/add, one subtask level; template-driven create/edit modal with per-type custom fields), and the **Household** screen (`/household` — Shopping list / Inventory tabs via `SegmentedControl`, items grouped by category, quick-add bar, per-row Got it/Need more + status-pill menu, tap-to-edit modal; household-local components QuickAddBar/StockItemRow/StatusPillMenu/HouseholdItemForm). `ToastProvider` mounted in providers. Design tokens + 14 UI components in `packages/ui` (Button, Card, Badge, UrgencyIndicator, Avatar, PartnerBadge, EmptyState, LoadingSpinner, **Input, Modal, Toast, TaskItem, ProjectCard, SegmentedControl**). Aesthetic: warm "paper", Fraunces + Inter, teal/coral/amber/sage.
 - **Tests** — pglite-based integration tests + faker factories in `apps/api/src/__tests__/`; project service/router/urgency covered; web + ui component tests.
 
 ### Env / running
@@ -26,7 +26,7 @@ This is **LifeSync**, a shared life management app for couples that combines fas
 - Dev works without a public webhook URL thanks to JIT provisioning; new Clerk users auto-join `DEFAULT_WORKSPACE_ID` (the seeded "Our Home").
 
 ### Remaining 🔭 (roughly prioritized)
-1. **Web screens beyond Dashboard + Inbox + Projects** — Household/grocery, Calendar, People, Settings. (Projects list + detail ✅ done; shared components Input/Modal/Toast/TaskItem/ProjectCard ✅ built. Still missing for other screens: any household/calendar-specific components.)
+1. **Web screens beyond Dashboard + Inbox + Projects + Household** — Calendar, People, Settings. (Projects ✅ and Household ✅ done; shared components Input/Modal/Toast/TaskItem/ProjectCard/SegmentedControl ✅ built. Still missing: calendar/people/settings-specific components.)
 2. **Inngest background jobs** (`apps/api/src/jobs/` is empty) — reminder delivery, weekly digest, recurring tasks, escalation, cleanup. **Reminders are written to the DB but never delivered**, and nothing creates `notifications` rows yet.
 3. **Supabase Storage** — `resource.upload` only stores metadata; no real upload/download or storage-object deletion.
 4. **Tests for the other routers/services** (workspace, task, reminder, household, person, notification, resource, template, search, activity, user) + Playwright E2E (none yet).
