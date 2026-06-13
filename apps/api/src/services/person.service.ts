@@ -130,4 +130,32 @@ export class PersonService {
       return { success: false, error: internal('Failed to update person', { cause: String(e) }) };
     }
   }
+
+  static async delete(
+    db: Database,
+    userId: string,
+    id: string,
+  ): Promise<Result<{ id: string }, AppError>> {
+    const existing = await db.query.people.findFirst({ where: eq(people.id, id) });
+    if (!existing) return { success: false, error: notFound('Person not found') };
+
+    const member = await assertWorkspaceMembership(db, userId, existing.workspaceId);
+    if (!member) return { success: false, error: notFound('Person not found') };
+
+    try {
+      await db.transaction(async (tx) => {
+        await tx.delete(people).where(eq(people.id, id));
+        await logActivity(tx, {
+          workspaceId: existing.workspaceId,
+          userId,
+          entityType: ENTITY,
+          entityId: id,
+          action: 'deleted',
+        });
+      });
+      return ok({ id });
+    } catch (e) {
+      return { success: false, error: internal('Failed to delete person', { cause: String(e) }) };
+    }
+  }
 }
