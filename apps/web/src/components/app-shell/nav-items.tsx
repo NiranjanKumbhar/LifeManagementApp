@@ -26,10 +26,15 @@ export const navItems: NavItem[] = [
   { label: 'Settings', href: '/settings', icon: <SettingsIcon /> },
 ];
 
-/** Condensed set for the mobile bottom bar (2 + FAB + 2). */
+/**
+ * Condensed set for the mobile bottom bar (2 + FAB + 2). Inbox sits beside the
+ * capture FAB so the capture → triage loop is reachable on the go. Calendar /
+ * People / Settings are reached via the sidebar (or a future overflow menu) and
+ * are not yet built as screens.
+ */
 export const bottomNavItems: NavItem[] = [
   { label: 'Home', href: '/dashboard', icon: <HomeIcon /> },
+  { label: 'Inbox', href: '/inbox', icon: <InboxIcon /> },
   { label: 'Projects', href: '/projects', icon: <ProjectsIcon /> },
   { label: 'Household', href: '/household', icon: <HouseholdIcon /> },
-  { label: 'People', href: '/people', icon: <PeopleIcon /> },
 ];
