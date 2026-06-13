@@ -78,7 +78,7 @@ export function ProjectForm({ mode, isOpen, onClose, project }: ProjectFormProps
 
   const templates = trpc.template.list.useQuery(
     { workspaceId: workspaceId ?? '', type },
-    { enabled: mode === 'create' && Boolean(workspaceId) },
+    { enabled: isOpen && mode === 'create' && Boolean(workspaceId) },
   );
 
   const fieldDefs = PROJECT_FIELD_REGISTRY[type];
