@@ -1,0 +1,57 @@
+.agenda {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.date {
+  margin: 0;
+  font-size: var(--ls-text-base);
+  font-weight: 600;
+  color: var(--ls-text-primary);
+}
+
+.empty {
+  margin: 0;
+  color: var(--ls-text-tertiary);
+  font-size: var(--ls-text-sm);
+}
+
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.link {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.5rem 0.4rem;
+  border-radius: var(--ls-radius-md);
+  text-decoration: none;
+  color: inherit;
+}
+
+a.link:hover {
+  background: var(--ls-surface-sunken);
+}
+
+.title {
+  flex: 1 1 auto;
+  color: var(--ls-text-primary);
+}
+
+.kind {
+  font-size: var(--ls-text-xs);
+  color: var(--ls-text-tertiary);
+}

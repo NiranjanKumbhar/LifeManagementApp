@@ -94,3 +94,6 @@ export type {
 
 // ── API — Dashboard ───────────────────────────────────────────────────────────
 export type { DashboardData } from './api/dashboard';
+
+// ── API — Calendar ────────────────────────────────────────────────────────────
+export type { CalendarItem, CalendarItemKind } from './api/calendar';
