@@ -13,11 +13,13 @@ type BaseProps = {
   required?: boolean;
   placeholder?: string;
   id?: string;
+  onBlur?: () => void;
+  disabled?: boolean;
 };
 
 type TextProps = BaseProps & {
   as?: 'input';
-  type?: 'text' | 'number' | 'date';
+  type?: 'text' | 'number' | 'date' | 'time';
 };
 type TextareaProps = BaseProps & { as: 'textarea'; rows?: number };
 type SelectProps = BaseProps & {
@@ -28,7 +30,7 @@ type SelectProps = BaseProps & {
 export type InputProps = TextProps | TextareaProps | SelectProps;
 
 export function Input(props: InputProps) {
-  const { label, value, onChange, error, helperText, required, placeholder, id } = props;
+  const { label, value, onChange, error, helperText, required, placeholder, id, onBlur, disabled } = props;
   const autoId = useId();
   const fieldId = id ?? autoId;
   const describedBy = error ? `${fieldId}-error` : helperText ? `${fieldId}-help` : undefined;
@@ -38,6 +40,8 @@ export function Input(props: InputProps) {
     value,
     required,
     placeholder,
+    disabled,
+    onBlur,
     'aria-invalid': error ? true : undefined,
     'aria-describedby': describedBy,
     className: cn(styles.control, error && styles.invalid),
