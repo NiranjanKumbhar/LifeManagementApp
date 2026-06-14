@@ -1,0 +1,37 @@
+.card {
+  background: var(--ls-surface-card);
+  border: 1px solid var(--ls-surface-border);
+  border-radius: var(--ls-radius-lg);
+  padding: var(--ls-space-5);
+}
+
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--ls-space-4);
+}
+
+.title {
+  margin: 0;
+  font-size: var(--ls-text-lg);
+  font-weight: 600;
+  color: var(--ls-text-primary);
+}
+
+.saving {
+  font-size: var(--ls-text-xs);
+  color: var(--ls-text-tertiary);
+}
+
+.saved {
+  font-size: var(--ls-text-xs);
+  color: var(--ls-urgency-on-track);
+  font-weight: 600;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ls-space-4);
+}
