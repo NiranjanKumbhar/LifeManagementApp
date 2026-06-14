@@ -37,7 +37,9 @@ export function CalendarGrid({ month, itemsByDay, selectedDay, today, onSelectDa
       {weeks.map((week) => (
         <div key={week[0]} className={styles.week} role="row">
           {week.map((day) => {
-            const [y, m, d] = day.split('-').map(Number);
+            const y = Number(day.slice(0, 4));
+            const m = Number(day.slice(5, 7));
+            const d = Number(day.slice(8, 10));
             const inMonth = m === month.month && y === month.year;
             const items = itemsByDay.get(day) ?? [];
             const isToday = day === today;

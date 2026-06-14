@@ -29,8 +29,9 @@ export default function CalendarPage() {
   const [addingReminder, setAddingReminder] = useState(false);
 
   const grid = useMemo(() => monthGridDays(month.year, month.month), [month]);
-  const from = grid[0];
-  const to = grid[grid.length - 1];
+  // monthGridDays always returns 42 days, so the endpoints are defined.
+  const from = grid[0]!;
+  const to = grid[grid.length - 1]!;
 
   const query = trpc.calendar.list.useQuery(
     { workspaceId: workspaceId ?? '', from, to },
@@ -53,17 +54,25 @@ export default function CalendarPage() {
     setSelectedDay(isoDay(now));
   };
 
+  // Navigate months; select the 1st of the new month so the agenda always
+  // reflects a day that's actually in view (the Today button re-selects today).
+  const navMonth = (delta: number) => {
+    const next = shiftMonth(month.year, month.month, delta);
+    setMonth(next);
+    setSelectedDay(`${next.year}-${String(next.month).padStart(2, '0')}-01`);
+  };
+
   return (
     <div className={styles.page}>
       <header className={styles.head}>
         <div className={styles.nav}>
-          <Button variant="ghost" size="sm" aria-label="Previous month" onClick={() => setMonth((m) => shiftMonth(m.year, m.month, -1))}>
+          <Button variant="ghost" size="sm" aria-label="Previous month" onClick={() => navMonth(-1)}>
             ‹
           </Button>
           <h1 className={styles.title}>
             {MONTHS[month.month - 1]} {month.year}
           </h1>
-          <Button variant="ghost" size="sm" aria-label="Next month" onClick={() => setMonth((m) => shiftMonth(m.year, m.month, 1))}>
+          <Button variant="ghost" size="sm" aria-label="Next month" onClick={() => navMonth(1)}>
             ›
           </Button>
         </div>
