@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import type { inferRouterOutputs } from '@trpc/server';
 import type { AppRouter } from 'api';
-import { Button, EmptyState, LoadingSpinner, ProjectCard } from '@lifesync/ui';
+import { Button, EmptyState, LoadingSpinner, PageHeader, PageShell, ProjectCard } from '@lifesync/ui';
 import { trpc } from '@/lib/trpc';
 import { useWorkspaceId } from '@/lib/hooks/useWorkspaceId';
 import { PROJECT_TYPE_META, PROJECT_TYPE_ORDER } from '@/lib/projects/project-meta';
@@ -33,25 +33,25 @@ export default function ProjectsPage() {
     })).filter((g) => g.projects.length > 0);
 
   return (
-    <div className={styles.page}>
-      <header className={styles.head}>
-        <div>
-          <h1 className={styles.heading}>Projects</h1>
-          <p className={styles.subhead}>Everything you&rsquo;re working on, by type.</p>
-        </div>
-        <div className={styles.actions}>
-          <button
-            className={styles.filter}
-            onClick={() => setShowActiveOnly((v) => !v)}
-            type="button"
-          >
-            {showActiveOnly ? 'Active' : 'All'}
-          </button>
-          <Button size="sm" leadingIcon={<PlusIcon size={16} />} onClick={() => setShowForm(true)}>
-            New project
-          </Button>
-        </div>
-      </header>
+    <PageShell>
+      <PageHeader
+        title="Projects"
+        subtitle="Everything you're working on, by type."
+        actions={
+          <>
+            <button
+              className={styles.filter}
+              onClick={() => setShowActiveOnly((v) => !v)}
+              type="button"
+            >
+              {showActiveOnly ? 'Active' : 'All'}
+            </button>
+            <Button size="sm" leadingIcon={<PlusIcon size={16} />} onClick={() => setShowForm(true)}>
+              New project
+            </Button>
+          </>
+        }
+      />
 
       {query.isLoading ? (
         <div className={styles.center}>
@@ -107,6 +107,6 @@ export default function ProjectsPage() {
       )}
 
       <ProjectForm mode="create" isOpen={showForm} onClose={() => setShowForm(false)} />
-    </div>
+    </PageShell>
   );
 }
