@@ -46,3 +46,4 @@ export {
   type SegmentedControlProps,
   type SegmentedControlOption,
 } from './components/SegmentedControl/SegmentedControl';
+export { PageShell, type PageShellProps } from './components/PageShell/PageShell';
