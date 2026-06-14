@@ -1,0 +1,97 @@
+.grid {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.weekrow,
+.cells {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.25rem;
+}
+
+.weekday {
+  text-align: center;
+  font-size: var(--ls-text-xs);
+  font-weight: 600;
+  color: var(--ls-text-tertiary);
+  padding: 0.25rem 0;
+}
+
+.cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.2rem;
+  min-height: 3rem;
+  padding: 0.35rem 0.2rem;
+  border: 1px solid transparent;
+  border-radius: var(--ls-radius-md);
+  background: var(--ls-surface-card);
+  color: var(--ls-text-primary);
+  font: inherit;
+  cursor: pointer;
+}
+
+.cell:hover {
+  background: var(--ls-surface-sunken);
+}
+
+.cell:focus-visible {
+  outline: 2px solid var(--ls-primary-600);
+  outline-offset: 1px;
+}
+
+.outside {
+  color: var(--ls-text-tertiary);
+  background: transparent;
+}
+
+.today .num {
+  background: var(--ls-primary-600);
+  color: var(--ls-text-inverse);
+  border-radius: var(--ls-radius-full);
+  width: 1.5rem;
+  height: 1.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.selected {
+  border-color: var(--ls-primary-600);
+}
+
+.num {
+  font-size: var(--ls-text-sm);
+}
+
+.num::after {
+  content: attr(data-day);
+}
+
+.dots {
+  display: flex;
+  align-items: center;
+  gap: 0.15rem;
+}
+
+.dot {
+  width: 0.4rem;
+  height: 0.4rem;
+  border-radius: var(--ls-radius-full);
+}
+
+.count {
+  font-size: 0.6rem;
+  font-weight: 600;
+  color: var(--ls-text-secondary);
+  min-width: 0.8rem;
+  text-align: center;
+}
+
+.more {
+  font-size: 0.6rem;
+  color: var(--ls-text-tertiary);
+}
