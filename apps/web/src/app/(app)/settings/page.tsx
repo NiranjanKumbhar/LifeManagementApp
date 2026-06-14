@@ -1,6 +1,6 @@
 'use client';
 
-import { EmptyState, LoadingSpinner } from '@lifesync/ui';
+import { EmptyState, LoadingSpinner, PageHeader, PageShell } from '@lifesync/ui';
 import { trpc } from '@/lib/trpc';
 import { useWorkspaceId } from '@/lib/hooks/useWorkspaceId';
 import { ProfileSettings } from '@/components/settings/ProfileSettings';
@@ -34,8 +34,8 @@ export default function SettingsPage() {
   const me = meQuery.data;
 
   return (
-    <div className={styles.page}>
-      <h1 className={styles.heading}>Settings</h1>
+    <PageShell>
+      <PageHeader title="Settings" />
       <ProfileSettings me={me} />
       <NotificationSettings me={me} />
       <WorkspaceSettings
@@ -43,6 +43,6 @@ export default function SettingsPage() {
         members={membersQuery.data ?? []}
         currentUserId={me.id}
       />
-    </div>
+    </PageShell>
   );
 }
