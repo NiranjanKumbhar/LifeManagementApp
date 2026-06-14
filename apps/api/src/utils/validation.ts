@@ -304,6 +304,13 @@ export const updateNotificationPrefsSchema = z.object({
   preferences: notificationPreferencesSchema,
 });
 
+// ── Calendar ─────────────────────────────────────────────────────────────────
+export const calendarRangeSchema = z.object({
+  workspaceId: uuidSchema,
+  from: dateStringSchema,
+  to: dateStringSchema,
+});
+
 // ── Inbox / Quick Capture ────────────────────────────────────────────────────
 export const captureInboxSchema = z.object({
   workspaceId: uuidSchema,
