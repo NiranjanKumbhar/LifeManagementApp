@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import type { CalendarItem } from '@lifesync/shared-types';
-import { Button, EmptyState, LoadingSpinner } from '@lifesync/ui';
+import { Button, EmptyState, LoadingSpinner, PageShell } from '@lifesync/ui';
 import { trpc } from '@/lib/trpc';
 import { useWorkspaceId } from '@/lib/hooks/useWorkspaceId';
 import { CalendarGrid } from '@/components/calendar/CalendarGrid';
@@ -63,7 +63,7 @@ export default function CalendarPage() {
   };
 
   return (
-    <div className={styles.page}>
+    <PageShell>
       <header className={styles.head}>
         <div className={styles.nav}>
           <Button variant="ghost" size="sm" aria-label="Previous month" onClick={() => navMonth(-1)}>
@@ -107,6 +107,6 @@ export default function CalendarPage() {
       )}
 
       <ReminderQuickAdd isOpen={addingReminder} day={selectedDay} onClose={() => setAddingReminder(false)} />
-    </div>
+    </PageShell>
   );
 }
