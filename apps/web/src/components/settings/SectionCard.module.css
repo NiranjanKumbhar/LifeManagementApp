@@ -30,6 +30,12 @@
   font-weight: 600;
 }
 
+.errorStatus {
+  font-size: var(--ls-text-xs);
+  color: var(--ls-urgency-overdue);
+  font-weight: 600;
+}
+
 .body {
   display: flex;
   flex-direction: column;

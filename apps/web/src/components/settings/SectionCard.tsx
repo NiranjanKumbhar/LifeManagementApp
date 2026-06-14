@@ -19,6 +19,8 @@ export function SectionCard({ title, status, children }: SectionCardProps) {
           <span className={styles.saving}>Saving…</span>
         ) : status === 'saved' ? (
           <span className={styles.saved}>Saved ✓</span>
+        ) : status === 'error' ? (
+          <span className={styles.errorStatus}>Couldn&rsquo;t save</span>
         ) : null}
       </header>
       <div className={styles.body}>{children}</div>
