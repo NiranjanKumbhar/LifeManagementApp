@@ -1,0 +1,36 @@
+.name {
+  font-size: var(--ls-text-base);
+  font-weight: 600;
+  color: var(--ls-text-primary);
+}
+
+.members {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ls-space-2);
+}
+
+.member {
+  display: flex;
+  align-items: center;
+  gap: var(--ls-space-3);
+}
+
+.memberName {
+  flex: 1 1 auto;
+  color: var(--ls-text-primary);
+}
+
+.invite {
+  display: flex;
+  align-items: center;
+  gap: var(--ls-space-3);
+}
+
+.soon {
+  font-size: var(--ls-text-xs);
+  color: var(--ls-text-tertiary);
+}
