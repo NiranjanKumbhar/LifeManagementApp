@@ -18,6 +18,7 @@ import {
 import { assertWorkspaceMembership } from '../middleware/workspace';
 import { forbidden, internal, notFound, ok, type AppError, type Result } from '../utils/errors';
 import { addDays, daysUntilAnnualDate, startOfDay, toISODateString } from '../utils/dates';
+import { compareTasks } from '../utils/task-order';
 import type {
   createProjectSchema,
   listProjectsSchema,
@@ -102,7 +103,7 @@ function buildTaskTree(rows: TaskRow[]): TaskTreeNode[] {
   }
 
   const sortRec = (nodes: TaskTreeNode[]): void => {
-    nodes.sort((a, b) => a.sortOrder - b.sortOrder);
+    nodes.sort(compareTasks);
     for (const n of nodes) sortRec(n.children);
   };
   sortRec(roots);
@@ -152,7 +153,17 @@ export class ProjectService {
     userId: string,
     id: string,
   ): Promise<Result<ProjectWithTasks, AppError>> {
-    const project = await db.query.projects.findFirst({ where: eq(projects.id, id) });
+    // Fetch the project and its tasks concurrently — the tasks query only needs
+    // the project id (which we already have), so it need not wait on the project
+    // row. Task rows are discarded below if the caller can't read the project.
+    const [project, taskRows] = await Promise.all([
+      db.query.projects.findFirst({ where: eq(projects.id, id) }),
+      db
+        .select()
+        .from(tasks)
+        .where(eq(tasks.projectId, id))
+        .orderBy(asc(tasks.sortOrder), asc(tasks.createdAt), asc(tasks.id)),
+    ]);
     if (!project) return { success: false, error: notFound('Project not found') };
 
     const isMember = await assertWorkspaceMembership(db, userId, project.workspaceId);
@@ -160,12 +171,6 @@ export class ProjectService {
     if (!isMember || !canRead(project, userId)) {
       return { success: false, error: notFound('Project not found') };
     }
-
-    const taskRows = await db
-      .select()
-      .from(tasks)
-      .where(eq(tasks.projectId, id))
-      .orderBy(asc(tasks.sortOrder));
 
     return ok({ ...project, tasks: buildTaskTree(taskRows) });
   }

@@ -31,6 +31,10 @@ export const taskRouter = router({
     return unwrap(await TaskService.complete(ctx.db, ctx.userId, input.id));
   }),
 
+  reopen: protectedProcedure.input(taskIdSchema).mutation(async ({ ctx, input }) => {
+    return unwrap(await TaskService.reopen(ctx.db, ctx.userId, input.id));
+  }),
+
   reorder: protectedProcedure.input(reorderTaskSchema).mutation(async ({ ctx, input }) => {
     return unwrap(
       await TaskService.reorder(ctx.db, ctx.userId, input.projectId, input.taskId, input.newOrder),

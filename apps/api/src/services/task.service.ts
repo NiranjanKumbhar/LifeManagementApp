@@ -5,6 +5,7 @@ import { tasks, type ActivityAction } from '../db/schema';
 import { forbidden, internal, notFound, ok, type AppError, type Result } from '../utils/errors';
 import { loadReadableProject, loadWritableProject } from './authz';
 import { logActivity } from './activity';
+import { compareTasks } from '../utils/task-order';
 import type { createTaskSchema, updateTaskSchema } from '../utils/validation';
 
 type TaskRow = typeof tasks.$inferSelect;
@@ -29,7 +30,7 @@ function buildTaskTree(rows: TaskRow[]): TaskTreeNode[] {
   }
 
   const sortRec = (nodes: TaskTreeNode[]): void => {
-    nodes.sort((a, b) => a.sortOrder - b.sortOrder);
+    nodes.sort(compareTasks);
     for (const n of nodes) sortRec(n.children);
   };
   sortRec(roots);
@@ -54,7 +55,7 @@ export class TaskService {
       .select()
       .from(tasks)
       .where(eq(tasks.projectId, projectId))
-      .orderBy(asc(tasks.sortOrder));
+      .orderBy(asc(tasks.sortOrder), asc(tasks.createdAt), asc(tasks.id));
     return ok(buildTaskTree(rows));
   }
 
@@ -197,6 +198,30 @@ export class TaskService {
       { status: 'completed', completedAt: new Date(), completedBy: userId, updatedAt: new Date() },
       undefined,
       'completed',
+      access.data.workspaceId,
+    );
+  }
+
+  /** Reverse a completion: back to pending and clear the completion metadata. */
+  static async reopen(
+    db: Database,
+    userId: string,
+    id: string,
+  ): Promise<Result<TaskRow, AppError>> {
+    const existing = await db.query.tasks.findFirst({ where: eq(tasks.id, id) });
+    if (!existing) return { success: false, error: notFound('Task not found') };
+
+    const access = await loadWritableProject(db, userId, existing.projectId);
+    if (!access.success) return access;
+
+    return this.persist(
+      db,
+      existing.projectId,
+      userId,
+      id,
+      { status: 'pending', completedAt: null, completedBy: null, updatedAt: new Date() },
+      undefined,
+      'updated',
       access.data.workspaceId,
     );
   }
