@@ -1,12 +1,11 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import type { inferRouterOutputs } from '@trpc/server';
 import type { AppRouter } from 'api';
 import type { GiftIdea } from '@lifesync/shared-types';
-import { Avatar, Button, EmptyState, LoadingSpinner, useToast } from '@lifesync/ui';
+import { Avatar, Button, EmptyState, LoadingSpinner, PageHeader, PageShell, useToast } from '@lifesync/ui';
 import { formatShortDate } from '@lifesync/ui';
 import { trpc } from '@/lib/trpc';
 import { useWorkspaceId } from '@/lib/hooks/useWorkspaceId';
@@ -65,43 +64,43 @@ export default function PersonDetailPage() {
   const next = nextKeyDate(person);
 
   return (
-    <div className={styles.page}>
-      <Link href="/people" className={styles.back}>
-        ← People
-      </Link>
-
-      <header className={styles.head}>
-        <Avatar name={person.name} size="lg" />
-        <div className={styles.headText}>
-          <h1 className={styles.name}>{person.name}</h1>
-          {person.relationship ? <p className={styles.rel}>{person.relationship}</p> : null}
-          {next ? (
-            <p className={styles.next}>
-              <span aria-hidden="true">{next.kind === 'birthday' ? '🎂' : '💗'}</span>{' '}
-              {next.kind} {formatShortDate(next.date)} · in {next.daysUntil}d
-            </p>
-          ) : null}
-        </div>
-        <div className={styles.actions}>
-          <Button variant="ghost" size="sm" onClick={() => setEditing(true)}>
-            Edit
-          </Button>
-          {confirmingDelete ? (
-            <>
-              <Button variant="danger" size="sm" onClick={() => remove.mutate({ id })}>
-                Confirm delete
-              </Button>
-              <Button variant="ghost" size="sm" onClick={() => setConfirmingDelete(false)}>
-                Cancel
-              </Button>
-            </>
-          ) : (
-            <Button variant="ghost" size="sm" onClick={() => setConfirmingDelete(true)}>
-              Delete
+    <PageShell>
+      <PageHeader
+        backHref="/people"
+        title={person.name}
+        subtitle={person.relationship ?? undefined}
+        actions={
+          <>
+            <Button variant="ghost" size="sm" onClick={() => setEditing(true)}>
+              Edit
             </Button>
-          )}
-        </div>
-      </header>
+            {confirmingDelete ? (
+              <>
+                <Button variant="danger" size="sm" onClick={() => remove.mutate({ id })}>
+                  Confirm delete
+                </Button>
+                <Button variant="ghost" size="sm" onClick={() => setConfirmingDelete(false)}>
+                  Cancel
+                </Button>
+              </>
+            ) : (
+              <Button variant="ghost" size="sm" onClick={() => setConfirmingDelete(true)}>
+                Delete
+              </Button>
+            )}
+          </>
+        }
+      />
+
+      <div className={styles.avatarRow}>
+        <Avatar name={person.name} size="lg" />
+        {next ? (
+          <p className={styles.next}>
+            <span aria-hidden="true">{next.kind === 'birthday' ? '🎂' : '💗'}</span>{' '}
+            {next.kind} {formatShortDate(next.date)} · in {next.daysUntil}d
+          </p>
+        ) : null}
+      </div>
 
       <section className={styles.section}>
         <h2 className={styles.sectionHead}>Contact</h2>
@@ -151,6 +150,6 @@ export default function PersonDetailPage() {
       </section>
 
       <PersonForm mode="edit" isOpen={editing} onClose={() => setEditing(false)} person={person} />
-    </div>
+    </PageShell>
   );
 }
