@@ -5,10 +5,18 @@
 }
 
 .weekrow,
-.cells {
+.week {
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: 0.25rem;
+}
+
+.cellWrap {
+  display: flex;
+}
+
+.cell {
+  flex: 1 1 auto;
 }
 
 .weekday {
@@ -67,10 +75,6 @@
   font-size: var(--ls-text-sm);
 }
 
-.num::after {
-  content: attr(data-day);
-}
-
 .dots {
   display: flex;
   align-items: center;
@@ -81,14 +85,6 @@
   width: 0.4rem;
   height: 0.4rem;
   border-radius: var(--ls-radius-full);
-}
-
-.count {
-  font-size: 0.6rem;
-  font-weight: 600;
-  color: var(--ls-text-secondary);
-  min-width: 0.8rem;
-  text-align: center;
 }
 
 .more {

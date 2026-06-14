@@ -20,8 +20,10 @@ describe('CalendarGrid', () => {
         onSelectDay={() => {}}
       />,
     );
+    // The marked day announces its item count; an unmarked day does not.
     expect(screen.getByRole('button', { name: /18 June.*1 item/i })).toBeInTheDocument();
-    expect(screen.getByText('1')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: '19 June' })).toBeInTheDocument();
+    expect(screen.getByRole('grid', { name: 'Calendar' })).toBeInTheDocument();
   });
 
   it('calls onSelectDay when a day is clicked', async () => {

@@ -22,6 +22,8 @@ export interface CalendarGridProps {
 
 export function CalendarGrid({ month, itemsByDay, selectedDay, today, onSelectDay }: CalendarGridProps) {
   const days = monthGridDays(month.year, month.month);
+  const weeks: string[][] = [];
+  for (let i = 0; i < days.length; i += 7) weeks.push(days.slice(i, i + 7));
 
   return (
     <div className={styles.grid} role="grid" aria-label="Calendar">
@@ -32,50 +34,53 @@ export function CalendarGrid({ month, itemsByDay, selectedDay, today, onSelectDa
           </span>
         ))}
       </div>
-      <div className={styles.cells}>
-        {days.map((day) => {
-          const [y, m, d] = day.split('-').map(Number);
-          const inMonth = m === month.month && y === month.year;
-          const items = itemsByDay.get(day) ?? [];
-          const isToday = day === today;
-          const isSelected = day === selectedDay;
-          const dayNum = d;
-          const label =
-            `${dayNum} ${MONTHS[m - 1]}` + (items.length ? `, ${items.length} item${items.length > 1 ? 's' : ''}` : '');
-          return (
-            <button
-              key={day}
-              type="button"
-              aria-selected={isSelected}
-              aria-current={isToday ? 'date' : undefined}
-              aria-label={label}
-              className={cn(
-                styles.cell,
-                !inMonth && styles.outside,
-                isToday && styles.today,
-                isSelected && styles.selected,
-              )}
-              onClick={() => onSelectDay(day)}
-            >
-              <span className={styles.num} aria-hidden="true" data-day={dayNum} />
-              {items.length > 0 ? (
-                <span className={styles.dots}>
-                  {items.slice(0, 3).map((it, i) => (
-                    <span
-                      key={i}
-                      className={styles.dot}
-                      aria-hidden="true"
-                      style={{ background: CALENDAR_KIND_META[it.kind].tone }}
-                    />
-                  ))}
-                  <span className={styles.count}>{items.length}</span>
-                  {items.length > 3 ? <span className={styles.more} aria-hidden="true">+{items.length - 3}</span> : null}
-                </span>
-              ) : null}
-            </button>
-          );
-        })}
-      </div>
+      {weeks.map((week) => (
+        <div key={week[0]} className={styles.week} role="row">
+          {week.map((day) => {
+            const [y, m, d] = day.split('-').map(Number);
+            const inMonth = m === month.month && y === month.year;
+            const items = itemsByDay.get(day) ?? [];
+            const isToday = day === today;
+            const isSelected = day === selectedDay;
+            const label =
+              `${d} ${MONTHS[m - 1]}` +
+              (items.length ? `, ${items.length} item${items.length > 1 ? 's' : ''}` : '');
+            return (
+              <div key={day} role="gridcell" className={styles.cellWrap}>
+                <button
+                  type="button"
+                  aria-pressed={isSelected}
+                  aria-current={isToday ? 'date' : undefined}
+                  aria-label={label}
+                  className={cn(
+                    styles.cell,
+                    !inMonth && styles.outside,
+                    isToday && styles.today,
+                    isSelected && styles.selected,
+                  )}
+                  onClick={() => onSelectDay(day)}
+                >
+                  <span className={styles.num} aria-hidden="true">
+                    {d}
+                  </span>
+                  {items.length > 0 ? (
+                    <span className={styles.dots} aria-hidden="true">
+                      {items.slice(0, 3).map((it, i) => (
+                        <span
+                          key={i}
+                          className={styles.dot}
+                          style={{ background: CALENDAR_KIND_META[it.kind].tone }}
+                        />
+                      ))}
+                      {items.length > 3 ? <span className={styles.more}>+{items.length - 3}</span> : null}
+                    </span>
+                  ) : null}
+                </button>
+              </div>
+            );
+          })}
+        </div>
+      ))}
     </div>
   );
 }
