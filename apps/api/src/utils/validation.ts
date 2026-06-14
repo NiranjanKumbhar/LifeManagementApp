@@ -141,18 +141,14 @@ export const moveTaskSchema = z.object({ taskId: uuidSchema, newProjectId: uuidS
 export const listRemindersSchema = z.object({ includeSent: z.boolean().optional() });
 export const reminderIdSchema = z.object({ id: uuidSchema });
 
-export const createReminderSchema = z
-  .object({
-    projectId: uuidSchema.optional(),
-    taskId: uuidSchema.optional(),
-    remindAt: z.string().datetime(),
-    type: z.enum(['standard', 'lead_time', 'escalation', 'recurring']).optional(),
-    severity: z.enum(['info', 'warning', 'urgent', 'critical']).optional(),
-    message: z.string().max(1000).optional(),
-  })
-  .refine((d) => Boolean(d.projectId) || Boolean(d.taskId), {
-    message: 'Either projectId or taskId is required',
-  });
+export const createReminderSchema = z.object({
+  projectId: uuidSchema.optional(),
+  taskId: uuidSchema.optional(),
+  remindAt: z.string().datetime(),
+  type: z.enum(['standard', 'lead_time', 'escalation', 'recurring']).optional(),
+  severity: z.enum(['info', 'warning', 'urgent', 'critical']).optional(),
+  message: z.string().max(1000).optional(),
+});
 
 export const snoozeReminderSchema = z.object({ id: uuidSchema, snoozeUntil: z.string().datetime() });
 
