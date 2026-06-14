@@ -20,7 +20,7 @@ describe('ReminderQuickAdd', () => {
         <ReminderQuickAdd isOpen day="2026-06-18" onClose={() => {}} />
       </ToastProvider>,
     );
-    await userEvent.type(screen.getByLabelText(/Reminder/i), 'Call plumber');
+    await userEvent.type(screen.getByRole('textbox'), 'Call plumber');
     await userEvent.click(screen.getByRole('button', { name: 'Add' }));
     expect(createMutate).toHaveBeenCalledWith(
       expect.objectContaining({ message: 'Call plumber', type: 'standard' }),

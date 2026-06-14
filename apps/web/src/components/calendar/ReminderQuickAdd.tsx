@@ -35,7 +35,7 @@ export function ReminderQuickAdd({ isOpen, day, onClose }: ReminderQuickAddProps
     <Modal
       isOpen={isOpen}
       onClose={onClose}
-      title="Quick add"
+      title="Add a reminder"
       footer={
         <>
           <Button variant="ghost" onClick={onClose}>
