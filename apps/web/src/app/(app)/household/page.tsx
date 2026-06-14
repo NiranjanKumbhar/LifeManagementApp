@@ -2,7 +2,7 @@
 
 import { useMemo, useState } from 'react';
 import type { StockStatus } from '@lifesync/shared-types';
-import { EmptyState, LoadingSpinner, SegmentedControl, useToast } from '@lifesync/ui';
+import { EmptyState, LoadingSpinner, PageHeader, PageShell, SegmentedControl, useToast } from '@lifesync/ui';
 import { trpc } from '@/lib/trpc';
 import { useWorkspaceId } from '@/lib/hooks/useWorkspaceId';
 import { BasketIcon } from '@/components/icons';
@@ -51,22 +51,22 @@ export default function HouseholdPage() {
   const onSetStatus = (id: string, status: StockStatus) => update.mutate({ id, status });
 
   return (
-    <div className={styles.page}>
-      <header className={styles.head}>
-        <div>
-          <h1 className={styles.heading}>Household</h1>
-          <p className={styles.subhead}>Groceries and supplies, shared and up to date.</p>
-        </div>
-        <SegmentedControl
-          ariaLabel="Household view"
-          value={tab}
-          onChange={(v) => setTab(v as Tab)}
-          options={[
-            { value: 'shopping', label: 'Shopping list' },
-            { value: 'inventory', label: 'Inventory' },
-          ]}
-        />
-      </header>
+    <PageShell>
+      <PageHeader
+        title="Household"
+        subtitle="Groceries and supplies, shared and up to date."
+        actions={
+          <SegmentedControl
+            ariaLabel="Household view"
+            value={tab}
+            onChange={(v) => setTab(v as Tab)}
+            options={[
+              { value: 'shopping', label: 'Shopping list' },
+              { value: 'inventory', label: 'Inventory' },
+            ]}
+          />
+        }
+      />
 
       <div className={styles.addbar}>
         <QuickAddBar
@@ -130,6 +130,6 @@ export default function HouseholdPage() {
       {editing ? (
         <HouseholdItemForm key={editing.id} isOpen item={editing} onClose={() => setEditing(null)} />
       ) : null}
-    </div>
+    </PageShell>
   );
 }
