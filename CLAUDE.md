@@ -8,7 +8,7 @@ This is **LifeSync**, a shared life management app for couples that combines fas
 
 ## Development Status
 
-> **Last updated:** 2026-06-13. Keep this section current when finishing a chunk of work.
+> **Last updated:** 2026-06-14. Keep this section current when finishing a chunk of work.
 > Full suite: `pnpm test` → 176 tests passing (api 66, web 78, ui 32; mobile passWithNoTests).
 
 ### Done ✅
@@ -38,6 +38,10 @@ This is **LifeSync**, a shared life management app for couples that combines fas
 ### Known stubs / shortcuts to revisit
 - `workspace.invite` → throws `NOT_IMPLEMENTED` (needs Clerk Organizations; replaces the `DEFAULT_WORKSPACE_ID` auto-join shortcut for real multi-couple use).
 - `person.get` returns `projects: []` (no person↔project FK yet).
+- **Migration `0002_reminders_standalone.sql` must be applied to live Supabase** (`pnpm db:migrate`) — it drops the `reminders_check` constraint so standalone reminders (e.g. Calendar's "add a reminder on a day") work. Applied automatically in pglite tests; the production DB still needs it.
+- **Calendar shows reminders but they are not delivered** — no Inngest jobs yet, so a reminder only appears on the calendar (no notification). The `/calendar` UI deliberately avoids any "you'll be notified" copy.
+- **`/settings` is still a 404** (Slice E pending) but the desktop sidebar links to it; the mobile bottom nav omits it.
+- **External calendar/contacts sync (Google/Outlook) to import birthdays is a deliberately separate future epic** (needs OAuth + provider APIs + dedup + background jobs) — not part of the Calendar slice. See `docs/superpowers/specs/2026-06-13-people-slice-c-design.md` §2.
 - `activity.feed` applies visibility filtering after the DB limit (page can under-fill).
 - No tRPC transformer (superjson): `Date` fields cross the wire as ISO strings.
 - API integration tests boot a fresh pglite per test (~1s each) — switch to shared instance + tx rollback if the suite gets slow.
