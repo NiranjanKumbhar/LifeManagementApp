@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react';
 import Link from 'next/link';
 import type { inferRouterOutputs } from '@trpc/server';
 import type { AppRouter } from 'api';
-import { Avatar, Button, EmptyState, LoadingSpinner } from '@lifesync/ui';
+import { Avatar, Button, EmptyState, LoadingSpinner, PageHeader, PageShell } from '@lifesync/ui';
 import { trpc } from '@/lib/trpc';
 import { useWorkspaceId } from '@/lib/hooks/useWorkspaceId';
 import { PlusIcon } from '@/components/icons';
@@ -44,16 +44,16 @@ export default function PeoplePage() {
   );
 
   return (
-    <div className={styles.page}>
-      <header className={styles.head}>
-        <div>
-          <h1 className={styles.heading}>People</h1>
-          <p className={styles.subhead}>The people in your life, and what matters to them.</p>
-        </div>
-        <Button size="sm" leadingIcon={<PlusIcon size={16} />} onClick={() => setShowForm(true)}>
-          New person
-        </Button>
-      </header>
+    <PageShell>
+      <PageHeader
+        title="People"
+        subtitle="The people in your life, and what matters to them."
+        actions={
+          <Button size="sm" leadingIcon={<PlusIcon size={16} />} onClick={() => setShowForm(true)}>
+            New person
+          </Button>
+        }
+      />
 
       {query.isLoading ? (
         <div className={styles.center}>
@@ -109,6 +109,6 @@ export default function PeoplePage() {
       )}
 
       <PersonForm mode="create" isOpen={showForm} onClose={() => setShowForm(false)} />
-    </div>
+    </PageShell>
   );
 }

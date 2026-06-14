@@ -1,14 +1,23 @@
 'use client';
 
+import { useRef, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@lifesync/ui';
-import { PlusIcon } from '../icons';
-import { bottomNavItems, type NavItem } from './nav-items';
+import { PlusIcon, MenuIcon } from '../icons';
+import { bottomNavItems, moreNavItems, type NavItem } from './nav-items';
+import { MoreSheet } from './MoreSheet';
 import styles from './BottomNav.module.css';
 
 export function BottomNav({ onQuickCapture }: { onQuickCapture: () => void }) {
   const pathname = usePathname();
+  const [moreOpen, setMoreOpen] = useState(false);
+  const moreButtonRef = useRef<HTMLButtonElement>(null);
+
+  const closeMore = () => {
+    setMoreOpen(false);
+    moreButtonRef.current?.focus();
+  };
 
   const renderLink = (item: NavItem) => {
     const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
@@ -25,20 +34,37 @@ export function BottomNav({ onQuickCapture }: { onQuickCapture: () => void }) {
     );
   };
 
+  const moreActive = moreNavItems.some(
+    (i) => pathname === i.href || pathname.startsWith(`${i.href}/`),
+  );
+
   return (
-    <nav className={styles.bar} aria-label="Primary">
-      {bottomNavItems.slice(0, 2).map(renderLink)}
+    <>
+      <nav className={styles.bar} aria-label="Primary">
+        {bottomNavItems.slice(0, 2).map(renderLink)}
 
-      <button
-        type="button"
-        className={styles.fab}
-        onClick={onQuickCapture}
-        aria-label="Quick capture"
-      >
-        <PlusIcon size={24} />
-      </button>
+        <button type="button" className={styles.fab} onClick={onQuickCapture} aria-label="Quick capture">
+          <PlusIcon size={24} />
+        </button>
 
-      {bottomNavItems.slice(2).map(renderLink)}
-    </nav>
+        {bottomNavItems.slice(2).map(renderLink)}
+
+        <button
+          ref={moreButtonRef}
+          type="button"
+          className={cn(styles.tab, moreActive && styles.active)}
+          aria-current={moreActive ? 'page' : undefined}
+          aria-expanded={moreOpen}
+          onClick={() => setMoreOpen(true)}
+        >
+          <span className={styles.icon}>
+            <MenuIcon />
+          </span>
+          <span className={styles.label}>More</span>
+        </button>
+      </nav>
+
+      <MoreSheet open={moreOpen} onClose={closeMore} />
+    </>
   );
 }

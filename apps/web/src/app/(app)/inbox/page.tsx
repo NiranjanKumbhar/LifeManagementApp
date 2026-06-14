@@ -1,6 +1,6 @@
 'use client';
 
-import { EmptyState, LoadingSpinner } from '@lifesync/ui';
+import { EmptyState, LoadingSpinner, PageHeader, PageShell } from '@lifesync/ui';
 import { trpc } from '@/lib/trpc';
 import { useWorkspaceId } from '@/lib/hooks/useWorkspaceId';
 import { InboxItemRow } from '@/components/inbox/InboxItemRow';
@@ -23,11 +23,8 @@ export default function InboxPage() {
   const busy = assign.isPending || dismiss.isPending;
 
   return (
-    <div className={styles.page}>
-      <header className={styles.head}>
-        <h1 className={styles.heading}>Inbox</h1>
-        <p className={styles.subhead}>Everything you&rsquo;ve captured, ready to sort.</p>
-      </header>
+    <PageShell>
+      <PageHeader title="Inbox" subtitle="Everything you've captured, ready to sort." />
 
       {inbox.isLoading ? (
         <div className={styles.center}>
@@ -63,6 +60,6 @@ export default function InboxPage() {
           ))}
         </ul>
       )}
-    </div>
+    </PageShell>
   );
 }

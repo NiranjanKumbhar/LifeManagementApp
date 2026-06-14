@@ -4,7 +4,7 @@ import type { ReactNode } from 'react';
 import { useUser } from '@clerk/nextjs';
 import type { inferRouterOutputs } from '@trpc/server';
 import type { AppRouter } from 'api';
-import { EmptyState, LoadingSpinner } from '@lifesync/ui';
+import { EmptyState, LoadingSpinner, PageShell } from '@lifesync/ui';
 import { trpc } from '@/lib/trpc';
 import { useWorkspaceId } from '@/lib/hooks/useWorkspaceId';
 import { DashboardBlock, type BlockAccent } from '@/components/dashboard/DashboardBlock';
@@ -147,7 +147,7 @@ export default function DashboardPage() {
   });
 
   return (
-    <div className={styles.page}>
+    <PageShell>
       <header className={styles.head}>
         <p className={styles.greeting}>
           {greeting()}
@@ -188,6 +188,6 @@ export default function DashboardPage() {
           ))}
         </div>
       )}
-    </div>
+    </PageShell>
   );
 }
