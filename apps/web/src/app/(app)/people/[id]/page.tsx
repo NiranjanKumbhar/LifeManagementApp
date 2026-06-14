@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { useParams, useRouter } from 'next/navigation';
 import type { inferRouterOutputs } from '@trpc/server';
 import type { AppRouter } from 'api';
@@ -67,6 +68,7 @@ export default function PersonDetailPage() {
     <PageShell>
       <PageHeader
         backHref="/people"
+        backComponent={Link}
         title={person.name}
         subtitle={person.relationship ?? undefined}
         actions={

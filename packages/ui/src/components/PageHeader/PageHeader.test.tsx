@@ -18,7 +18,7 @@ describe('PageHeader', () => {
       />,
     );
     expect(screen.getByText('Mother')).toBeInTheDocument();
-    expect(screen.getByRole('link', { name: /people/i })).toHaveAttribute('href', '/people');
+    expect(screen.getByRole('link', { name: /back/i })).toHaveAttribute('href', '/people');
     expect(screen.getByRole('button', { name: 'Edit' })).toBeInTheDocument();
   });
 });

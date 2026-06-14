@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import type { inferRouterOutputs } from '@trpc/server';
 import type { AppRouter } from 'api';
@@ -104,6 +105,7 @@ export default function ProjectDetailPage() {
     <PageShell>
       <PageHeader
         backHref="/projects"
+        backComponent={Link}
         title={
           <>
             <span className={styles.icon} aria-hidden="true">

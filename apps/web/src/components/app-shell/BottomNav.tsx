@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@lifesync/ui';
@@ -12,6 +12,12 @@ import styles from './BottomNav.module.css';
 export function BottomNav({ onQuickCapture }: { onQuickCapture: () => void }) {
   const pathname = usePathname();
   const [moreOpen, setMoreOpen] = useState(false);
+  const moreButtonRef = useRef<HTMLButtonElement>(null);
+
+  const closeMore = () => {
+    setMoreOpen(false);
+    moreButtonRef.current?.focus();
+  };
 
   const renderLink = (item: NavItem) => {
     const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
@@ -44,6 +50,7 @@ export function BottomNav({ onQuickCapture }: { onQuickCapture: () => void }) {
         {bottomNavItems.slice(2).map(renderLink)}
 
         <button
+          ref={moreButtonRef}
           type="button"
           className={cn(styles.tab, moreActive && styles.active)}
           aria-current={moreActive ? 'page' : undefined}
@@ -57,7 +64,7 @@ export function BottomNav({ onQuickCapture }: { onQuickCapture: () => void }) {
         </button>
       </nav>
 
-      <MoreSheet open={moreOpen} onClose={() => setMoreOpen(false)} />
+      <MoreSheet open={moreOpen} onClose={closeMore} />
     </>
   );
 }
