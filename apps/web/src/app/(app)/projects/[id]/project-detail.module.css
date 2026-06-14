@@ -1,43 +1,11 @@
-.page {
-  max-width: 720px;
-  margin: 0 auto;
-  padding: var(--ls-space-6) var(--ls-space-4) var(--ls-space-16);
-}
 .center {
   display: flex;
   justify-content: center;
   padding: var(--ls-space-16) 0;
 }
-.back {
-  display: inline-block;
-  font-size: var(--ls-text-sm);
-  color: var(--ls-text-tertiary);
-  text-decoration: none;
-  margin-bottom: var(--ls-space-4);
-}
-.head {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: var(--ls-space-4);
-}
-.title {
-  display: flex;
-  align-items: center;
-  gap: var(--ls-space-2);
-  font-family: var(--ls-font-display);
-  font-size: var(--ls-text-2xl);
-  margin: 0;
-  color: var(--ls-text-primary);
-}
 .icon {
   display: inline-flex;
   color: var(--ls-primary-700);
-}
-.actions {
-  display: flex;
-  gap: var(--ls-space-2);
-  flex: none;
 }
 .metaRow {
   display: flex;

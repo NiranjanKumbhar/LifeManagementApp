@@ -1,11 +1,10 @@
 'use client';
 
 import { useState } from 'react';
-import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import type { inferRouterOutputs } from '@trpc/server';
 import type { AppRouter } from 'api';
-import { Button, EmptyState, LoadingSpinner, TaskItem } from '@lifesync/ui';
+import { Button, EmptyState, LoadingSpinner, PageHeader, PageShell, TaskItem } from '@lifesync/ui';
 import { formatRelativeDate } from '@lifesync/ui';
 import { trpc } from '@/lib/trpc';
 import { useWorkspaceId } from '@/lib/hooks/useWorkspaceId';
@@ -102,30 +101,31 @@ export default function ProjectDetailPage() {
   };
 
   return (
-    <div className={styles.page}>
-      <Link href="/projects" className={styles.back}>
-        ← Projects
-      </Link>
-
-      <header className={styles.head}>
-        <h1 className={styles.title}>
-          <span className={styles.icon} aria-hidden="true">
-            {meta.icon}
-          </span>
-          {project.title}
-        </h1>
-        <div className={styles.actions}>
-          <Button variant="ghost" size="sm" onClick={() => setEditing(true)}>
-            Edit
-          </Button>
-          <Button variant="ghost" size="sm" onClick={() => archiveProject.mutate({ id: project.id })}>
-            Archive
-          </Button>
-          <Button size="sm" onClick={() => completeProject.mutate({ id: project.id })}>
-            Complete
-          </Button>
-        </div>
-      </header>
+    <PageShell>
+      <PageHeader
+        backHref="/projects"
+        title={
+          <>
+            <span className={styles.icon} aria-hidden="true">
+              {meta.icon}
+            </span>
+            {project.title}
+          </>
+        }
+        actions={
+          <>
+            <Button variant="ghost" size="sm" onClick={() => setEditing(true)}>
+              Edit
+            </Button>
+            <Button variant="ghost" size="sm" onClick={() => archiveProject.mutate({ id: project.id })}>
+              Archive
+            </Button>
+            <Button size="sm" onClick={() => completeProject.mutate({ id: project.id })}>
+              Complete
+            </Button>
+          </>
+        }
+      />
 
       <div className={styles.metaRow}>
         <span className={styles.metaPill}>{meta.label}</span>
@@ -222,6 +222,6 @@ export default function ProjectDetailPage() {
         onClose={() => setEditing(false)}
         project={project}
       />
-    </div>
+    </PageShell>
   );
 }
