@@ -231,7 +231,7 @@ export class ProjectService {
             title: input.title,
             description: input.description ?? null,
             priority,
-            ownerId: input.ownerId ?? null,
+            ownerId: input.ownerId ?? userId,
             visibility: input.visibility ?? 'shared',
             dueDate,
             earliestActionDate,

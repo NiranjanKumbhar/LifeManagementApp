@@ -26,6 +26,47 @@ function send(res: ServerResponse, status: number, body: string): void {
 }
 
 /**
+ * Next.js App Router variant: accepts a Web Fetch `Request`, returns a `Response`.
+ * Same verification + sync logic as `handleClerkWebhook`.
+ */
+export async function handleClerkWebhookFetch(req: Request): Promise<Response> {
+  if (req.method !== 'POST') {
+    return new Response('Method not allowed', { status: 405 });
+  }
+
+  const secret = process.env['CLERK_WEBHOOK_SECRET'];
+  if (!secret) {
+    return new Response('Webhook not configured', { status: 503 });
+  }
+
+  const payload = await req.text();
+  const headers = {
+    'svix-id': req.headers.get('svix-id') ?? '',
+    'svix-timestamp': req.headers.get('svix-timestamp') ?? '',
+    'svix-signature': req.headers.get('svix-signature') ?? '',
+  };
+
+  let event: ClerkWebhookEvent;
+  try {
+    event = new Webhook(secret).verify(payload, headers) as ClerkWebhookEvent;
+  } catch {
+    return new Response('Invalid signature', { status: 400 });
+  }
+
+  try {
+    switch (event.type) {
+      case 'user.created':
+      case 'user.updated':
+        await UserProvisioningService.upsertFromWebhook(db, event.data);
+        break;
+    }
+    return new Response('ok', { status: 200 });
+  } catch {
+    return new Response('Sync failed', { status: 500 });
+  }
+}
+
+/**
  * Verifies a Clerk (Svix-signed) webhook and syncs the user into the database.
  * Handles `user.created` and `user.updated`; other events are acknowledged.
  */

@@ -7,7 +7,7 @@ import { httpBatchLink } from '@trpc/client';
 import { ToastProvider } from '@lifesync/ui';
 import { trpc } from './trpc';
 
-const API_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:3001';
+const API_URL = process.env.NEXT_PUBLIC_API_URL ?? '/api/trpc';
 
 /** Wires the tRPC client to React Query, attaching the Clerk session token. */
 function TRPCProvider({ children }: { children: ReactNode }) {

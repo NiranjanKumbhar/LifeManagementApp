@@ -4,6 +4,16 @@
   "private": true,
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./dist/index.js"
+    },
+    "./server": {
+      "types": "./src/server-entry.ts",
+      "default": "./src/server-entry.ts"
+    }
+  },
   "scripts": {
     "dev": "tsx watch src/index.ts",
     "build": "tsc",
@@ -16,12 +26,13 @@
     "db:reset": "tsx src/db/reset.ts"
   },
   "dependencies": {
-    "@lifesync/shared-types": "workspace:*",
     "@clerk/backend": "^1.21.0",
+    "@lifesync/shared-types": "workspace:*",
     "@trpc/server": "^11.0.0",
     "drizzle-orm": "^0.38.3",
     "inngest": "^3.29.0",
     "postgres": "^3.4.5",
+    "resend": "^6.12.4",
     "svix": "^1.42.0",
     "zod": "^3.24.1"
   },

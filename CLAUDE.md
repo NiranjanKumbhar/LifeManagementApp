@@ -8,8 +8,8 @@ This is **LifeSync**, a shared life management app for couples that combines fas
 
 ## Development Status
 
-> **Last updated:** 2026-06-14. Keep this section current when finishing a chunk of work.
-> Full suite: `pnpm test` → 197 tests passing (api 66, web 94, ui 37; mobile passWithNoTests).
+> **Last updated:** 2026-06-15. Keep this section current when finishing a chunk of work.
+> Full suite: `pnpm test` → 280 tests passing (api 149, web 94, ui 37; mobile passWithNoTests).
 
 ### Done ✅
 - **Monorepo + tooling** — Turborepo, pnpm workspaces, tsconfig base, ESLint 9 flat config, Prettier. `pnpm install` / `pnpm build` / `pnpm test` all green.
@@ -27,9 +27,9 @@ This is **LifeSync**, a shared life management app for couples that combines fas
 
 ### Remaining 🔭 (roughly prioritized)
 1. ~~**Web screens beyond Dashboard + Inbox**~~ ✅ **COMPLETE** — Projects, Household, People, Calendar, and Settings all shipped (slices A–E). The remaining items below are the next priorities. (**External calendar/contacts sync (Google/Outlook) to import birthdays remains a separate future epic** — see `docs/superpowers/specs/2026-06-13-people-slice-c-design.md` §2.)
-2. **Inngest background jobs** (`apps/api/src/jobs/` is empty) — reminder delivery, weekly digest, recurring tasks, escalation, cleanup. **Reminders are written to the DB but never delivered**, and nothing creates `notifications` rows yet.
+2. **Inngest background jobs** — Inngest client wired, `deliver-due-reminders` cron (every 5 min) and `send-weekly-digest` stub are live; the `/api/inngest` serve endpoint is mounted. **Reminders are now delivered** (in-app notification row created + Resend email sent). Remaining: recurring tasks, escalation, cleanup jobs. `INNGEST_EVENT_KEY` still needed in `.env` for fan-out events.
 3. **Supabase Storage** — `resource.upload` only stores metadata; no real upload/download or storage-object deletion.
-4. **Tests for the other routers/services** (workspace, task, reminder, household, person, notification, resource, template, search, activity, user) + Playwright E2E (none yet).
+4. **Tests for the other routers/services** — workspace ✅, task ✅, reminder ✅, household ✅, person ✅, notification ✅, search ✅, activity ✅, user ✅; resource + template routers not yet tested; Playwright E2E (none yet).
 5. **Mobile app** (`apps/mobile`) — scaffolding only (3 stub files). Entire RN/Expo app, tRPC client, RxDB, PowerSync, notifications, haptics.
 6. **Local-first sync** — RxDB + PowerSync not set up anywhere (core architectural pillar).
 7. **Middleware** — `rateLimit`, `logging` not built (only `auth` + `workspace`).
@@ -38,8 +38,9 @@ This is **LifeSync**, a shared life management app for couples that combines fas
 ### Known stubs / shortcuts to revisit
 - `workspace.invite` → throws `NOT_IMPLEMENTED` (needs Clerk Organizations; replaces the `DEFAULT_WORKSPACE_ID` auto-join shortcut for real multi-couple use).
 - `person.get` returns `projects: []` (no person↔project FK yet).
+- **`ProjectService.create` now defaults `ownerId` to the creator's userId** (was `null`) — fixes private-project visibility for the owner in list/search/task-list queries.
 - **Migration `0002_reminders_standalone.sql` must be applied to live Supabase** (`pnpm db:migrate`) — it drops the `reminders_check` constraint so standalone reminders (e.g. Calendar's "add a reminder on a day") work. Applied automatically in pglite tests; the production DB still needs it.
-- **Calendar shows reminders but they are not delivered** — no Inngest jobs yet, so a reminder only appears on the calendar (no notification). The `/calendar` UI deliberately avoids any "you'll be notified" copy.
+- **Reminder delivery** — `deliver-due-reminders` cron fires every 5 min. Creates a `notifications` row + sends Resend email. All keys configured (`RESEND_API_KEY`, `FROM_EMAIL=LifeSync<noreply@twentynineth.com>`, domain verified). Weekly digest cron exists but is a stub.
 - **External calendar/contacts sync (Google/Outlook) to import birthdays is a deliberately separate future epic** (needs OAuth + provider APIs + dedup + background jobs) — not part of the Calendar slice. See `docs/superpowers/specs/2026-06-13-people-slice-c-design.md` §2.
 - `activity.feed` applies visibility filtering after the DB limit (page can under-fill).
 - No tRPC transformer (superjson): `Date` fields cross the wire as ISO strings.

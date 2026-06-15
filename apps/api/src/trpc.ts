@@ -1,5 +1,6 @@
 import { initTRPC, TRPCError } from '@trpc/server';
 import type { CreateHTTPContextOptions } from '@trpc/server/adapters/standalone';
+import type { FetchCreateContextFnOptions } from '@trpc/server/adapters/fetch';
 import { db, type Database } from './db/client';
 import type { AppError, AppErrorCode, Result } from './utils/errors';
 
@@ -18,6 +19,13 @@ export async function createContext({ req }: CreateHTTPContextOptions): Promise<
   const header = req.headers['authorization'];
   const authToken =
     typeof header === 'string' && header.startsWith('Bearer ') ? header.slice(7) : null;
+  return { db, authToken };
+}
+
+/** Context factory for the Next.js App Router fetch adapter. */
+export async function createFetchContext({ req }: FetchCreateContextFnOptions): Promise<Context> {
+  const header = req.headers.get('authorization');
+  const authToken = header?.startsWith('Bearer ') ? header.slice(7) : null;
   return { db, authToken };
 }
 
