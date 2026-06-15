@@ -25,7 +25,6 @@ export function Avatar({ name, src, size = 'md', tone = 'neutral', className }: 
       aria-label={name}
     >
       {src ? (
-        // eslint-disable-next-line @next/next/no-img-element
         <img src={src} alt="" className={styles.image} />
       ) : (
         <span className={styles.initials} aria-hidden="true">
