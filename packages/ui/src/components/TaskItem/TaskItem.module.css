@@ -31,3 +31,17 @@
   font-size: var(--ls-text-xs);
   color: var(--ls-text-tertiary);
 }
+.titleButton {
+  font-size: var(--ls-text-base);
+  color: var(--ls-text-primary);
+  background: none;
+  border: none;
+  padding: 0;
+  margin: 0;
+  text-align: left;
+  cursor: pointer;
+  font: inherit;
+}
+.titleButton:hover {
+  color: var(--ls-primary-600);
+}
