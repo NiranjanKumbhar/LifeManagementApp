@@ -5,12 +5,20 @@ import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@lifesync/ui';
 import { PlusIcon, MenuIcon } from '../icons';
-import { bottomNavItems, moreNavItems, type NavItem } from './nav-items';
+import { useSecondNav } from '@/lib/nav-prefs';
+import {
+  HOME_NAV_ITEM,
+  PROJECTS_NAV_ITEM,
+  SECONDARY_NAV,
+  SECOND_NAV_ORDER,
+  type NavItem,
+} from './nav-items';
 import { MoreSheet } from './MoreSheet';
 import styles from './BottomNav.module.css';
 
 export function BottomNav({ onQuickCapture }: { onQuickCapture: () => void }) {
   const pathname = usePathname();
+  const { secondNav } = useSecondNav();
   const [moreOpen, setMoreOpen] = useState(false);
   const moreButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -34,20 +42,23 @@ export function BottomNav({ onQuickCapture }: { onQuickCapture: () => void }) {
     );
   };
 
-  const moreActive = moreNavItems.some(
-    (i) => pathname === i.href || pathname.startsWith(`${i.href}/`),
-  );
+  const overflowKeys = SECOND_NAV_ORDER.filter((k) => k !== secondNav);
+  const moreActive = overflowKeys.some((k) => {
+    const href = SECONDARY_NAV[k].href;
+    return pathname === href || pathname.startsWith(`${href}/`);
+  });
 
   return (
     <>
       <nav className={styles.bar} aria-label="Primary">
-        {bottomNavItems.slice(0, 2).map(renderLink)}
+        {renderLink(HOME_NAV_ITEM)}
+        {renderLink(SECONDARY_NAV[secondNav])}
 
         <button type="button" className={styles.fab} onClick={onQuickCapture} aria-label="Quick capture">
           <PlusIcon size={24} />
         </button>
 
-        {bottomNavItems.slice(2).map(renderLink)}
+        {renderLink(PROJECTS_NAV_ITEM)}
 
         <button
           ref={moreButtonRef}

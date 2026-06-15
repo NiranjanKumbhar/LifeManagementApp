@@ -4,7 +4,9 @@ import { useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { cn } from '@lifesync/ui';
-import { moreNavItems } from './nav-items';
+import { useSecondNav } from '@/lib/nav-prefs';
+import { SECONDARY_NAV, SECOND_NAV_ORDER } from './nav-items';
+import { AccountControl } from './AccountControl';
 import styles from './MoreSheet.module.css';
 
 export function MoreSheet({ open, onClose }: { open: boolean; onClose: () => void }) {
@@ -18,12 +20,15 @@ export function MoreSheet({ open, onClose }: { open: boolean; onClose: () => voi
   }, [open, onClose]);
 
   const pathname = usePathname();
+  const { secondNav } = useSecondNav();
   if (!open) return null;
+
+  const items = SECOND_NAV_ORDER.filter((k) => k !== secondNav).map((k) => SECONDARY_NAV[k]);
 
   return (
     <div className={styles.overlay} onClick={onClose} role="dialog" aria-modal="true" aria-label="More">
       <div className={styles.sheet} onClick={(e) => e.stopPropagation()}>
-        {moreNavItems.map((item) => {
+        {items.map((item) => {
           const active = pathname === item.href || pathname.startsWith(`${item.href}/`);
           return (
             <Link
@@ -39,6 +44,9 @@ export function MoreSheet({ open, onClose }: { open: boolean; onClose: () => voi
             </Link>
           );
         })}
+        <div className={styles.accountFooter}>
+          <AccountControl />
+        </div>
       </div>
     </div>
   );
