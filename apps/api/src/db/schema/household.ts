@@ -20,6 +20,7 @@ export const householdItems = pgTable(
     autoReplenish: boolean('auto_replenish').notNull().default(false),
     lastPurchased: timestamp('last_purchased', { withTimezone: true }),
     addedBy: uuid('added_by').references(() => users.id),
+    lastPurchasedBy: uuid('last_purchased_by').references(() => users.id),
     sortOrder: integer('sort_order').notNull().default(0),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
