@@ -82,11 +82,6 @@
   margin-top: var(--ls-space-2);
 }
 
-.footerHint {
-  font-size: var(--ls-text-sm);
-  color: var(--ls-text-tertiary);
-}
-
 @media (min-width: 880px) {
   .sidebar {
     display: flex;
