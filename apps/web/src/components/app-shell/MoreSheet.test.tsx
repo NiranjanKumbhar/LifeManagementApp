@@ -34,6 +34,15 @@ describe('MoreSheet', () => {
     expect(screen.getByText('account-control')).toBeInTheDocument();
   });
 
+  it('drops the promoted screen and shows the displaced one instead', () => {
+    localStorage.setItem('ls-second-nav', 'calendar');
+    renderSheet({ open: true, onClose: () => {} });
+    // Calendar is now the bottom-bar second button, so it leaves the overflow…
+    expect(screen.queryByRole('link', { name: /Calendar/i })).not.toBeInTheDocument();
+    // …and the displaced Inbox appears in the overflow.
+    expect(screen.getByRole('link', { name: /Inbox/i })).toHaveAttribute('href', '/inbox');
+  });
+
   it('closes on backdrop click', async () => {
     const onClose = vi.fn();
     renderSheet({ open: true, onClose });
