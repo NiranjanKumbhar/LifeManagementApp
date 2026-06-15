@@ -3,7 +3,7 @@
   inset: auto 0 0 0;
   z-index: 30;
   display: grid;
-  grid-template-columns: repeat(6, 1fr);
+  grid-template-columns: repeat(5, 1fr);
   align-items: center;
   padding: 0.4rem 0.5rem calc(0.4rem + env(safe-area-inset-bottom, 0px));
   background-color: var(--ls-surface-elevated);

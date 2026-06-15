@@ -92,3 +92,33 @@
   --ls-ease-entrance: cubic-bezier(0.16, 1, 0.3, 1);
   --ls-ease-exit: cubic-bezier(0.4, 0, 1, 1);
 }
+
+/* Dark theme — warm-dark surfaces, inverted text. Applied via data-theme on <html>.
+   Only semantic surface/text/border/shadow/urgency-soft tokens change; the brand
+   scale, spacing, radii, typography and motion tokens stay the same. */
+[data-theme='dark'] {
+  --ls-surface-background: #1a1816;
+  --ls-surface-card: #242120;
+  --ls-surface-elevated: #2b2826;
+  --ls-surface-sunken: #161413;
+  --ls-surface-border: #3a3633;
+  --ls-surface-border-strong: #4a4541;
+  --ls-surface-overlay: rgba(0, 0, 0, 0.55);
+
+  --ls-text-primary: #f5f3f0;
+  --ls-text-secondary: #c4beb6;
+  --ls-text-tertiary: #a8a199;
+  --ls-text-inverse: #1c1917;
+
+  --ls-urgency-overdue-soft: #3a201d;
+  --ls-urgency-soon-soft: #3a2e16;
+  --ls-urgency-on-track-soft: #14302b;
+  --ls-urgency-completed-soft: #163021;
+
+  --ls-shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.4);
+  --ls-shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.45), 0 1px 2px rgba(0, 0, 0, 0.4);
+  --ls-shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5), 0 2px 4px rgba(0, 0, 0, 0.4);
+  --ls-shadow-lg: 0 12px 28px rgba(0, 0, 0, 0.55), 0 4px 8px rgba(0, 0, 0, 0.4);
+  --ls-shadow-xl: 0 24px 48px rgba(0, 0, 0, 0.6), 0 8px 16px rgba(0, 0, 0, 0.45);
+  --ls-shadow-focus: 0 0 0 3px rgba(45, 212, 191, 0.4);
+}

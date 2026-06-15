@@ -1,6 +1,22 @@
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { ToastProvider } from '@lifesync/ui';
+import { ThemeProvider } from '@/lib/theme';
+
+beforeEach(() => {
+  localStorage.clear();
+  document.documentElement.removeAttribute('data-theme');
+  window.matchMedia = vi.fn().mockImplementation((query: string) => ({
+    matches: false,
+    media: query,
+    onchange: null,
+    addEventListener: vi.fn(),
+    removeEventListener: vi.fn(),
+    addListener: vi.fn(),
+    removeListener: vi.fn(),
+    dispatchEvent: vi.fn(),
+  }));
+});
 
 vi.mock('@/lib/hooks/useWorkspaceId', () => ({ useWorkspaceId: () => 'ws-1' }));
 vi.mock('@/lib/trpc', () => ({
@@ -31,15 +47,18 @@ import SettingsPage from './page';
 
 function renderPage() {
   return render(
-    <ToastProvider>
-      <SettingsPage />
-    </ToastProvider>,
+    <ThemeProvider>
+      <ToastProvider>
+        <SettingsPage />
+      </ToastProvider>
+    </ThemeProvider>,
   );
 }
 
 describe('SettingsPage', () => {
-  it('renders the three settings sections', () => {
+  it('renders the four settings sections', () => {
     renderPage();
+    expect(screen.getByRole('heading', { name: 'Appearance' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Profile' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Notifications' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Workspace' })).toBeInTheDocument();

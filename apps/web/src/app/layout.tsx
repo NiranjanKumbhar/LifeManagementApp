@@ -25,6 +25,13 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className={`${fraunces.variable} ${inter.variable}`}>
       <body>
+        {/* No-flash: apply the saved theme before first paint. Keep in sync with resolve() in lib/theme.tsx. */}
+        <script
+          dangerouslySetInnerHTML={{
+            __html:
+              "(function(){try{var m=localStorage.getItem('ls-theme');var d=m==='dark'||((m===null||m==='system')&&window.matchMedia('(prefers-color-scheme: dark)').matches);document.documentElement.dataset.theme=d?'dark':'light';}catch(e){}})();",
+          }}
+        />
         <Providers>{children}</Providers>
       </body>
     </html>
