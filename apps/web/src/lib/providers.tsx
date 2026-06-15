@@ -6,6 +6,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { httpBatchLink } from '@trpc/client';
 import { ToastProvider } from '@lifesync/ui';
 import { trpc } from './trpc';
+import { ThemeProvider } from './theme';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? '/api/trpc';
 
@@ -51,9 +52,11 @@ function TRPCProvider({ children }: { children: ReactNode }) {
 export function Providers({ children }: { children: ReactNode }) {
   return (
     <ClerkProvider>
-      <TRPCProvider>
-        <ToastProvider>{children}</ToastProvider>
-      </TRPCProvider>
+      <ThemeProvider>
+        <TRPCProvider>
+          <ToastProvider>{children}</ToastProvider>
+        </TRPCProvider>
+      </ThemeProvider>
     </ClerkProvider>
   );
 }
