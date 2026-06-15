@@ -12,6 +12,7 @@ import { useWorkspaceId } from '@/lib/hooks/useWorkspaceId';
 import { PROJECT_TYPE_META } from '@/lib/projects/project-meta';
 import { PROJECT_FIELD_REGISTRY } from '@/lib/projects/field-registry';
 import { ProjectForm } from '@/components/projects/ProjectForm';
+import { TaskForm } from '@/components/tasks/TaskForm';
 import styles from './project-detail.module.css';
 
 type ProjectDetail = inferRouterOutputs<AppRouter>['project']['get'];
@@ -47,6 +48,7 @@ export default function ProjectDetailPage() {
   const utils = trpc.useUtils();
   const [newTask, setNewTask] = useState('');
   const [editing, setEditing] = useState(false);
+  const [editingTask, setEditingTask] = useState<TaskNode | null>(null);
 
   const query = trpc.project.get.useQuery({ id }, { enabled: Boolean(id) });
 
@@ -180,6 +182,7 @@ export default function ProjectDetailPage() {
               }}
               depth={0}
               onToggleComplete={() => toggleTask(task)}
+              onEdit={() => setEditingTask(task)}
             />
             {(task.children ?? []).map((child) => (
               <TaskItem
@@ -193,6 +196,7 @@ export default function ProjectDetailPage() {
                 }}
                 depth={1}
                 onToggleComplete={() => toggleTask(child)}
+                onEdit={() => setEditingTask(child)}
               />
             ))}
           </div>
@@ -224,6 +228,15 @@ export default function ProjectDetailPage() {
         onClose={() => setEditing(false)}
         project={project}
       />
+      {editingTask && workspaceId ? (
+        <TaskForm
+          isOpen={Boolean(editingTask)}
+          onClose={() => setEditingTask(null)}
+          task={editingTask}
+          projectId={project.id}
+          workspaceId={workspaceId}
+        />
+      ) : null}
     </PageShell>
   );
 }
