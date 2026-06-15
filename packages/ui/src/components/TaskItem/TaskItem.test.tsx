@@ -34,4 +34,17 @@ describe('TaskItem', () => {
     );
     expect(screen.getByRole('checkbox')).toBeChecked();
   });
+
+  it('fires onEdit with the id when the title is clicked', async () => {
+    const onEdit = vi.fn();
+    render(<TaskItem task={baseTask} depth={0} onToggleComplete={() => {}} onEdit={onEdit} />);
+    await userEvent.click(screen.getByRole('button', { name: /send invitations/i }));
+    expect(onEdit).toHaveBeenCalledWith('t1');
+  });
+
+  it('renders the title as plain text when onEdit is not provided', () => {
+    render(<TaskItem task={baseTask} depth={0} onToggleComplete={() => {}} />);
+    expect(screen.queryByRole('button', { name: /send invitations/i })).not.toBeInTheDocument();
+    expect(screen.getByText('Send invitations')).toBeInTheDocument();
+  });
 });
