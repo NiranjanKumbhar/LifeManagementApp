@@ -25,6 +25,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
   return (
     <html lang="en" className={`${fraunces.variable} ${inter.variable}`}>
       <body>
+        {/* No-flash: apply the saved theme before first paint. Keep in sync with resolve() in lib/theme.tsx. */}
         <script
           dangerouslySetInnerHTML={{
             __html:

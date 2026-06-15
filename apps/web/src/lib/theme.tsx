@@ -1,10 +1,25 @@
 'use client';
 
-import { createContext, useContext, useEffect, useState, type ReactNode } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+  type ReactNode,
+} from 'react';
 
 export type ThemeMode = 'system' | 'light' | 'dark';
 
 const STORAGE_KEY = 'ls-theme';
+
+/** Read the persisted choice. Returns 'system' on the server or when unset/invalid. */
+function readStored(): ThemeMode {
+  if (typeof window === 'undefined') return 'system';
+  const stored = localStorage.getItem(STORAGE_KEY);
+  return stored === 'light' || stored === 'dark' || stored === 'system' ? stored : 'system';
+}
 
 interface ThemeContextValue {
   mode: ThemeMode;
@@ -13,6 +28,8 @@ interface ThemeContextValue {
 
 const ThemeContext = createContext<ThemeContextValue | null>(null);
 
+// NOTE: keep this resolution logic in sync with the inline no-flash script in
+// apps/web/src/app/layout.tsx (same storage key + same system→OS fallback).
 function resolve(mode: ThemeMode): 'light' | 'dark' {
   if (mode === 'system') {
     return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
@@ -25,17 +42,11 @@ function apply(mode: ThemeMode): void {
 }
 
 export function ThemeProvider({ children }: { children: ReactNode }) {
-  const [mode, setModeState] = useState<ThemeMode>('system');
+  // Lazy initializer reads the persisted choice on the first client render, so the
+  // mode (and applied theme) is correct immediately — no post-mount flash.
+  const [mode, setModeState] = useState<ThemeMode>(readStored);
 
-  // Load the persisted choice on mount (client only).
-  useEffect(() => {
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored === 'light' || stored === 'dark' || stored === 'system') {
-      setModeState(stored);
-    }
-  }, []);
-
-  // Apply the theme, and while in "system" mode, follow OS changes live.
+  // Apply the theme; while in "system" mode, follow OS changes live.
   useEffect(() => {
     apply(mode);
     if (mode !== 'system') return;
@@ -45,12 +56,14 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
     return () => mql.removeEventListener('change', onChange);
   }, [mode]);
 
-  const setMode = (next: ThemeMode) => {
+  const setMode = useCallback((next: ThemeMode) => {
     localStorage.setItem(STORAGE_KEY, next);
     setModeState(next);
-  };
+  }, []);
 
-  return <ThemeContext.Provider value={{ mode, setMode }}>{children}</ThemeContext.Provider>;
+  const value = useMemo(() => ({ mode, setMode }), [mode, setMode]);
+
+  return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
 }
 
 export function useTheme(): ThemeContextValue {

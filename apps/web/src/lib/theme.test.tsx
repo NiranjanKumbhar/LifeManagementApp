@@ -50,4 +50,35 @@ describe('ThemeProvider', () => {
     expect(document.documentElement.dataset.theme).toBe('dark');
     expect(screen.getByTestId('mode')).toHaveTextContent('dark');
   });
+
+  it('resolves system to dark when the OS prefers dark', () => {
+    window.matchMedia = vi.fn().mockImplementation((query: string) => ({
+      matches: true,
+      media: query,
+      onchange: null,
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+    }));
+    render(
+      <ThemeProvider>
+        <Probe />
+      </ThemeProvider>,
+    );
+    expect(screen.getByTestId('mode')).toHaveTextContent('system');
+    expect(document.documentElement.dataset.theme).toBe('dark');
+  });
+
+  it('initializes mode from a persisted choice on first render', () => {
+    localStorage.setItem('ls-theme', 'dark');
+    render(
+      <ThemeProvider>
+        <Probe />
+      </ThemeProvider>,
+    );
+    expect(screen.getByTestId('mode')).toHaveTextContent('dark');
+    expect(document.documentElement.dataset.theme).toBe('dark');
+  });
 });
