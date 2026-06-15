@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import { Fraunces, Inter } from 'next/font/google';
+import { Analytics } from '@vercel/analytics/next';
 import { Providers } from '@/lib/providers';
 import '@/styles/globals.css';
 
@@ -33,6 +34,7 @@ export default function RootLayout({ children }: { children: ReactNode }) {
           }}
         />
         <Providers>{children}</Providers>
+        <Analytics />
       </body>
     </html>
   );
