@@ -34,7 +34,7 @@ export function TaskForm({ isOpen, onClose, task, projectId, workspaceId }: Task
   const [title, setTitle] = useState(task.title);
   const [description, setDescription] = useState(task.description ?? '');
   const [dueDate, setDueDate] = useState(task.dueDate ?? '');
-  const [priority, setPriority] = useState<Priority>(task.priority ?? 'none');
+  const [priority, setPriority] = useState<Priority>((task.priority ?? 'none') as Priority);
   const [ownerId, setOwnerId] = useState(task.ownerId ?? '');
   const [remindAt, setRemindAt] = useState('');
 
