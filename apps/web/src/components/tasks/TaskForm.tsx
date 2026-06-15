@@ -50,14 +50,19 @@ export function TaskForm({ isOpen, onClose, task, projectId, workspaceId }: Task
       toast.success('Task updated');
       onClose();
     },
+    onError: (e: { message: string }) => toast.error(e.message),
   });
   const createReminder = trpc.reminder.create.useMutation({
     onSuccess: () => {
       setRemindAt('');
       refreshReminders();
     },
+    onError: (e: { message: string }) => toast.error(e.message),
   });
-  const dismissReminder = trpc.reminder.dismiss.useMutation({ onSuccess: refreshReminders });
+  const dismissReminder = trpc.reminder.dismiss.useMutation({
+    onSuccess: refreshReminders,
+    onError: (e: { message: string }) => toast.error(e.message),
+  });
 
   const ownerOptions = [
     { value: '', label: 'Unassigned' },
