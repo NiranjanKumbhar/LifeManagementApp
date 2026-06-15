@@ -4,6 +4,7 @@ import { EmptyState, LoadingSpinner, PageHeader, PageShell } from '@lifesync/ui'
 import { trpc } from '@/lib/trpc';
 import { useWorkspaceId } from '@/lib/hooks/useWorkspaceId';
 import { AppearanceSettings } from '@/components/settings/AppearanceSettings';
+import { NavSettings } from '@/components/settings/NavSettings';
 import { ProfileSettings } from '@/components/settings/ProfileSettings';
 import { NotificationSettings } from '@/components/settings/NotificationSettings';
 import { WorkspaceSettings } from '@/components/settings/WorkspaceSettings';
@@ -38,6 +39,7 @@ export default function SettingsPage() {
     <PageShell>
       <PageHeader title="Settings" />
       <AppearanceSettings />
+      <NavSettings />
       <ProfileSettings me={me} />
       <NotificationSettings me={me} />
       <WorkspaceSettings

@@ -7,6 +7,7 @@ import { httpBatchLink } from '@trpc/client';
 import { ToastProvider } from '@lifesync/ui';
 import { trpc } from './trpc';
 import { ThemeProvider } from './theme';
+import { NavPrefsProvider } from './nav-prefs';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? '/api/trpc';
 
@@ -53,9 +54,11 @@ export function Providers({ children }: { children: ReactNode }) {
   return (
     <ClerkProvider>
       <ThemeProvider>
-        <TRPCProvider>
-          <ToastProvider>{children}</ToastProvider>
-        </TRPCProvider>
+        <NavPrefsProvider>
+          <TRPCProvider>
+            <ToastProvider>{children}</ToastProvider>
+          </TRPCProvider>
+        </NavPrefsProvider>
       </ThemeProvider>
     </ClerkProvider>
   );

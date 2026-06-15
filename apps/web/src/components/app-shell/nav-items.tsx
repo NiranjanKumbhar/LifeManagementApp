@@ -1,4 +1,5 @@
 import type { ReactNode } from 'react';
+import type { SecondNavKey } from '@/lib/nav-prefs';
 import {
   CalendarIcon,
   HomeIcon,
@@ -26,21 +27,22 @@ export const navItems: NavItem[] = [
   { label: 'Settings', href: '/settings', icon: <SettingsIcon /> },
 ];
 
-/**
- * Condensed set for the mobile bottom bar (Home, Inbox + centered FAB + Projects).
- * Inbox sits beside the capture FAB so the capture → triage loop is reachable on
- * the go. Household / Calendar / People / Settings live in the "More" overflow sheet.
- */
-export const bottomNavItems: NavItem[] = [
-  { label: 'Home', href: '/dashboard', icon: <HomeIcon /> },
-  { label: 'Inbox', href: '/inbox', icon: <InboxIcon /> },
-  { label: 'Projects', href: '/projects', icon: <ProjectsIcon /> },
-];
+/** Fixed bottom-bar slots flanking the capture FAB. */
+export const HOME_NAV_ITEM: NavItem = { label: 'Home', href: '/dashboard', icon: <HomeIcon /> };
+export const PROJECTS_NAV_ITEM: NavItem = { label: 'Projects', href: '/projects', icon: <ProjectsIcon /> };
 
-/** Destinations behind the mobile bottom-bar "More" button. */
-export const moreNavItems: NavItem[] = [
-  { label: 'Household', href: '/household', icon: <HouseholdIcon /> },
-  { label: 'Calendar', href: '/calendar', icon: <CalendarIcon /> },
-  { label: 'People', href: '/people', icon: <PeopleIcon /> },
-  { label: 'Settings', href: '/settings', icon: <SettingsIcon /> },
-];
+/**
+ * The five "secondary" screens. One occupies the customizable second bottom-bar
+ * slot (per-device preference, see lib/nav-prefs); the other four fill the "More"
+ * overflow sheet.
+ */
+export const SECONDARY_NAV: Record<SecondNavKey, NavItem> = {
+  inbox: { label: 'Inbox', href: '/inbox', icon: <InboxIcon /> },
+  household: { label: 'Household', href: '/household', icon: <HouseholdIcon /> },
+  calendar: { label: 'Calendar', href: '/calendar', icon: <CalendarIcon /> },
+  people: { label: 'People', href: '/people', icon: <PeopleIcon /> },
+  settings: { label: 'Settings', href: '/settings', icon: <SettingsIcon /> },
+};
+
+/** Display order for pickers and the overflow sheet. */
+export const SECOND_NAV_ORDER: SecondNavKey[] = ['inbox', 'household', 'calendar', 'people', 'settings'];

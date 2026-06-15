@@ -2,6 +2,7 @@ import { describe, expect, it, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import { ToastProvider } from '@lifesync/ui';
 import { ThemeProvider } from '@/lib/theme';
+import { NavPrefsProvider } from '@/lib/nav-prefs';
 
 beforeEach(() => {
   localStorage.clear();
@@ -48,17 +49,20 @@ import SettingsPage from './page';
 function renderPage() {
   return render(
     <ThemeProvider>
-      <ToastProvider>
-        <SettingsPage />
-      </ToastProvider>
+      <NavPrefsProvider>
+        <ToastProvider>
+          <SettingsPage />
+        </ToastProvider>
+      </NavPrefsProvider>
     </ThemeProvider>,
   );
 }
 
 describe('SettingsPage', () => {
-  it('renders the four settings sections', () => {
+  it('renders the settings sections', () => {
     renderPage();
     expect(screen.getByRole('heading', { name: 'Appearance' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'Bottom bar' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Profile' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Notifications' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Workspace' })).toBeInTheDocument();
