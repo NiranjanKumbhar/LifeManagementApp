@@ -45,7 +45,7 @@ export function TaskItem({ task, depth, onToggleComplete, onEdit }: TaskItemProp
       {task.dueDate ? <span className={styles.due}>{formatRelativeDate(task.dueDate)}</span> : null}
       {task.createdByUser ? <UserChip user={task.createdByUser} /> : null}
       {task.status === 'completed' && task.completedByUser ? (
-        <UserChip user={task.completedByUser} label="✓" />
+        <UserChip user={task.completedByUser} label="Done by" />
       ) : null}
     </div>
   );

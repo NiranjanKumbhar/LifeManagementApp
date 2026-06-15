@@ -35,6 +35,19 @@ describe('taskRouter — list', () => {
     expect(list.map((t) => t.title).sort()).toEqual(['Task A', 'Task B']);
   });
 
+  it('populates createdByUser on listed tasks and leaves completedByUser null', async () => {
+    const alex = callerFor(ctx.db, world.alex.clerkId);
+    const project = await alex.project.create(
+      createProjectInput({ workspaceId: world.workspace.id }),
+    );
+    await alex.task.create({ projectId: project.id, title: 'Owned task' });
+
+    const [task] = await alex.task.list({ projectId: project.id });
+    expect(task.createdByUser).not.toBeNull();
+    expect(typeof task.createdByUser?.displayName).toBe('string');
+    expect(task.completedByUser).toBeNull();
+  });
+
   it('returns an empty list for a project with no tasks', async () => {
     const alex = callerFor(ctx.db, world.alex.clerkId);
     const project = await alex.project.create(
