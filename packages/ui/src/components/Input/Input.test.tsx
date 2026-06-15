@@ -32,4 +32,9 @@ describe('Input', () => {
     render(<Input label="Email" value="a@b.com" onChange={() => {}} disabled />);
     expect(screen.getByLabelText('Email')).toBeDisabled();
   });
+
+  it('renders a datetime-local input', () => {
+    render(<Input label="Remind at" value="" onChange={() => {}} type="datetime-local" />);
+    expect(screen.getByLabelText('Remind at')).toHaveAttribute('type', 'datetime-local');
+  });
 });

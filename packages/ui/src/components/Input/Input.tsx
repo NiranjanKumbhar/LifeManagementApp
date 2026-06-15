@@ -19,7 +19,7 @@ type BaseProps = {
 
 type TextProps = BaseProps & {
   as?: 'input';
-  type?: 'text' | 'number' | 'date' | 'time';
+  type?: 'text' | 'number' | 'date' | 'time' | 'datetime-local';
 };
 type TextareaProps = BaseProps & { as: 'textarea'; rows?: number };
 type SelectProps = BaseProps & {
