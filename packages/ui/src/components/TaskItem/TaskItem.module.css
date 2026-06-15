@@ -45,3 +45,6 @@
 .titleButton:hover {
   color: var(--ls-primary-600);
 }
+.titleButton.done {
+  color: var(--ls-text-tertiary);
+}

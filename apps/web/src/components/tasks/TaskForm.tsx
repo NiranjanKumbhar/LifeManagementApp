@@ -127,6 +127,7 @@ export function TaskForm({ isOpen, onClose, task, projectId, workspaceId }: Task
                     variant="ghost"
                     size="sm"
                     aria-label="Remove reminder"
+                    disabled={dismissReminder.isPending}
                     onClick={() => dismissReminder.mutate({ id: r.id })}
                   >
                     Remove
