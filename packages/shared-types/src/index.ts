@@ -21,6 +21,7 @@ export type {
 export type { Workspace, WorkspaceMember } from './entities/workspace';
 export type {
   User,
+  UserRef,
   NotificationPreferences,
   NotificationChannels,
   QuietHours,
