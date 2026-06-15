@@ -9,7 +9,10 @@ function createDb() {
   if (!connectionString) {
     throw new Error('DATABASE_URL environment variable is required');
   }
-  const queryClient = postgres(connectionString);
+  // prepare:false is required for Supabase's transaction pooler (pgbouncer in
+  // transaction mode does not support prepared statements). Safe on direct /
+  // session-pooler connections too.
+  const queryClient = postgres(connectionString, { prepare: false });
   return drizzle(queryClient, { schema });
 }
 
