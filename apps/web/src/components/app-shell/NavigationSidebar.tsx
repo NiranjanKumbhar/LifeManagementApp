@@ -2,9 +2,9 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { UserButton } from '@clerk/nextjs';
 import { cn } from '@lifesync/ui';
 import { navItems } from './nav-items';
+import { AccountControl } from './AccountControl';
 import styles from './NavigationSidebar.module.css';
 
 function isActive(pathname: string, href: string): boolean {
@@ -39,8 +39,7 @@ export function NavigationSidebar() {
       </nav>
 
       <div className={styles.footer}>
-        <UserButton />
-        <span className={styles.footerHint}>Your account</span>
+        <AccountControl />
       </div>
     </aside>
   );

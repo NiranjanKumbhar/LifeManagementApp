@@ -1,0 +1,12 @@
+.account {
+  display: flex;
+  align-items: center;
+  gap: var(--ls-space-2);
+}
+.name {
+  font-size: var(--ls-text-sm);
+  color: var(--ls-text-secondary);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
