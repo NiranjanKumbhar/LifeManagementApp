@@ -1,7 +1,8 @@
 import { and, asc, desc, eq, gte, inArray, isNotNull, ne, or, sql } from 'drizzle-orm';
 import type { z } from 'zod';
-import type { ProjectListItem } from '@lifesync/shared-types';
+import type { ProjectListItem, UserRef } from '@lifesync/shared-types';
 import type { Database } from '../db/client';
+import { resolveUsers } from './resolve-users';
 import {
   activityEvents,
   householdItems,
@@ -34,6 +35,9 @@ type TaskRow = typeof tasks.$inferSelect;
 
 export interface TaskTreeNode extends TaskRow {
   children: TaskTreeNode[];
+  createdByUser?: UserRef | null;
+  completedByUser?: UserRef | null;
+  ownerUser?: UserRef | null;
 }
 
 export interface ProjectWithTasks extends ProjectRow {
@@ -172,7 +176,18 @@ export class ProjectService {
       return { success: false, error: notFound('Project not found') };
     }
 
-    return ok({ ...project, tasks: buildTaskTree(taskRows) });
+    const userMap = await resolveUsers(db, taskRows.flatMap((r) => [r.createdBy, r.completedBy, r.ownerId]));
+    const attach = (nodes: TaskTreeNode[]): void => {
+      for (const n of nodes) {
+        n.createdByUser = userMap.get(n.createdBy ?? '') ?? null;
+        n.completedByUser = userMap.get(n.completedBy ?? '') ?? null;
+        n.ownerUser = userMap.get(n.ownerId ?? '') ?? null;
+        attach(n.children);
+      }
+    };
+    const tree = buildTaskTree(taskRows);
+    attach(tree);
+    return ok({ ...project, tasks: tree });
   }
 
   /**

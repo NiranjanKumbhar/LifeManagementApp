@@ -8,7 +8,8 @@ const baseTask = {
   title: 'Send invitations',
   status: 'pending' as const,
   dueDate: null as string | null,
-  ownerName: null as string | null,
+  createdByUser: null as import('@lifesync/shared-types').UserRef | null,
+  completedByUser: null as import('@lifesync/shared-types').UserRef | null,
 };
 
 describe('TaskItem', () => {
@@ -46,5 +47,19 @@ describe('TaskItem', () => {
     render(<TaskItem task={baseTask} depth={0} onToggleComplete={() => {}} />);
     expect(screen.queryByRole('button', { name: /send invitations/i })).not.toBeInTheDocument();
     expect(screen.getByText('Send invitations')).toBeInTheDocument();
+  });
+
+  it('shows a UserChip with the creator first name when createdByUser is set', () => {
+    render(
+      <TaskItem
+        task={{
+          ...baseTask,
+          createdByUser: { id: 'u1', displayName: 'Alex Rivera', avatarUrl: null },
+        }}
+        depth={0}
+        onToggleComplete={() => {}}
+      />,
+    );
+    expect(screen.getByText('Alex')).toBeInTheDocument();
   });
 });

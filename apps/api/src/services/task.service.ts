@@ -1,11 +1,13 @@
 import { asc, eq } from 'drizzle-orm';
 import type { z } from 'zod';
+import type { UserRef } from '@lifesync/shared-types';
 import type { Database } from '../db/client';
 import { tasks, type ActivityAction } from '../db/schema';
 import { forbidden, internal, notFound, ok, type AppError, type Result } from '../utils/errors';
 import { loadReadableProject, loadWritableProject } from './authz';
 import { logActivity } from './activity';
 import { compareTasks } from '../utils/task-order';
+import { resolveUsers } from './resolve-users';
 import type { createTaskSchema, updateTaskSchema } from '../utils/validation';
 
 type TaskRow = typeof tasks.$inferSelect;
@@ -14,6 +16,9 @@ type UpdateInput = z.infer<typeof updateTaskSchema>;
 
 export interface TaskTreeNode extends TaskRow {
   children: TaskTreeNode[];
+  createdByUser?: UserRef | null;
+  completedByUser?: UserRef | null;
+  ownerUser?: UserRef | null;
 }
 
 const ENTITY = 'task';
@@ -56,7 +61,19 @@ export class TaskService {
       .from(tasks)
       .where(eq(tasks.projectId, projectId))
       .orderBy(asc(tasks.sortOrder), asc(tasks.createdAt), asc(tasks.id));
-    return ok(buildTaskTree(rows));
+
+    const userMap = await resolveUsers(db, rows.flatMap((r) => [r.createdBy, r.completedBy, r.ownerId]));
+    const attach = (nodes: TaskTreeNode[]): void => {
+      for (const n of nodes) {
+        n.createdByUser = userMap.get(n.createdBy ?? '') ?? null;
+        n.completedByUser = userMap.get(n.completedBy ?? '') ?? null;
+        n.ownerUser = userMap.get(n.ownerId ?? '') ?? null;
+        attach(n.children);
+      }
+    };
+    const tree = buildTaskTree(rows);
+    attach(tree);
+    return ok(tree);
   }
 
   static async create(
@@ -91,6 +108,7 @@ export class TaskService {
             dueDate: input.dueDate ?? null,
             sortOrder: input.sortOrder ?? 0,
             path,
+            createdBy: userId,
             isRecurring: input.isRecurring ?? false,
             recurrenceRule: input.recurrenceRule ?? null,
           })
