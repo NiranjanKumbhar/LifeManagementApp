@@ -32,7 +32,7 @@
   display: flex;
   align-items: center;
   gap: var(--ls-space-2);
-  flex-shrink: 0;
+  min-width: 0; /* allow the select to shrink rather than overflow the row */
 }
 
 .select {
@@ -44,6 +44,9 @@
   border-radius: var(--ls-radius-full);
   padding: 0.4rem 0.85rem;
   cursor: pointer;
+  min-width: 0;
+  max-width: 14rem;
+  text-overflow: ellipsis;
 }
 
 .select:focus-visible {
@@ -58,5 +61,9 @@
   }
   .actions {
     justify-content: space-between;
+  }
+  .select {
+    flex: 1 1 auto;
+    max-width: 100%;
   }
 }
