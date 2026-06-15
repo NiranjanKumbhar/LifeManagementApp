@@ -1,0 +1,45 @@
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ls-space-4);
+}
+.fieldset {
+  border: 1px solid var(--ls-surface-border);
+  border-radius: var(--ls-radius-md);
+  padding: var(--ls-space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--ls-space-3);
+}
+.legend {
+  font-size: var(--ls-text-sm);
+  font-weight: 600;
+  color: var(--ls-text-secondary);
+  padding: 0 var(--ls-space-2);
+}
+.hint {
+  font-size: var(--ls-text-xs);
+  color: var(--ls-text-tertiary);
+  margin: 0;
+}
+.reminderList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ls-space-2);
+}
+.reminderRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ls-space-3);
+  font-size: var(--ls-text-sm);
+  color: var(--ls-text-primary);
+}
+.addReminder {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--ls-space-3);
+}
