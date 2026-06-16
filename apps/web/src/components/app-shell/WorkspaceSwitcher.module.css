@@ -1,0 +1,20 @@
+.wrap { display: block; }
+.select {
+  width: 100%;
+  font: inherit;
+  font-size: var(--ls-text-sm);
+  color: var(--ls-text-primary);
+  background: var(--ls-surface-card);
+  border: 1px solid var(--ls-surface-border);
+  border-radius: var(--ls-radius-md);
+  padding: 0.3rem 0.5rem;
+}
+.single {
+  font-size: var(--ls-text-sm);
+  font-weight: 600;
+  color: var(--ls-text-secondary);
+}
+.srOnly {
+  position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+  overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}
