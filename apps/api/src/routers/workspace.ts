@@ -4,12 +4,15 @@ import { workspaceProcedure } from '../middleware/workspace';
 import { WorkspaceService } from '../services/workspace.service';
 import {
   acceptInviteSchema,
+  changeRoleSchema,
   createInviteSchema,
   createWorkspaceSchema,
   inviteIdSchema,
   invitePreviewSchema,
+  leaveSchema,
   listInvitesSchema,
   membersSchema,
+  removeMemberSchema,
   workspaceGetSchema,
 } from '../utils/validation';
 
@@ -44,5 +47,15 @@ export const workspaceRouter = router({
   }),
   listInvites: workspaceProcedure.input(listInvitesSchema).query(async ({ ctx, input }) => {
     return unwrap(await WorkspaceService.listInvites(ctx.db, ctx.userId, input.workspaceId));
+  }),
+
+  changeRole: workspaceProcedure.input(changeRoleSchema).mutation(async ({ ctx, input }) => {
+    return unwrap(await WorkspaceService.changeRole(ctx.db, ctx.userId, input));
+  }),
+  removeMember: workspaceProcedure.input(removeMemberSchema).mutation(async ({ ctx, input }) => {
+    return unwrap(await WorkspaceService.removeMember(ctx.db, ctx.userId, input));
+  }),
+  leave: workspaceProcedure.input(leaveSchema).mutation(async ({ ctx, input }) => {
+    return unwrap(await WorkspaceService.leave(ctx.db, ctx.userId, input));
   }),
 });

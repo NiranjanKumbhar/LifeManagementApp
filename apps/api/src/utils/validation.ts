@@ -104,6 +104,13 @@ export const acceptInviteSchema = z.object({ token: z.string().min(1) });
 export const invitePreviewSchema = z.object({ token: z.string().min(1) });
 export const inviteIdSchema = z.object({ id: uuidSchema });
 export const listInvitesSchema = z.object({ workspaceId: uuidSchema });
+export const changeRoleSchema = z.object({
+  workspaceId: uuidSchema,
+  targetUserId: uuidSchema,
+  role: z.enum(['owner', 'member']),
+});
+export const removeMemberSchema = z.object({ workspaceId: uuidSchema, targetUserId: uuidSchema });
+export const leaveSchema = z.object({ workspaceId: uuidSchema });
 
 // ── Task ────────────────────────────────────────────────────────────────────
 export const listTasksSchema = z.object({ projectId: uuidSchema });

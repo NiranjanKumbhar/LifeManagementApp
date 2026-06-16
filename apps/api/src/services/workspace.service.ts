@@ -113,7 +113,7 @@ export class WorkspaceService {
     });
     if (!m) return { success: false, error: notFound('Workspace not found') };
     if (m.role !== 'owner')
-      return { success: false, error: forbidden('Only the owner can manage invites') };
+      return { success: false, error: forbidden('Only an owner can manage this workspace') };
     return ok(true);
   }
 
@@ -250,5 +250,99 @@ export class WorkspaceService {
       )
       .orderBy(desc(workspaceInvites.createdAt));
     return ok(rows);
+  }
+
+  private static async countOwners(db: Database, workspaceId: string): Promise<number> {
+    const [row] = await db
+      .select({ value: count() })
+      .from(workspaceMembers)
+      .where(and(eq(workspaceMembers.workspaceId, workspaceId), eq(workspaceMembers.role, 'owner')));
+    return row?.value ?? 0;
+  }
+
+  static async changeRole(
+    db: Database,
+    userId: string,
+    input: { workspaceId: string; targetUserId: string; role: 'owner' | 'member' },
+  ): Promise<Result<MemberRow, AppError>> {
+    const owner = await this.requireOwner(db, userId, input.workspaceId);
+    if (!owner.success) return owner;
+
+    const target = await db.query.workspaceMembers.findFirst({
+      where: and(
+        eq(workspaceMembers.workspaceId, input.workspaceId),
+        eq(workspaceMembers.userId, input.targetUserId),
+      ),
+    });
+    if (!target) return { success: false, error: notFound('Member not found') };
+    if (target.role === input.role) return ok(target);
+
+    if (target.role === 'owner' && input.role === 'member' && (await this.countOwners(db, input.workspaceId)) <= 1) {
+      return { success: false, error: conflict('Promote another member to owner before stepping down') };
+    }
+
+    const [updated] = await db
+      .update(workspaceMembers)
+      .set({ role: input.role })
+      .where(and(
+        eq(workspaceMembers.workspaceId, input.workspaceId),
+        eq(workspaceMembers.userId, input.targetUserId),
+      ))
+      .returning();
+    if (!updated) return { success: false, error: internal('Role update failed') };
+    return ok(updated);
+  }
+
+  static async removeMember(
+    db: Database,
+    userId: string,
+    input: { workspaceId: string; targetUserId: string },
+  ): Promise<Result<void, AppError>> {
+    const owner = await this.requireOwner(db, userId, input.workspaceId);
+    if (!owner.success) return owner;
+
+    const target = await db.query.workspaceMembers.findFirst({
+      where: and(
+        eq(workspaceMembers.workspaceId, input.workspaceId),
+        eq(workspaceMembers.userId, input.targetUserId),
+      ),
+    });
+    if (!target) return { success: false, error: notFound('Member not found') };
+    if (target.role === 'owner' && (await this.countOwners(db, input.workspaceId)) <= 1) {
+      return { success: false, error: conflict('Cannot remove the last owner') };
+    }
+
+    await db
+      .delete(workspaceMembers)
+      .where(and(
+        eq(workspaceMembers.workspaceId, input.workspaceId),
+        eq(workspaceMembers.userId, input.targetUserId),
+      ));
+    return ok(undefined);
+  }
+
+  static async leave(
+    db: Database,
+    userId: string,
+    input: { workspaceId: string },
+  ): Promise<Result<void, AppError>> {
+    const me = await db.query.workspaceMembers.findFirst({
+      where: and(
+        eq(workspaceMembers.workspaceId, input.workspaceId),
+        eq(workspaceMembers.userId, userId),
+      ),
+    });
+    if (!me) return { success: false, error: notFound('Membership not found') };
+    if (me.role === 'owner' && (await this.countOwners(db, input.workspaceId)) <= 1) {
+      return { success: false, error: conflict('Make someone else an owner before leaving') };
+    }
+
+    await db
+      .delete(workspaceMembers)
+      .where(and(
+        eq(workspaceMembers.workspaceId, input.workspaceId),
+        eq(workspaceMembers.userId, userId),
+      ));
+    return ok(undefined);
   }
 }

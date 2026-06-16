@@ -19,6 +19,7 @@ beforeEach(() => {
   }));
 });
 
+vi.mock('next/navigation', () => ({ useRouter: () => ({ push: vi.fn() }) }));
 vi.mock('@/lib/hooks/useWorkspaceId', () => ({ useWorkspaceId: () => 'ws-1' }));
 vi.mock('@/lib/workspace-context', () => ({
   useWorkspace: () => ({
@@ -33,7 +34,11 @@ vi.mock('@/lib/trpc', () => ({
   trpc: {
     useUtils: () => ({
       user: { me: { invalidate: vi.fn() } },
-      workspace: { listInvites: { invalidate: vi.fn() } },
+      workspace: {
+        listInvites: { invalidate: vi.fn() },
+        members: { invalidate: vi.fn() },
+        mine: { invalidate: vi.fn() },
+      },
     }),
     user: {
       me: {
@@ -55,6 +60,9 @@ vi.mock('@/lib/trpc', () => ({
       createInvite: { useMutation: () => ({ mutate: vi.fn(), isPending: false }) },
       listInvites: { useQuery: () => ({ data: [] }) },
       revokeInvite: { useMutation: () => ({ mutate: vi.fn(), isPending: false }) },
+      changeRole: { useMutation: () => ({ mutate: vi.fn(), isPending: false }) },
+      removeMember: { useMutation: () => ({ mutate: vi.fn(), isPending: false }) },
+      leave: { useMutation: () => ({ mutate: vi.fn(), isPending: false }) },
     },
   },
 }));
