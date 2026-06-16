@@ -56,27 +56,43 @@ async function upsertUser(db: Database, input: UserUpsert): Promise<UserRow> {
   return user as UserRow;
 }
 
-/**
- * Add the user to the configured default workspace (dev/demo convenience so a
- * fresh account lands in the seeded "Our Home" workspace). No-op if unset or
- * the workspace doesn't exist. Idempotent via the (workspace,user) unique key.
- */
-async function ensureDefaultMembership(db: Database, userId: string): Promise<void> {
-  const workspaceId = process.env['DEFAULT_WORKSPACE_ID'];
-  if (!workspaceId) return;
-
-  const workspace = await db.query.workspaces.findFirst({
-    where: eq(workspaces.id, workspaceId),
-  });
-  if (!workspace) return;
-
-  await db
-    .insert(workspaceMembers)
-    .values({ workspaceId, userId, role: 'member', joinedAt: new Date() })
-    .onConflictDoNothing();
-}
-
 export class UserProvisioningService {
+  /**
+   * Guarantee the user belongs to at least one workspace. If they already do,
+   * no-op. In dev with DEFAULT_WORKSPACE_ID set, join that (legacy convenience).
+   * Otherwise create a personal workspace they own.
+   */
+  static async ensureOwnWorkspace(db: Database, user: UserRow): Promise<void> {
+    const existing = await db.query.workspaceMembers.findFirst({
+      where: eq(workspaceMembers.userId, user.id),
+    });
+    if (existing) return;
+
+    const defaultId = process.env['DEFAULT_WORKSPACE_ID'];
+    if (defaultId && process.env['NODE_ENV'] !== 'production') {
+      const ws = await db.query.workspaces.findFirst({ where: eq(workspaces.id, defaultId) });
+      if (ws) {
+        await db
+          .insert(workspaceMembers)
+          .values({ workspaceId: defaultId, userId: user.id, role: 'member', joinedAt: new Date() })
+          .onConflictDoNothing();
+        return;
+      }
+    }
+
+    const firstName = user.displayName.split(' ')[0] || user.displayName;
+    await db.transaction(async (tx) => {
+      const [ws] = await tx.insert(workspaces).values({ name: `${firstName}'s Home` }).returning();
+      if (!ws) throw new Error('workspace insert returned no row');
+      await tx.insert(workspaceMembers).values({
+        workspaceId: ws.id,
+        userId: user.id,
+        role: 'owner',
+        joinedAt: new Date(),
+      });
+    });
+  }
+
   /**
    * Just-in-time provisioning: look up the Clerk profile by id, upsert it into
    * the users table, and ensure default workspace membership. Returns the row,
@@ -110,7 +126,7 @@ export class UserProvisioningService {
       ),
       avatarUrl: clerkUser.imageUrl ?? null,
     });
-    await ensureDefaultMembership(db, user.id);
+    await UserProvisioningService.ensureOwnWorkspace(db, user);
     return user;
   }
 
@@ -127,6 +143,6 @@ export class UserProvisioningService {
       displayName: displayNameFrom(data.first_name, data.last_name, data.username, email),
       avatarUrl: data.image_url ?? null,
     });
-    await ensureDefaultMembership(db, user.id);
+    await UserProvisioningService.ensureOwnWorkspace(db, user);
   }
 }
