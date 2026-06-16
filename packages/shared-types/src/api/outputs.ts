@@ -2,6 +2,7 @@ import type { Project } from '../entities/project';
 import type { Task, TaskNode } from '../entities/task';
 import type { Person } from '../entities/person';
 import type { HouseholdItem } from '../entities/household';
+import type { InboxItem } from '../entities/inbox';
 import type { WorkspaceMember } from '../entities/workspace';
 import type { User, UserRef } from '../entities/user';
 import type { ActivityEvent } from '../entities/activity';
@@ -61,6 +62,12 @@ export interface PersonWithProjects extends Person {
 export interface HouseholdItemListItem extends HouseholdItem {
   addedByUser?: UserRef | null;
   lastPurchasedByUser?: UserRef | null;
+}
+
+// ── Inbox ─────────────────────────────────────────────────────────────────────
+
+export interface InboxItemListItem extends InboxItem {
+  capturedByUser?: UserRef | null;
 }
 
 // ── Search ────────────────────────────────────────────────────────────────────

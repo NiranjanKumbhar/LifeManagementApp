@@ -6,8 +6,10 @@ import type { tasks } from '../db/schema';
 import { forbidden, internal, notFound, ok, type AppError, type Result } from '../utils/errors';
 import { assertWorkspaceMembership } from '../middleware/workspace';
 import { logActivity } from './activity';
+import { resolveUsers } from './resolve-users';
 import { TaskService } from './task.service';
 import type { assignInboxSchema, captureInboxSchema, listInboxSchema } from '../utils/validation';
+import type { InboxItemListItem } from '@lifesync/shared-types';
 
 type InboxRow = typeof inboxItems.$inferSelect;
 type TaskRow = typeof tasks.$inferSelect;
@@ -71,7 +73,7 @@ export class InboxService {
     db: Database,
     userId: string,
     input: ListInput,
-  ): Promise<Result<InboxRow[], AppError>> {
+  ): Promise<Result<InboxItemListItem[], AppError>> {
     const rows = await db
       .select()
       .from(inboxItems)
@@ -83,7 +85,8 @@ export class InboxService {
         ),
       )
       .orderBy(desc(inboxItems.createdAt));
-    return ok(rows);
+    const userMap = await resolveUsers(db, rows.map((r) => r.capturedBy));
+    return ok(rows.map((r) => ({ ...r, capturedByUser: userMap.get(r.capturedBy) ?? null })));
   }
 
   /**

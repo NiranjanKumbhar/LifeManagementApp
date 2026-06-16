@@ -3,7 +3,12 @@ import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { InboxItemRow } from './InboxItemRow';
 
-const item = { id: 'i1', content: 'Order cake', createdAt: new Date() };
+const item = {
+  id: 'i1',
+  content: 'Order cake',
+  createdAt: new Date(),
+  capturedByUser: { id: 'u1', displayName: 'Jordan Lee', avatarUrl: null },
+};
 const projects = [{ id: 'p1', title: 'Anniversary' }];
 
 describe('InboxItemRow', () => {
@@ -12,6 +17,13 @@ describe('InboxItemRow', () => {
       <InboxItemRow item={item} projects={projects} onAssign={() => {}} onDismiss={() => {}} />,
     );
     expect(screen.getByText('Order cake')).toBeInTheDocument();
+  });
+
+  it('renders who captured the item', () => {
+    render(
+      <InboxItemRow item={item} projects={projects} onAssign={() => {}} onDismiss={() => {}} />,
+    );
+    expect(screen.getByText('Jordan')).toBeInTheDocument();
   });
 
   it('assigns to the chosen project', async () => {

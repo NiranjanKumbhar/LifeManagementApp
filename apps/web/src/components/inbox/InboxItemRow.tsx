@@ -1,4 +1,5 @@
-import { Button, formatRelativeDate } from '@lifesync/ui';
+import { Button, UserChip, formatRelativeDate } from '@lifesync/ui';
+import type { UserRef } from '@lifesync/shared-types';
 import styles from './InboxItemRow.module.css';
 
 export interface InboxRowProject {
@@ -10,6 +11,7 @@ export interface InboxRowItem {
   id: string;
   content: string;
   createdAt: string | Date;
+  capturedByUser?: UserRef | null;
 }
 
 export interface InboxItemRowProps {
@@ -26,6 +28,7 @@ export function InboxItemRow({ item, projects, onAssign, onDismiss, busy = false
       <div className={styles.main}>
         <p className={styles.content}>{item.content}</p>
         <span className={styles.time}>Captured {formatRelativeDate(item.createdAt)}</span>
+        <UserChip user={item.capturedByUser ?? null} label="Captured by" />
       </div>
       <div className={styles.actions}>
         <select
