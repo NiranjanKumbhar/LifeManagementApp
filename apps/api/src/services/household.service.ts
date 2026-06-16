@@ -23,6 +23,7 @@ const ENTITY = 'household_item';
 export class HouseholdService {
   static async list(
     db: Database,
+    userId: string,
     input: ListInput,
   ): Promise<Result<HouseholdItemListItem[], AppError>> {
     const conditions = [eq(householdItems.workspaceId, input.workspaceId)];
@@ -35,9 +36,11 @@ export class HouseholdService {
       .where(and(...conditions))
       .orderBy(asc(householdItems.category), asc(householdItems.sortOrder));
 
-    const userMap = await resolveUsers(db, rows.flatMap((r) => [r.addedBy, r.lastPurchasedBy]));
+    const visible = rows.filter((r) => r.visibility !== 'private' || r.addedBy === userId);
+
+    const userMap = await resolveUsers(db, visible.flatMap((r) => [r.addedBy, r.lastPurchasedBy]));
     return ok(
-      rows.map((r) => ({
+      visible.map((r) => ({
         ...r,
         addedByUser: userMap.get(r.addedBy ?? '') ?? null,
         lastPurchasedByUser: userMap.get(r.lastPurchasedBy ?? '') ?? null,
@@ -63,6 +66,7 @@ export class HouseholdService {
             unit: input.unit ?? null,
             autoReplenish: input.autoReplenish ?? false,
             addedBy: userId,
+            visibility: input.visibility ?? 'shared',
           })
           .returning();
         if (!row) throw new Error('insert returned no row');
@@ -93,6 +97,9 @@ export class HouseholdService {
     if (!(await assertWorkspaceMembership(db, userId, existing.workspaceId))) {
       return { success: false, error: notFound('Item not found') };
     }
+    if (existing.visibility === 'private' && existing.addedBy !== userId) {
+      return { success: false, error: notFound('Item not found') };
+    }
 
     const patch: Partial<ItemRow> = { updatedAt: new Date() };
     if (input.name !== undefined) patch.name = input.name;
@@ -116,6 +123,9 @@ export class HouseholdService {
     if (!(await assertWorkspaceMembership(db, userId, existing.workspaceId))) {
       return { success: false, error: notFound('Item not found') };
     }
+    if (existing.visibility === 'private' && existing.addedBy !== userId) {
+      return { success: false, error: notFound('Item not found') };
+    }
     return this.applyUpdate(db, userId, existing, {
       status: 'stocked',
       lastPurchased: new Date(),
@@ -133,6 +143,9 @@ export class HouseholdService {
     const existing = await db.query.householdItems.findFirst({ where: eq(householdItems.id, id) });
     if (!existing) return { success: false, error: notFound('Item not found') };
     if (!(await assertWorkspaceMembership(db, userId, existing.workspaceId))) {
+      return { success: false, error: notFound('Item not found') };
+    }
+    if (existing.visibility === 'private' && existing.addedBy !== userId) {
       return { success: false, error: notFound('Item not found') };
     }
     return this.applyUpdate(db, userId, existing, { status: 'out', updatedAt: new Date() });

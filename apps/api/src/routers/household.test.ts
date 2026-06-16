@@ -190,3 +190,27 @@ describe('householdRouter — member flows', () => {
     expect(purchased.status).toBe('stocked');
   });
 });
+
+describe('householdRouter — item privacy', () => {
+  it('hides a private item from other members and blocks their edits', async () => {
+    const alex = callerFor(ctx.db, world.alex.clerkId);
+    const jordan = callerFor(ctx.db, world.jordan.clerkId);
+    const secret = await alex.household.add({
+      workspaceId: world.workspace.id,
+      name: 'Surprise gift',
+      visibility: 'private',
+    });
+    await alex.household.add({ workspaceId: world.workspace.id, name: 'Milk' });
+
+    const jordanList = await jordan.household.list({ workspaceId: world.workspace.id });
+    expect(jordanList.map((i) => i.name)).toContain('Milk');
+    expect(jordanList.map((i) => i.name)).not.toContain('Surprise gift');
+
+    const alexList = await alex.household.list({ workspaceId: world.workspace.id });
+    expect(alexList.map((i) => i.name)).toEqual(expect.arrayContaining(['Milk', 'Surprise gift']));
+
+    await expect(
+      jordan.household.update({ id: secret.id, name: 'peek' }),
+    ).rejects.toMatchObject({ code: 'NOT_FOUND' });
+  });
+});
