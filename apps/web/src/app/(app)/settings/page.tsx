@@ -3,6 +3,7 @@
 import { EmptyState, LoadingSpinner, PageHeader, PageShell } from '@lifesync/ui';
 import { trpc } from '@/lib/trpc';
 import { useWorkspaceId } from '@/lib/hooks/useWorkspaceId';
+import { useWorkspace } from '@/lib/workspace-context';
 import { AppearanceSettings } from '@/components/settings/AppearanceSettings';
 import { NavSettings } from '@/components/settings/NavSettings';
 import { ProfileSettings } from '@/components/settings/ProfileSettings';
@@ -13,6 +14,7 @@ import styles from './settings.module.css';
 export default function SettingsPage() {
   const workspaceId = useWorkspaceId();
   const enabled = Boolean(workspaceId);
+  const { role } = useWorkspace();
 
   const meQuery = trpc.user.me.useQuery();
   const workspaceQuery = trpc.workspace.get.useQuery({ id: workspaceId ?? '' }, { enabled });
@@ -46,6 +48,7 @@ export default function SettingsPage() {
         workspace={workspaceQuery.data}
         members={membersQuery.data ?? []}
         currentUserId={me.id}
+        role={role}
       />
     </PageShell>
   );

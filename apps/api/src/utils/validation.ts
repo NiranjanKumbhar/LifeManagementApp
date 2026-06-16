@@ -95,8 +95,15 @@ export const workspaceIdSchema = z.object({ workspaceId: uuidSchema });
 // ── Workspace ───────────────────────────────────────────────────────────────
 export const workspaceGetSchema = z.object({ id: uuidSchema });
 export const createWorkspaceSchema = z.object({ name: z.string().min(1).max(200) });
-export const inviteSchema = z.object({ workspaceId: uuidSchema, email: z.string().email() });
 export const membersSchema = z.object({ workspaceId: uuidSchema });
+export const createInviteSchema = z.object({
+  workspaceId: uuidSchema,
+  email: z.string().email().optional(),
+});
+export const acceptInviteSchema = z.object({ token: z.string().min(1) });
+export const invitePreviewSchema = z.object({ token: z.string().min(1) });
+export const inviteIdSchema = z.object({ id: uuidSchema });
+export const listInvitesSchema = z.object({ workspaceId: uuidSchema });
 
 // ── Task ────────────────────────────────────────────────────────────────────
 export const listTasksSchema = z.object({ projectId: uuidSchema });
@@ -150,7 +157,10 @@ export const createReminderSchema = z.object({
   message: z.string().max(1000).optional(),
 });
 
-export const snoozeReminderSchema = z.object({ id: uuidSchema, snoozeUntil: z.string().datetime() });
+export const snoozeReminderSchema = z.object({
+  id: uuidSchema,
+  snoozeUntil: z.string().datetime(),
+});
 
 // ── Household ───────────────────────────────────────────────────────────────
 export const stockStatusSchema = z.enum(['stocked', 'low', 'out', 'on_list']);
@@ -246,7 +256,10 @@ export const uploadResourceSchema = z.object({
 });
 
 // ── Template ────────────────────────────────────────────────────────────────
-const templateTaskSchema = z.object({ title: z.string().min(1), description: z.string().optional() });
+const templateTaskSchema = z.object({
+  title: z.string().min(1),
+  description: z.string().optional(),
+});
 
 export const listTemplatesSchema = z.object({
   workspaceId: uuidSchema,
@@ -295,9 +308,7 @@ export const updateProfileSchema = z.object({
 export const notificationPreferencesSchema = z.object({
   quietHours: z.object({ start: z.string(), end: z.string() }).optional(),
   digestMode: z.enum(['none', 'daily', 'weekly']).optional(),
-  channels: z
-    .object({ push: z.boolean(), email: z.boolean(), inApp: z.boolean() })
-    .optional(),
+  channels: z.object({ push: z.boolean(), email: z.boolean(), inApp: z.boolean() }).optional(),
 });
 
 export const updateNotificationPrefsSchema = z.object({

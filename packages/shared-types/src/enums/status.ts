@@ -16,6 +16,6 @@ export type MemberRole = 'owner' | 'member';
 
 export type DigestMode = 'none' | 'daily' | 'weekly';
 
-export type InviteStatus = 'pending' | 'accepted' | 'expired';
+export type InviteStatus = 'pending' | 'accepted' | 'revoked' | 'expired';
 
 export type InboxStatus = 'pending' | 'triaged' | 'dismissed';

@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation';
 import { cn } from '@lifesync/ui';
 import { navItems } from './nav-items';
 import { AccountControl } from './AccountControl';
+import { WorkspaceSwitcher } from './WorkspaceSwitcher';
 import styles from './NavigationSidebar.module.css';
 
 function isActive(pathname: string, href: string): boolean {
@@ -20,6 +21,8 @@ export function NavigationSidebar() {
         <span className={styles.brandMark} aria-hidden="true" />
         <span className={styles.brandName}>LifeSync</span>
       </Link>
+
+      <WorkspaceSwitcher />
 
       <nav className={styles.nav}>
         {navItems.map((item) => {

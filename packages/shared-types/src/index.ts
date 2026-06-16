@@ -18,7 +18,7 @@ export type {
 } from './enums/status';
 
 // ── Entities ──────────────────────────────────────────────────────────────────
-export type { Workspace, WorkspaceMember } from './entities/workspace';
+export type { Workspace, WorkspaceMember, WorkspaceInvite } from './entities/workspace';
 export type {
   User,
   UserRef,
@@ -80,7 +80,6 @@ export type {
 
 // ── API — Outputs ─────────────────────────────────────────────────────────────
 export type {
-  WorkspaceInvite,
   MemberWithUser,
   ProjectListItem,
   ProjectWithTasks,

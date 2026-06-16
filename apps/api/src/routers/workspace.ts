@@ -1,11 +1,14 @@
-import { TRPCError } from '@trpc/server';
 import { router, unwrap } from '../trpc';
 import { protectedProcedure } from '../middleware/auth';
 import { workspaceProcedure } from '../middleware/workspace';
 import { WorkspaceService } from '../services/workspace.service';
 import {
+  acceptInviteSchema,
+  createInviteSchema,
   createWorkspaceSchema,
-  inviteSchema,
+  inviteIdSchema,
+  invitePreviewSchema,
+  listInvitesSchema,
   membersSchema,
   workspaceGetSchema,
 } from '../utils/validation';
@@ -23,11 +26,23 @@ export const workspaceRouter = router({
     return unwrap(await WorkspaceService.members(ctx.db, input.workspaceId));
   }),
 
-  // Partner invites are delegated to Clerk Organizations and are not yet wired up.
-  invite: workspaceProcedure.input(inviteSchema).mutation(() => {
-    throw new TRPCError({
-      code: 'NOT_IMPLEMENTED',
-      message: 'Workspace invites require Clerk Organizations integration (pending)',
-    });
+  mine: protectedProcedure.query(async ({ ctx }) => {
+    return unwrap(await WorkspaceService.mine(ctx.db, ctx.userId));
+  }),
+
+  createInvite: workspaceProcedure.input(createInviteSchema).mutation(async ({ ctx, input }) => {
+    return unwrap(await WorkspaceService.createInvite(ctx.db, ctx.userId, input));
+  }),
+  invitePreview: protectedProcedure.input(invitePreviewSchema).query(async ({ ctx, input }) => {
+    return unwrap(await WorkspaceService.invitePreview(ctx.db, ctx.userId, input.token));
+  }),
+  acceptInvite: protectedProcedure.input(acceptInviteSchema).mutation(async ({ ctx, input }) => {
+    return unwrap(await WorkspaceService.acceptInvite(ctx.db, ctx.userId, input.token));
+  }),
+  revokeInvite: protectedProcedure.input(inviteIdSchema).mutation(async ({ ctx, input }) => {
+    return unwrap(await WorkspaceService.revokeInvite(ctx.db, ctx.userId, input.id));
+  }),
+  listInvites: workspaceProcedure.input(listInvitesSchema).query(async ({ ctx, input }) => {
+    return unwrap(await WorkspaceService.listInvites(ctx.db, ctx.userId, input.workspaceId));
   }),
 });
