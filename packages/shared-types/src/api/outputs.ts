@@ -2,8 +2,9 @@ import type { Project } from '../entities/project';
 import type { Task, TaskNode } from '../entities/task';
 import type { Person } from '../entities/person';
 import type { HouseholdItem } from '../entities/household';
+import type { InboxItem } from '../entities/inbox';
 import type { WorkspaceMember } from '../entities/workspace';
-import type { User } from '../entities/user';
+import type { User, UserRef } from '../entities/user';
 import type { ActivityEvent } from '../entities/activity';
 import type { UrgencyLevel } from '../enums/urgency';
 import type { InviteStatus } from '../enums/status';
@@ -31,10 +32,16 @@ export interface MemberWithUser extends WorkspaceMember {
 export interface ProjectListItem extends Project {
   taskCount: number;
   completedCount: number;
+  createdByUser?: UserRef | null;
+  ownerUser?: UserRef | null;
+  completedByUser?: UserRef | null;
 }
 
 export interface ProjectWithTasks extends Project {
   tasks: TaskNode[];
+  createdByUser?: UserRef | null;
+  ownerUser?: UserRef | null;
+  completedByUser?: UserRef | null;
 }
 
 export interface ProjectWithUrgency {
@@ -48,6 +55,19 @@ export interface ProjectWithUrgency {
 
 export interface PersonWithProjects extends Person {
   projects: Project[];
+}
+
+// ── Household ─────────────────────────────────────────────────────────────────
+
+export interface HouseholdItemListItem extends HouseholdItem {
+  addedByUser?: UserRef | null;
+  lastPurchasedByUser?: UserRef | null;
+}
+
+// ── Inbox ─────────────────────────────────────────────────────────────────────
+
+export interface InboxItemListItem extends InboxItem {
+  capturedByUser?: UserRef | null;
 }
 
 // ── Search ────────────────────────────────────────────────────────────────────

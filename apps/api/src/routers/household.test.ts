@@ -114,16 +114,38 @@ describe('householdRouter — member flows', () => {
     expect(onList.map((i) => i.name)).toEqual(['Milk']);
   });
 
-  it('purchase marks an item stocked and records lastPurchased', async () => {
+  it('purchase marks an item stocked and records lastPurchased + lastPurchasedBy', async () => {
     const caller = callerFor(ctx.db, world.alex.clerkId);
     const item = await caller.household.add(
       createHouseholdInput({ workspaceId: world.workspace.id, name: 'Eggs', status: 'out' }),
     );
     expect(item.lastPurchased).toBeNull();
+    expect(item.lastPurchasedBy).toBeNull();
 
     const purchased = await caller.household.purchase({ id: item.id });
     expect(purchased.status).toBe('stocked');
     expect(purchased.lastPurchased).not.toBeNull();
+    expect(purchased.lastPurchasedBy).toBe(world.alex.id);
+  });
+
+  it('list resolves addedByUser and lastPurchasedByUser', async () => {
+    const alex = callerFor(ctx.db, world.alex.clerkId);
+    const item = await alex.household.add(
+      createHouseholdInput({ workspaceId: world.workspace.id, name: 'Coffee', status: 'out' }),
+    );
+
+    const beforePurchase = await alex.household.list({ workspaceId: world.workspace.id });
+    const beforeItem = beforePurchase.find((i) => i.id === item.id);
+    expect(beforeItem?.addedByUser).toMatchObject({ id: world.alex.id });
+    expect(beforeItem?.lastPurchasedByUser).toBeNull();
+
+    const jordan = callerFor(ctx.db, world.jordan.clerkId);
+    await jordan.household.purchase({ id: item.id });
+
+    const afterPurchase = await alex.household.list({ workspaceId: world.workspace.id });
+    const afterItem = afterPurchase.find((i) => i.id === item.id);
+    expect(afterItem?.addedByUser).toMatchObject({ id: world.alex.id });
+    expect(afterItem?.lastPurchasedByUser).toMatchObject({ id: world.jordan.id });
   });
 
   it('restock flags an item as out (back on the shopping list)', async () => {

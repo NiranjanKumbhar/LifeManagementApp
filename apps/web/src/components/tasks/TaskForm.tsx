@@ -4,7 +4,7 @@ import { useState } from 'react';
 import type { inferRouterOutputs } from '@trpc/server';
 import type { AppRouter } from 'api';
 import type { Priority } from '@lifesync/shared-types';
-import { Button, Input, Modal, useToast } from '@lifesync/ui';
+import { Button, Input, Modal, UserChip, useToast } from '@lifesync/ui';
 import { trpc } from '@/lib/trpc';
 import styles from './TaskForm.module.css';
 
@@ -103,6 +103,12 @@ export function TaskForm({ isOpen, onClose, task, projectId, workspaceId }: Task
       }
     >
       <div className={styles.form}>
+        <div className={styles.attribution}>
+          <UserChip user={task.createdByUser ?? null} label="Added by" />
+          {task.status === 'completed' ? (
+            <UserChip user={task.completedByUser ?? null} label="Completed by" />
+          ) : null}
+        </div>
         <Input label="Title" value={title} onChange={setTitle} required />
         <Input as="textarea" label="Description" value={description} onChange={setDescription} />
         <Input type="date" label="Due date" value={dueDate} onChange={setDueDate} />

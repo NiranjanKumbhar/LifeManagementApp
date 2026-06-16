@@ -88,6 +88,21 @@ describe('InboxService.list', () => {
     expect(asOwner).toHaveLength(2);
   });
 
+  it('enriches items with the capturing user', async () => {
+    await insertInboxItem(ctx.db, {
+      workspaceId: world.workspace.id,
+      capturedBy: world.alex.id,
+      ownerId: world.alex.id,
+      content: 'Shared note',
+      visibility: 'shared',
+    });
+
+    const items = expectOk(
+      await InboxService.list(ctx.db, world.alex.id, { workspaceId: world.workspace.id }),
+    );
+    expect(items[0]!.capturedByUser).toMatchObject({ id: world.alex.id });
+  });
+
   it('excludes triaged items by default', async () => {
     await insertInboxItem(ctx.db, {
       workspaceId: world.workspace.id,

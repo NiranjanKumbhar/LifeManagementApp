@@ -13,7 +13,10 @@ const item = {
   unit: 'bunch',
   autoReplenish: false,
   lastPurchased: null,
-  addedBy: null,
+  addedBy: 'u1',
+  lastPurchasedBy: null,
+  addedByUser: { id: 'u1', displayName: 'Jordan Lee', avatarUrl: null },
+  lastPurchasedByUser: null,
   sortOrder: 0,
   createdAt: '2026-06-01',
   updatedAt: '2026-06-01',
@@ -52,5 +55,25 @@ describe('StockItemRow', () => {
       <StockItemRow item={item} tab="shopping" onPrimary={() => {}} onSetStatus={() => {}} onEdit={() => {}} />,
     );
     expect(screen.getByText('2 · bunch')).toBeInTheDocument();
+  });
+
+  it('shows who added the item', () => {
+    render(
+      <StockItemRow item={item} tab="shopping" onPrimary={() => {}} onSetStatus={() => {}} onEdit={() => {}} />,
+    );
+    expect(screen.getByText('Jordan')).toBeInTheDocument();
+  });
+
+  it('shows who marked a stocked item as "Got it"', () => {
+    const stocked = {
+      ...item,
+      status: 'stocked' as const,
+      lastPurchasedBy: 'u2',
+      lastPurchasedByUser: { id: 'u2', displayName: 'Alex Rivera', avatarUrl: null },
+    };
+    render(
+      <StockItemRow item={stocked} tab="inventory" onPrimary={() => {}} onSetStatus={() => {}} onEdit={() => {}} />,
+    );
+    expect(screen.getByText('Alex')).toBeInTheDocument();
   });
 });

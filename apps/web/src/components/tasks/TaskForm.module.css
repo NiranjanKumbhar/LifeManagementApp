@@ -3,6 +3,10 @@
   flex-direction: column;
   gap: var(--ls-space-4);
 }
+.attribution {
+  display: flex;
+  gap: var(--ls-space-3);
+}
 .fieldset {
   border: 1px solid var(--ls-surface-border);
   border-radius: var(--ls-radius-md);

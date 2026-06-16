@@ -40,6 +40,7 @@ export const tasks = pgTable(
     recurrenceRule: jsonb('recurrence_rule').$type<Record<string, unknown>>(),
     completedAt: timestamp('completed_at', { withTimezone: true }),
     completedBy: uuid('completed_by').references(() => users.id),
+    createdBy: uuid('created_by').references(() => users.id),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
   },

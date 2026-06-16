@@ -94,7 +94,7 @@ export default function ProjectsPage() {
                     project={{
                       title: p.title,
                       dueDate: p.dueDate,
-                      ownerName: null,
+                      createdByUser: p.createdByUser ?? null,
                       taskCount: p.taskCount,
                       completedCount: p.completedCount,
                     }}

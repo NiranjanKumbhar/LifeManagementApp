@@ -1,5 +1,7 @@
+import type { UserRef } from '@lifesync/shared-types';
 import { cn } from '../../utils/cn';
 import { formatRelativeDate } from '../../utils/format-date';
+import { UserChip } from '../UserChip/UserChip';
 import styles from './TaskItem.module.css';
 
 export interface TaskItemData {
@@ -7,7 +9,8 @@ export interface TaskItemData {
   title: string;
   status: string;
   dueDate: string | null;
-  ownerName: string | null;
+  createdByUser: UserRef | null;
+  completedByUser: UserRef | null;
 }
 
 export interface TaskItemProps {
@@ -40,7 +43,10 @@ export function TaskItem({ task, depth, onToggleComplete, onEdit }: TaskItemProp
         <span className={cn(styles.title, done && styles.done)}>{task.title}</span>
       )}
       {task.dueDate ? <span className={styles.due}>{formatRelativeDate(task.dueDate)}</span> : null}
-      {task.ownerName ? <span className={styles.owner}>{task.ownerName}</span> : null}
+      {task.createdByUser ? <UserChip user={task.createdByUser} /> : null}
+      {task.status === 'completed' && task.completedByUser ? (
+        <UserChip user={task.completedByUser} label="Done by" />
+      ) : null}
     </div>
   );
 }

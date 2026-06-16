@@ -1,6 +1,7 @@
 import type { TaskStatus } from '../enums/status';
 import type { Priority } from '../enums/priority';
 import type { RecurrenceRule } from './project';
+import type { UserRef } from './user';
 
 export interface Task {
   id: string;
@@ -19,6 +20,7 @@ export interface Task {
   recurrenceRule: RecurrenceRule | null;
   completedAt: Date | null;
   completedBy: string | null;
+  createdBy: string | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -26,4 +28,7 @@ export interface Task {
 // Recursive tree node for project.get responses
 export interface TaskNode extends Task {
   children: TaskNode[];
+  createdByUser?: UserRef | null;
+  completedByUser?: UserRef | null;
+  ownerUser?: UserRef | null;
 }

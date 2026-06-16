@@ -120,6 +120,20 @@ describe('ProjectService.create', () => {
     });
   });
 
+  it('records the creator and resolves it on list', async () => {
+    await ProjectService.create(
+      ctx.db,
+      world.alex.id,
+      createProjectInput({ workspaceId: world.workspace.id, title: 'Created by Alex' }),
+    );
+
+    const listed = expectOk(
+      await ProjectService.list(ctx.db, world.alex.id, { workspaceId: world.workspace.id }),
+    );
+    const found = listed.find((p) => p.title === 'Created by Alex');
+    expect(found?.createdByUser?.id).toBe(world.alex.id);
+  });
+
   it('rejects creating in a workspace the user does not belong to', async () => {
     // Membership for create is enforced by the router middleware, but the
     // service still must not allow templates from other workspaces, etc.
@@ -248,6 +262,19 @@ describe('ProjectService.complete / archive', () => {
     });
     const archived = expectOk(await ProjectService.archive(ctx.db, world.alex.id, project.id));
     expect(archived.status).toBe('archived');
+  });
+
+  it('records who completed the project and exposes it on get', async () => {
+    const project = await insertProject(ctx.db, {
+      workspaceId: world.workspace.id,
+      ownerId: world.alex.id,
+      visibility: 'shared',
+    });
+    const completed = expectOk(await ProjectService.complete(ctx.db, world.jordan.id, project.id));
+    expect(completed.completedBy).toBe(world.jordan.id);
+
+    const fetched = expectOk(await ProjectService.get(ctx.db, world.alex.id, project.id));
+    expect(fetched.completedByUser?.id).toBe(world.jordan.id);
   });
 });
 

@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import type { inferRouterOutputs } from '@trpc/server';
 import type { AppRouter } from 'api';
-import { Button, EmptyState, LoadingSpinner, PageHeader, PageShell, TaskItem } from '@lifesync/ui';
+import { Button, EmptyState, LoadingSpinner, PageHeader, PageShell, TaskItem, UserChip } from '@lifesync/ui';
 import { formatRelativeDate } from '@lifesync/ui';
 import { trpc } from '@/lib/trpc';
 import { useWorkspaceId } from '@/lib/hooks/useWorkspaceId';
@@ -136,6 +136,10 @@ export default function ProjectDetailPage() {
         {project.dueDate ? (
           <span className={styles.metaPill}>{formatRelativeDate(project.dueDate)}</span>
         ) : null}
+        <UserChip user={project.createdByUser ?? null} label="Added by" />
+        {project.status === 'completed' ? (
+          <UserChip user={project.completedByUser ?? null} label="Completed by" />
+        ) : null}
       </div>
 
       <div
@@ -178,7 +182,8 @@ export default function ProjectDetailPage() {
                 title: task.title,
                 status: task.status,
                 dueDate: task.dueDate,
-                ownerName: null,
+                createdByUser: task.createdByUser ?? null,
+                completedByUser: task.completedByUser ?? null,
               }}
               depth={0}
               onToggleComplete={() => toggleTask(task)}
@@ -192,7 +197,8 @@ export default function ProjectDetailPage() {
                   title: child.title,
                   status: child.status,
                   dueDate: child.dueDate,
-                  ownerName: null,
+                  createdByUser: child.createdByUser ?? null,
+                  completedByUser: child.completedByUser ?? null,
                 }}
                 depth={1}
                 onToggleComplete={() => toggleTask(child)}

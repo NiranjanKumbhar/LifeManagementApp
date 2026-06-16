@@ -1,5 +1,11 @@
 import type { DigestMode } from '../enums/status';
 
+export interface UserRef {
+  id: string;
+  displayName: string;
+  avatarUrl: string | null;
+}
+
 export interface NotificationChannels {
   push: boolean;
   email: boolean;

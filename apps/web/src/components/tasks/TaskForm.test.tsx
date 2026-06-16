@@ -42,6 +42,8 @@ const task = {
   priority: 'medium',
   ownerId: 'u1',
   children: [],
+  createdByUser: { id: 'u1', displayName: 'Alex', avatarUrl: null },
+  completedByUser: null,
 };
 
 function renderForm() {

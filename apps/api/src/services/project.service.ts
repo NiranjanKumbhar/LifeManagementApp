@@ -1,7 +1,8 @@
 import { and, asc, desc, eq, gte, inArray, isNotNull, ne, or, sql } from 'drizzle-orm';
 import type { z } from 'zod';
-import type { ProjectListItem } from '@lifesync/shared-types';
+import type { ProjectListItem, UserRef } from '@lifesync/shared-types';
 import type { Database } from '../db/client';
+import { resolveUsers } from './resolve-users';
 import {
   activityEvents,
   householdItems,
@@ -34,10 +35,16 @@ type TaskRow = typeof tasks.$inferSelect;
 
 export interface TaskTreeNode extends TaskRow {
   children: TaskTreeNode[];
+  createdByUser?: UserRef | null;
+  completedByUser?: UserRef | null;
+  ownerUser?: UserRef | null;
 }
 
 export interface ProjectWithTasks extends ProjectRow {
   tasks: TaskTreeNode[];
+  createdByUser?: UserRef | null;
+  ownerUser?: UserRef | null;
+  completedByUser?: UserRef | null;
 }
 
 export interface DashboardResult {
@@ -143,8 +150,24 @@ export class ProjectService {
       .groupBy(projects.id)
       .orderBy(sql`${projects.dueDate} asc nulls last`, desc(projects.createdAt));
 
+    const userMap = await resolveUsers(
+      db,
+      rows.flatMap((r) => [r.project.createdBy, r.project.ownerId, r.project.completedBy]),
+    );
     // cast reconciles Drizzle's inferred recurrenceRule shape with shared-types RecurrenceRule
-    return ok(rows.map((r) => ({ ...r.project, taskCount: r.taskCount, completedCount: r.completedCount } as ProjectListItem)));
+    return ok(
+      rows.map(
+        (r) =>
+          ({
+            ...r.project,
+            taskCount: r.taskCount,
+            completedCount: r.completedCount,
+            createdByUser: userMap.get(r.project.createdBy ?? '') ?? null,
+            ownerUser: userMap.get(r.project.ownerId ?? '') ?? null,
+            completedByUser: userMap.get(r.project.completedBy ?? '') ?? null,
+          }) as ProjectListItem,
+      ),
+    );
   }
 
   /** Get a single project with its nested task tree. */
@@ -172,7 +195,30 @@ export class ProjectService {
       return { success: false, error: notFound('Project not found') };
     }
 
-    return ok({ ...project, tasks: buildTaskTree(taskRows) });
+    const allIds = [
+      project.createdBy,
+      project.ownerId,
+      project.completedBy,
+      ...taskRows.flatMap((r) => [r.createdBy, r.completedBy, r.ownerId]),
+    ];
+    const userMap = await resolveUsers(db, allIds);
+    const attach = (nodes: TaskTreeNode[]): void => {
+      for (const n of nodes) {
+        n.createdByUser = userMap.get(n.createdBy ?? '') ?? null;
+        n.completedByUser = userMap.get(n.completedBy ?? '') ?? null;
+        n.ownerUser = userMap.get(n.ownerId ?? '') ?? null;
+        attach(n.children);
+      }
+    };
+    const tree = buildTaskTree(taskRows);
+    attach(tree);
+    return ok({
+      ...project,
+      tasks: tree,
+      createdByUser: userMap.get(project.createdBy ?? '') ?? null,
+      ownerUser: userMap.get(project.ownerId ?? '') ?? null,
+      completedByUser: userMap.get(project.completedBy ?? '') ?? null,
+    });
   }
 
   /**
@@ -232,6 +278,7 @@ export class ProjectService {
             description: input.description ?? null,
             priority,
             ownerId: input.ownerId ?? userId,
+            createdBy: userId,
             visibility: input.visibility ?? 'shared',
             dueDate,
             earliestActionDate,
@@ -392,6 +439,7 @@ export class ProjectService {
           .set({
             status,
             completedAt: status === 'completed' ? new Date() : existing.completedAt,
+            completedBy: status === 'completed' ? userId : existing.completedBy,
             updatedAt: new Date(),
           })
           .where(eq(projects.id, id))

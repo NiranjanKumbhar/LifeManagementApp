@@ -1,0 +1,17 @@
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ls-space-1);
+  font-size: var(--ls-text-xs);
+  color: var(--ls-text-secondary);
+}
+.label {
+  color: var(--ls-text-tertiary);
+}
+.name {
+  white-space: nowrap;
+}
+.empty {
+  font-size: var(--ls-text-xs);
+  color: var(--ls-text-tertiary);
+}

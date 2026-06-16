@@ -100,6 +100,8 @@ export interface Project {
   status: ProjectStatus;
   priority: Priority;
   ownerId: string | null;
+  createdBy: string | null;
+  completedBy: string | null;
   visibility: Visibility;
   dueDate: string | null;           // ISO date string (YYYY-MM-DD)
   earliestActionDate: string | null; // ISO date string

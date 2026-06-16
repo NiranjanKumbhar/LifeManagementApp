@@ -63,6 +63,8 @@ export const projects = pgTable(
     status: text('status').notNull().default('active').$type<ProjectStatus>(),
     priority: text('priority').notNull().default('medium').$type<Priority>(),
     ownerId: uuid('owner_id').references(() => users.id),
+    createdBy: uuid('created_by').references(() => users.id),
+    completedBy: uuid('completed_by').references(() => users.id),
     visibility: text('visibility').notNull().default('shared').$type<Visibility>(),
     dueDate: date('due_date'),
     earliestActionDate: date('earliest_action_date'),

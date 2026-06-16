@@ -21,6 +21,7 @@ export type {
 export type { Workspace, WorkspaceMember } from './entities/workspace';
 export type {
   User,
+  UserRef,
   NotificationPreferences,
   NotificationChannels,
   QuietHours,
@@ -84,6 +85,8 @@ export type {
   ProjectListItem,
   ProjectWithTasks,
   ProjectWithUrgency,
+  HouseholdItemListItem,
+  InboxItemListItem,
   PersonWithProjects,
   SearchResult,
   ActivityFeedPage,
