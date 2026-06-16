@@ -97,6 +97,14 @@ export const workspaceGetSchema = z.object({ id: uuidSchema });
 export const createWorkspaceSchema = z.object({ name: z.string().min(1).max(200) });
 export const inviteSchema = z.object({ workspaceId: uuidSchema, email: z.string().email() });
 export const membersSchema = z.object({ workspaceId: uuidSchema });
+export const createInviteSchema = z.object({
+  workspaceId: uuidSchema,
+  email: z.string().email().optional(),
+});
+export const acceptInviteSchema = z.object({ token: z.string().min(1) });
+export const invitePreviewSchema = z.object({ token: z.string().min(1) });
+export const inviteIdSchema = z.object({ id: uuidSchema });
+export const listInvitesSchema = z.object({ workspaceId: uuidSchema });
 
 // ── Task ────────────────────────────────────────────────────────────────────
 export const listTasksSchema = z.object({ projectId: uuidSchema });

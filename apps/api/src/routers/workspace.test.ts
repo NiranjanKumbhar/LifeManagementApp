@@ -95,11 +95,65 @@ describe('workspaceRouter — mine', () => {
   });
 });
 
-describe('workspaceRouter — invite', () => {
-  it('is not implemented yet (delegated to Clerk Organizations)', async () => {
+describe('workspaceRouter — invites', () => {
+  it('owner can create an invite and a member cannot', async () => {
     const alex = callerFor(ctx.db, world.alex.clerkId);
+    const jordan = callerFor(ctx.db, world.jordan.clerkId);
+    const res = await alex.workspace.createInvite({ workspaceId: world.workspace.id });
+    expect(res.joinPath).toMatch(/^\/join\//);
+    expect(res.invite.status).toBe('pending');
     await expect(
-      alex.workspace.invite({ workspaceId: world.workspace.id, email: 'new@example.com' }),
-    ).rejects.toMatchObject({ code: 'NOT_IMPLEMENTED' });
+      jordan.workspace.createInvite({ workspaceId: world.workspace.id }),
+    ).rejects.toMatchObject({ code: 'FORBIDDEN' });
+  });
+
+  it('a signed-in stranger can accept an invite and becomes a member', async () => {
+    const alex = callerFor(ctx.db, world.alex.clerkId);
+    const { invite } = await alex.workspace.createInvite({ workspaceId: world.workspace.id });
+    const stranger = await insertUser(ctx.db);
+    const ws = await callerFor(ctx.db, stranger.clerkId).workspace.acceptInvite({ token: invite.token });
+    expect(ws.id).toBe(world.workspace.id);
+    const members = await alex.workspace.members({ workspaceId: world.workspace.id });
+    expect(members.map((m) => m.userId)).toContain(stranger.id);
+  });
+
+  it('rejects a revoked invite', async () => {
+    const alex = callerFor(ctx.db, world.alex.clerkId);
+    const { invite } = await alex.workspace.createInvite({ workspaceId: world.workspace.id });
+    await alex.workspace.revokeInvite({ id: invite.id });
+    const stranger = await insertUser(ctx.db);
+    await expect(
+      callerFor(ctx.db, stranger.clerkId).workspace.acceptInvite({ token: invite.token }),
+    ).rejects.toMatchObject({ code: 'NOT_FOUND' });
+  });
+
+  it('rejects accept when the workspace is full (6 members)', async () => {
+    const alex = callerFor(ctx.db, world.alex.clerkId);
+    for (let i = 0; i < 4; i++) {
+      const u = await insertUser(ctx.db);
+      const { invite } = await alex.workspace.createInvite({ workspaceId: world.workspace.id });
+      await callerFor(ctx.db, u.clerkId).workspace.acceptInvite({ token: invite.token });
+    }
+    const seventh = await insertUser(ctx.db);
+    const { invite } = await alex.workspace.createInvite({ workspaceId: world.workspace.id });
+    await expect(
+      callerFor(ctx.db, seventh.clerkId).workspace.acceptInvite({ token: invite.token }),
+    ).rejects.toMatchObject({ code: 'CONFLICT' });
+  });
+
+  it('previews an invite without joining', async () => {
+    const alex = callerFor(ctx.db, world.alex.clerkId);
+    const { invite } = await alex.workspace.createInvite({ workspaceId: world.workspace.id });
+    const stranger = await insertUser(ctx.db);
+    const preview = await callerFor(ctx.db, stranger.clerkId).workspace.invitePreview({ token: invite.token });
+    expect(preview).toMatchObject({ workspaceName: world.workspace.name, status: 'pending' });
+  });
+
+  it('lists pending invites for the owner', async () => {
+    const alex = callerFor(ctx.db, world.alex.clerkId);
+    await alex.workspace.createInvite({ workspaceId: world.workspace.id });
+    const list = await alex.workspace.listInvites({ workspaceId: world.workspace.id });
+    expect(list.length).toBeGreaterThanOrEqual(1);
+    expect(list.every((i) => i.status === 'pending')).toBe(true);
   });
 });
