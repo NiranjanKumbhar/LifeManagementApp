@@ -90,6 +90,34 @@ describe('activityRouter — feed', () => {
     expect(myEvent).toBeDefined();
   });
 
+  it("hides a private task's and private household item's activity from the partner", async () => {
+    const alex = callerFor(ctx.db, world.alex.clerkId);
+    const project = await alex.project.create(
+      createProjectInput({ workspaceId: world.workspace.id, title: 'Shared proj' }),
+    );
+    const secretTask = await alex.task.create({
+      projectId: project.id,
+      title: 'Secret task',
+      visibility: 'private',
+    });
+    const secretItem = await alex.household.add({
+      workspaceId: world.workspace.id,
+      name: 'Secret item',
+      visibility: 'private',
+    });
+
+    const jordan = callerFor(ctx.db, world.jordan.clerkId);
+    const page = await jordan.activity.feed({ workspaceId: world.workspace.id });
+    const ids = page.items.map((e) => e.entityId);
+    expect(ids).not.toContain(secretTask.id);
+    expect(ids).not.toContain(secretItem.id);
+
+    // The owner still sees them.
+    const ownerPage = await alex.activity.feed({ workspaceId: world.workspace.id });
+    const ownerIds = ownerPage.items.map((e) => e.entityId);
+    expect(ownerIds).toEqual(expect.arrayContaining([secretTask.id, secretItem.id]));
+  });
+
   it('paginates with limit', async () => {
     const alex = callerFor(ctx.db, world.alex.clerkId);
     // Create 5 projects → 5 activity events
