@@ -92,7 +92,7 @@ function canRead(p: Pick<ProjectRow, 'visibility' | 'ownerId'>, userId: string):
 
 function canWrite(p: Pick<ProjectRow, 'visibility' | 'ownerId'>, userId: string): boolean {
   if (p.visibility === 'shared') return true;
-  // mine_visible and private are editable only by their owner
+  // private is editable only by its owner
   return p.ownerId === userId;
 }
 

@@ -23,7 +23,7 @@ export type ProjectType =
   | 'general';
 export type ProjectStatus = 'active' | 'completed' | 'archived' | 'on_hold';
 export type Priority = 'urgent' | 'high' | 'medium' | 'low' | 'none';
-export type Visibility = 'shared' | 'mine_visible' | 'private';
+export type Visibility = 'shared' | 'private';
 
 export const projectTemplates = pgTable(
   'project_templates',

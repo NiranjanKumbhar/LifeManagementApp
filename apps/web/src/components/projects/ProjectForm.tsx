@@ -28,7 +28,6 @@ const PRIORITIES = [
 ];
 const VISIBILITIES = [
   { value: 'shared', label: 'Shared' },
-  { value: 'mine_visible', label: 'Visible to partner' },
   { value: 'private', label: 'Private' },
 ];
 

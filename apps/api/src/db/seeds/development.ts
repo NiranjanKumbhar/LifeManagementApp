@@ -155,7 +155,7 @@ async function seed() {
         status: 'active',
         priority: 'medium',
         ownerId: IDS.alex,
-        visibility: 'mine_visible',
+        visibility: 'private',
         dueDate: daysFromNow(30),
         leadTimeDays: 14,
         customFields: {

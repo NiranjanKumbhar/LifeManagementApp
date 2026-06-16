@@ -217,15 +217,15 @@ describe('ProjectService.update', () => {
     expect(events[0]!.changes).toMatchObject({ title: { old: 'Old title', new: 'New title' } });
   });
 
-  it('forbids a partner from editing a mine_visible project', async () => {
+  it('hides a private project from a partner trying to edit it (NOT_FOUND, no leak)', async () => {
     const project = await insertProject(ctx.db, {
       workspaceId: world.workspace.id,
       ownerId: world.alex.id,
-      visibility: 'mine_visible',
+      visibility: 'private',
     });
     expectErr(
       await ProjectService.update(ctx.db, world.jordan.id, { id: project.id, title: 'Nope' }),
-      'FORBIDDEN',
+      'NOT_FOUND',
     );
   });
 
@@ -279,18 +279,12 @@ describe('ProjectService.complete / archive', () => {
 });
 
 describe('ProjectService.list — visibility filtering', () => {
-  async function seedThreeVisibilities() {
+  async function seedTwoVisibilities() {
     await insertProject(ctx.db, {
       workspaceId: world.workspace.id,
       ownerId: world.alex.id,
       visibility: 'shared',
       title: 'Shared project',
-    });
-    await insertProject(ctx.db, {
-      workspaceId: world.workspace.id,
-      ownerId: world.alex.id,
-      visibility: 'mine_visible',
-      title: 'Mine-visible project',
     });
     await insertProject(ctx.db, {
       workspaceId: world.workspace.id,
@@ -301,21 +295,21 @@ describe('ProjectService.list — visibility filtering', () => {
   }
 
   it('never leaks a private project to the partner', async () => {
-    await seedThreeVisibilities();
+    await seedTwoVisibilities();
     const visible = expectOk(
       await ProjectService.list(ctx.db, world.jordan.id, { workspaceId: world.workspace.id }),
     );
-    expect(visible).toHaveLength(2);
+    expect(visible).toHaveLength(1);
     expect(visible.every((p) => p.visibility !== 'private')).toBe(true);
-    expect(visible.map((p) => p.title).sort()).toEqual(['Mine-visible project', 'Shared project']);
+    expect(visible.map((p) => p.title).sort()).toEqual(['Shared project']);
   });
 
   it('returns the private project to its owner', async () => {
-    await seedThreeVisibilities();
+    await seedTwoVisibilities();
     const visible = expectOk(
       await ProjectService.list(ctx.db, world.alex.id, { workspaceId: world.workspace.id }),
     );
-    expect(visible).toHaveLength(3);
+    expect(visible).toHaveLength(2);
     expect(visible.some((p) => p.visibility === 'private')).toBe(true);
   });
 
