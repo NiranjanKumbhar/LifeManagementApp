@@ -3,7 +3,7 @@ import type { Task, TaskNode } from '../entities/task';
 import type { Person } from '../entities/person';
 import type { HouseholdItem } from '../entities/household';
 import type { WorkspaceMember } from '../entities/workspace';
-import type { User } from '../entities/user';
+import type { User, UserRef } from '../entities/user';
 import type { ActivityEvent } from '../entities/activity';
 import type { UrgencyLevel } from '../enums/urgency';
 import type { InviteStatus } from '../enums/status';
@@ -31,10 +31,16 @@ export interface MemberWithUser extends WorkspaceMember {
 export interface ProjectListItem extends Project {
   taskCount: number;
   completedCount: number;
+  createdByUser?: UserRef | null;
+  ownerUser?: UserRef | null;
+  completedByUser?: UserRef | null;
 }
 
 export interface ProjectWithTasks extends Project {
   tasks: TaskNode[];
+  createdByUser?: UserRef | null;
+  ownerUser?: UserRef | null;
+  completedByUser?: UserRef | null;
 }
 
 export interface ProjectWithUrgency {

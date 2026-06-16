@@ -1,13 +1,15 @@
 import type { ElementType, ReactNode } from 'react';
+import type { UserRef } from '@lifesync/shared-types';
 import { cn } from '../../utils/cn';
 import { formatRelativeDate, daysUntil } from '../../utils/format-date';
 import { urgencyStyle, urgencyFromDays } from '../../utils/urgency-color';
+import { UserChip } from '../UserChip/UserChip';
 import styles from './ProjectCard.module.css';
 
 export interface ProjectCardData {
   title: string;
   dueDate: string | null;
-  ownerName: string | null;
+  createdByUser?: UserRef | null;
   taskCount: number;
   completedCount: number;
 }
@@ -20,7 +22,7 @@ export interface ProjectCardProps {
 }
 
 export function ProjectCard({ project, href, icon, as: Component = 'a' }: ProjectCardProps) {
-  const { title, dueDate, ownerName, taskCount, completedCount } = project;
+  const { title, dueDate, createdByUser, taskCount, completedCount } = project;
   const urgency = urgencyStyle(urgencyFromDays(daysUntil(dueDate)));
   const pct = taskCount > 0 ? Math.round((completedCount / taskCount) * 100) : 0;
 
@@ -44,7 +46,9 @@ export function ProjectCard({ project, href, icon, as: Component = 'a' }: Projec
             {formatRelativeDate(dueDate)}
           </span>
         ) : null}
-        {ownerName ? <span className={styles.owner}>{ownerName}</span> : null}
+        {createdByUser !== undefined ? (
+          <UserChip user={createdByUser ?? null} label="Added by" />
+        ) : null}
       </div>
 
       {taskCount > 0 ? (
