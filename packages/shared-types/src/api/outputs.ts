@@ -56,6 +56,13 @@ export interface PersonWithProjects extends Person {
   projects: Project[];
 }
 
+// ── Household ─────────────────────────────────────────────────────────────────
+
+export interface HouseholdItemListItem extends HouseholdItem {
+  addedByUser?: UserRef | null;
+  lastPurchasedByUser?: UserRef | null;
+}
+
 // ── Search ────────────────────────────────────────────────────────────────────
 
 export interface SearchResult {

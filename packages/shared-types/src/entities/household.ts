@@ -11,6 +11,7 @@ export interface HouseholdItem {
   autoReplenish: boolean;
   lastPurchased: Date | null;
   addedBy: string | null;
+  lastPurchasedBy: string | null;
   sortOrder: number;
   createdAt: Date;
   updatedAt: Date;

@@ -3,7 +3,7 @@
 import type { inferRouterOutputs } from '@trpc/server';
 import type { AppRouter } from 'api';
 import type { StockStatus } from '@lifesync/shared-types';
-import { Button, formatShortDate } from '@lifesync/ui';
+import { Button, UserChip, formatShortDate } from '@lifesync/ui';
 import { StatusPillMenu } from './StatusPillMenu';
 import styles from './StockItemRow.module.css';
 
@@ -29,6 +29,10 @@ export function StockItemRow({ item, tab, onPrimary, onSetStatus, onEdit }: Stoc
         {measure ? <span className={styles.meta}>{measure}</span> : null}
         {tab === 'inventory' && item.lastPurchased ? (
           <span className={styles.meta}>Last bought {formatShortDate(item.lastPurchased)}</span>
+        ) : null}
+        <UserChip user={item.addedByUser ?? null} label="Added by" />
+        {item.status === 'stocked' && item.lastPurchasedByUser ? (
+          <UserChip user={item.lastPurchasedByUser} label="Got it" />
         ) : null}
       </button>
       <div className={styles.controls}>

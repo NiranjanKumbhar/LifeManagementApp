@@ -85,6 +85,7 @@ export type {
   ProjectListItem,
   ProjectWithTasks,
   ProjectWithUrgency,
+  HouseholdItemListItem,
   PersonWithProjects,
   SearchResult,
   ActivityFeedPage,

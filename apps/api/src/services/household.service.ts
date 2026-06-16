@@ -5,6 +5,8 @@ import { householdItems } from '../db/schema';
 import { internal, notFound, ok, type AppError, type Result } from '../utils/errors';
 import { assertWorkspaceMembership } from '../middleware/workspace';
 import { logActivity } from './activity';
+import { resolveUsers } from './resolve-users';
+import type { HouseholdItemListItem } from '@lifesync/shared-types';
 import type {
   createHouseholdSchema,
   listHouseholdSchema,
@@ -19,7 +21,10 @@ type UpdateInput = z.infer<typeof updateHouseholdSchema>;
 const ENTITY = 'household_item';
 
 export class HouseholdService {
-  static async list(db: Database, input: ListInput): Promise<Result<ItemRow[], AppError>> {
+  static async list(
+    db: Database,
+    input: ListInput,
+  ): Promise<Result<HouseholdItemListItem[], AppError>> {
     const conditions = [eq(householdItems.workspaceId, input.workspaceId)];
     if (input.status) conditions.push(eq(householdItems.status, input.status));
     if (input.category) conditions.push(eq(householdItems.category, input.category));
@@ -29,7 +34,15 @@ export class HouseholdService {
       .from(householdItems)
       .where(and(...conditions))
       .orderBy(asc(householdItems.category), asc(householdItems.sortOrder));
-    return ok(rows);
+
+    const userMap = await resolveUsers(db, rows.flatMap((r) => [r.addedBy, r.lastPurchasedBy]));
+    return ok(
+      rows.map((r) => ({
+        ...r,
+        addedByUser: userMap.get(r.addedBy ?? '') ?? null,
+        lastPurchasedByUser: userMap.get(r.lastPurchasedBy ?? '') ?? null,
+      })),
+    );
   }
 
   static async add(
@@ -106,6 +119,7 @@ export class HouseholdService {
     return this.applyUpdate(db, userId, existing, {
       status: 'stocked',
       lastPurchased: new Date(),
+      lastPurchasedBy: userId,
       updatedAt: new Date(),
     });
   }
