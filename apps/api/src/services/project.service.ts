@@ -147,9 +147,10 @@ export class ProjectService {
     const rows = await db
       .select({
         project: projects,
-        // taskCount excludes cancelled tasks so progress reflects actionable work
-        taskCount: sql<number>`count(${tasks.id}) filter (where ${tasks.status} <> 'cancelled')`.mapWith(Number),
-        completedCount: sql<number>`count(${tasks.id}) filter (where ${tasks.status} = 'completed')`.mapWith(Number),
+        // taskCount excludes cancelled tasks so progress reflects actionable work;
+        // others' private tasks are excluded so counts don't leak their existence
+        taskCount: sql<number>`count(${tasks.id}) filter (where ${tasks.status} <> 'cancelled' and (${tasks.visibility} <> 'private' or ${tasks.createdBy} = ${userId}))`.mapWith(Number),
+        completedCount: sql<number>`count(${tasks.id}) filter (where ${tasks.status} = 'completed' and (${tasks.visibility} <> 'private' or ${tasks.createdBy} = ${userId}))`.mapWith(Number),
       })
       .from(projects)
       .leftJoin(tasks, eq(tasks.projectId, projects.id))

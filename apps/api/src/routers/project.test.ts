@@ -148,6 +148,26 @@ describe('projectRouter — member flows', () => {
     expect(row).toMatchObject({ taskCount: 2, completedCount: 1 });
   });
 
+  it("excludes another member's private tasks from list counts", async () => {
+    const alex = callerFor(ctx.db, world.alex.clerkId);
+    const jordan = callerFor(ctx.db, world.jordan.clerkId);
+    const project = await alex.project.create(
+      createProjectInput({ workspaceId: world.workspace.id, title: 'Mixed' }),
+    );
+    await alex.task.create({ projectId: project.id, title: 'Open' });
+    await alex.task.create({ projectId: project.id, title: 'Secret', visibility: 'private' });
+
+    const alexRow = (await alex.project.list({ workspaceId: world.workspace.id })).find(
+      (p) => p.id === project.id,
+    );
+    const jordanRow = (await jordan.project.list({ workspaceId: world.workspace.id })).find(
+      (p) => p.id === project.id,
+    );
+    // Alex (the creator) sees both; Jordan sees only the shared task.
+    expect(alexRow).toMatchObject({ taskCount: 2 });
+    expect(jordanRow).toMatchObject({ taskCount: 1 });
+  });
+
   it('returns zero task counts for a project with no tasks', async () => {
     const caller = callerFor(ctx.db, world.alex.clerkId);
     const empty = await caller.project.create(
