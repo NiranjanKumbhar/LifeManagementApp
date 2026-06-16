@@ -117,6 +117,13 @@ function buildTaskTree(rows: TaskRow[]): TaskTreeNode[] {
   return roots;
 }
 
+/** Removes private tasks (and their subtrees) that the viewer didn't create. */
+function prunePrivateTasks(nodes: TaskTreeNode[], viewerId: string): TaskTreeNode[] {
+  return nodes
+    .filter((n) => !(n.visibility === 'private' && n.createdBy !== viewerId))
+    .map((n) => ({ ...n, children: prunePrivateTasks(n.children, viewerId) }));
+}
+
 // ── Service ───────────────────────────────────────────────────────────────────
 
 export class ProjectService {
@@ -210,7 +217,7 @@ export class ProjectService {
         attach(n.children);
       }
     };
-    const tree = buildTaskTree(taskRows);
+    const tree = prunePrivateTasks(buildTaskTree(taskRows), userId);
     attach(tree);
     return ok({
       ...project,

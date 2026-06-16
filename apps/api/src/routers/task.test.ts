@@ -235,3 +235,43 @@ describe('taskRouter — move', () => {
     expect(destTasks.map((t) => t.id)).toContain(task.id);
   });
 });
+
+describe('taskRouter — task privacy', () => {
+  it('hides a private task (and its subtree) from non-creators', async () => {
+    const alex = callerFor(ctx.db, world.alex.clerkId);
+    const jordan = callerFor(ctx.db, world.jordan.clerkId);
+    const project = await alex.project.create(
+      createProjectInput({ workspaceId: world.workspace.id, title: 'Shared proj' }),
+    );
+    const secret = await alex.task.create({ projectId: project.id, title: 'Secret', visibility: 'private' });
+    await alex.task.create({ projectId: project.id, parentId: secret.id, title: 'Secret child' });
+    await alex.task.create({ projectId: project.id, title: 'Open task' });
+
+    const titles = (nodes: Array<{ title: string; children: unknown[] }>): string[] =>
+      nodes.flatMap((n) => [n.title, ...titles(n.children as Array<{ title: string; children: unknown[] }>)]);
+
+    const alexList = await alex.task.list({ projectId: project.id });
+    const jordanList = await jordan.task.list({ projectId: project.id });
+    expect(titles(alexList)).toEqual(expect.arrayContaining(['Secret', 'Secret child', 'Open task']));
+    expect(titles(jordanList)).toContain('Open task');
+    expect(titles(jordanList)).not.toContain('Secret');
+    expect(titles(jordanList)).not.toContain('Secret child');
+  });
+
+  it('also hides the private task from project.get for a non-creator', async () => {
+    const alex = callerFor(ctx.db, world.alex.clerkId);
+    const jordan = callerFor(ctx.db, world.jordan.clerkId);
+    const project = await alex.project.create(createProjectInput({ workspaceId: world.workspace.id }));
+    await alex.task.create({ projectId: project.id, title: 'Secret', visibility: 'private' });
+    const got = await jordan.project.get({ id: project.id });
+    expect(got.tasks.map((t) => t.title)).not.toContain('Secret');
+  });
+
+  it('forbids a non-creator from editing a private task (NOT_FOUND)', async () => {
+    const alex = callerFor(ctx.db, world.alex.clerkId);
+    const jordan = callerFor(ctx.db, world.jordan.clerkId);
+    const project = await alex.project.create(createProjectInput({ workspaceId: world.workspace.id }));
+    const secret = await alex.task.create({ projectId: project.id, title: 'Secret', visibility: 'private' });
+    await expect(jordan.task.update({ id: secret.id, title: 'hax' })).rejects.toMatchObject({ code: 'NOT_FOUND' });
+  });
+});
