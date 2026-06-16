@@ -14,6 +14,14 @@ const leaveSpy = vi.fn();
 
 vi.mock('next/navigation', () => ({ useRouter: () => ({ push: vi.fn() }) }));
 
+// Mutable workspace count so tests can simulate "this is my only workspace".
+const mockState = vi.hoisted(() => ({
+  workspaces: [{ workspace: { id: 'ws-1' } }, { workspace: { id: 'ws-2' } }] as unknown[],
+}));
+vi.mock('@/lib/workspace-context', () => ({
+  useWorkspace: () => ({ workspaces: mockState.workspaces, setActiveWorkspace: vi.fn() }),
+}));
+
 vi.mock('@/lib/trpc', () => ({
   trpc: {
     useUtils: () => ({
@@ -92,6 +100,8 @@ describe('WorkspaceSettings', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     Object.assign(navigator, { clipboard: { writeText: vi.fn().mockResolvedValue(undefined) } });
+    // Default: user is in more than one workspace (leaving is not the "last one").
+    mockState.workspaces = [{ workspace: { id: 'ws-1' } }, { workspace: { id: 'ws-2' } }];
   });
 
   it('renders the workspace name and members', () => {
@@ -210,6 +220,26 @@ describe('WorkspaceSettings', () => {
     const leaveButton = screen.getByRole('button', { name: /Leave workspace/i });
     expect(leaveButton).toBeEnabled();
     fireEvent.click(leaveButton);
+    expect(leaveSpy).toHaveBeenCalledWith({ workspaceId: 'ws-1' });
+  });
+
+  it('warns and confirms before leaving your only workspace', () => {
+    mockState.workspaces = [{ workspace: { id: 'ws-1' } }];
+    renderWithToast(
+      <WorkspaceSettings
+        workspace={workspace as never}
+        members={members as never}
+        currentUserId="u2"
+        role="member"
+      />,
+    );
+    // First click → no leave yet, shows the confirm.
+    fireEvent.click(screen.getByRole('button', { name: /Leave workspace/i }));
+    expect(leaveSpy).not.toHaveBeenCalled();
+    expect(screen.getByText(/only workspace/i)).toBeInTheDocument();
+
+    // Confirm → leaves.
+    fireEvent.click(screen.getByRole('button', { name: /Leave anyway/i }));
     expect(leaveSpy).toHaveBeenCalledWith({ workspaceId: 'ws-1' });
   });
 });

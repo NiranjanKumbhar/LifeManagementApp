@@ -2,10 +2,12 @@
 
 import type { inferRouterOutputs } from '@trpc/server';
 import type { AppRouter } from 'api';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Avatar, Badge, Button, useToast } from '@lifesync/ui';
 import { SectionCard } from './SectionCard';
 import { trpc } from '@/lib/trpc';
+import { useWorkspace } from '@/lib/workspace-context';
 import styles from './WorkspaceSettings.module.css';
 
 type Workspace = inferRouterOutputs<AppRouter>['workspace']['get'];
@@ -22,7 +24,10 @@ export function WorkspaceSettings({ workspace, members, currentUserId, role }: W
   const toast = useToast();
   const router = useRouter();
   const utils = trpc.useUtils();
+  const { workspaces } = useWorkspace();
+  const [confirmLeave, setConfirmLeave] = useState(false);
   const isOwner = role === 'owner';
+  const isLastWorkspace = workspaces.length <= 1;
   const ownerCount = members.filter((m) => m.role === 'owner').length;
   const wsId = workspace?.id;
 
@@ -75,6 +80,16 @@ export function WorkspaceSettings({ workspace, members, currentUserId, role }: W
   const invites = listInvitesQuery.data ?? [];
   const busy = changeRole.isPending || removeMember.isPending || leave.isPending;
   const canLeave = role === 'member' || (isOwner && ownerCount > 1);
+
+  const onLeaveClick = () => {
+    if (!wsId) return;
+    // Leaving your only workspace strands you — make them confirm first.
+    if (isLastWorkspace && !confirmLeave) {
+      setConfirmLeave(true);
+      return;
+    }
+    leave.mutate({ workspaceId: wsId });
+  };
 
   return (
     <SectionCard title="Workspace">
@@ -167,17 +182,28 @@ export function WorkspaceSettings({ workspace, members, currentUserId, role }: W
 
       {wsId ? (
         <div className={styles.leaveRow}>
-          <Button
-            variant="ghost"
-            size="sm"
-            disabled={busy || !canLeave}
-            onClick={() => leave.mutate({ workspaceId: wsId })}
-          >
-            Leave workspace
-          </Button>
-          {isOwner && ownerCount <= 1 ? (
-            <span className={styles.leaveHint}>Make another member an owner before leaving.</span>
-          ) : null}
+          {confirmLeave ? (
+            <>
+              <span className={styles.leaveHint}>
+                This is your only workspace — you'll have none and will need to create a new one.
+              </span>
+              <Button variant="ghost" size="sm" disabled={busy} onClick={onLeaveClick}>
+                Leave anyway
+              </Button>
+              <Button variant="secondary" size="sm" disabled={busy} onClick={() => setConfirmLeave(false)}>
+                Cancel
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button variant="ghost" size="sm" disabled={busy || !canLeave} onClick={onLeaveClick}>
+                Leave workspace
+              </Button>
+              {isOwner && ownerCount <= 1 ? (
+                <span className={styles.leaveHint}>Make another member an owner before leaving.</span>
+              ) : null}
+            </>
+          )}
         </div>
       ) : null}
     </SectionCard>
