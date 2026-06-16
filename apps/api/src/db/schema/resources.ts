@@ -16,7 +16,9 @@ export const resources = pgTable(
     fileType: text('file_type').notNull(),
     storagePath: text('storage_path').notNull(),
     sizeBytes: bigint('size_bytes', { mode: 'number' }),
-    uploadedBy: uuid('uploaded_by').notNull().references(() => users.id),
+    uploadedBy: uuid('uploaded_by')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   },
   (table) => ({

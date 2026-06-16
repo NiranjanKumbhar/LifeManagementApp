@@ -13,7 +13,9 @@ export const activityEvents = pgTable(
     workspaceId: uuid('workspace_id')
       .notNull()
       .references(() => workspaces.id, { onDelete: 'cascade' }),
-    userId: uuid('user_id').notNull().references(() => users.id),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
     entityType: text('entity_type').notNull(),
     entityId: uuid('entity_id').notNull(),
     action: text('action').notNull().$type<ActivityAction>(),
