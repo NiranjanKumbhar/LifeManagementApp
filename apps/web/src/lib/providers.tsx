@@ -8,6 +8,7 @@ import { ToastProvider } from '@lifesync/ui';
 import { trpc } from './trpc';
 import { ThemeProvider } from './theme';
 import { NavPrefsProvider } from './nav-prefs';
+import { WorkspaceProvider } from './workspace-context';
 
 const API_URL = process.env.NEXT_PUBLIC_API_URL ?? '/api/trpc';
 
@@ -56,7 +57,9 @@ export function Providers({ children }: { children: ReactNode }) {
       <ThemeProvider>
         <NavPrefsProvider>
           <TRPCProvider>
-            <ToastProvider>{children}</ToastProvider>
+            <WorkspaceProvider>
+              <ToastProvider>{children}</ToastProvider>
+            </WorkspaceProvider>
           </TRPCProvider>
         </NavPrefsProvider>
       </ThemeProvider>

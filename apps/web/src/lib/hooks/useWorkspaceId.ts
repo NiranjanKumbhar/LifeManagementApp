@@ -1,10 +1,11 @@
+'use client';
+
+import { useWorkspace } from '@/lib/workspace-context';
+
 /**
- * The active workspace id.
- *
- * Temporary single-workspace assumption sourced from an env var
- * (the seeded "Our Home" workspace). Replace with real workspace
- * selection once a `workspace.list` / current-workspace endpoint exists.
+ * The active workspace id, from WorkspaceProvider. Returns null while loading
+ * or when the user has no workspace. Signature unchanged for existing callers.
  */
 export function useWorkspaceId(): string | null {
-  return process.env.NEXT_PUBLIC_DEFAULT_WORKSPACE_ID ?? null;
+  return useWorkspace().workspaceId;
 }
