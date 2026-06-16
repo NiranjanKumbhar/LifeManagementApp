@@ -49,3 +49,7 @@ export {
 export { PageShell, type PageShellProps } from './components/PageShell/PageShell';
 export { PageHeader, type PageHeaderProps } from './components/PageHeader/PageHeader';
 export { UserChip, type UserChipProps } from './components/UserChip/UserChip';
+export {
+  VisibilityToggle,
+  type VisibilityToggleProps,
+} from './components/VisibilityToggle/VisibilityToggle';
