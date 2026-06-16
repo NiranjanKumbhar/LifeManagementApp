@@ -113,7 +113,7 @@ export class WorkspaceService {
     });
     if (!m) return { success: false, error: notFound('Workspace not found') };
     if (m.role !== 'owner')
-      return { success: false, error: forbidden('Only the owner can manage invites') };
+      return { success: false, error: forbidden('Only an owner can manage this workspace') };
     return ok(true);
   }
 
