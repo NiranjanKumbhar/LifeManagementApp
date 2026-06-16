@@ -5,7 +5,7 @@ import Link from 'next/link';
 import { useParams } from 'next/navigation';
 import type { inferRouterOutputs } from '@trpc/server';
 import type { AppRouter } from 'api';
-import { Button, EmptyState, LoadingSpinner, PageHeader, PageShell, TaskItem } from '@lifesync/ui';
+import { Button, EmptyState, LoadingSpinner, PageHeader, PageShell, TaskItem, UserChip } from '@lifesync/ui';
 import { formatRelativeDate } from '@lifesync/ui';
 import { trpc } from '@/lib/trpc';
 import { useWorkspaceId } from '@/lib/hooks/useWorkspaceId';
@@ -135,6 +135,10 @@ export default function ProjectDetailPage() {
         <span className={styles.metaPill}>{meta.label}</span>
         {project.dueDate ? (
           <span className={styles.metaPill}>{formatRelativeDate(project.dueDate)}</span>
+        ) : null}
+        <UserChip user={project.createdByUser ?? null} label="Added by" />
+        {project.status === 'completed' ? (
+          <UserChip user={project.completedByUser ?? null} label="Completed by" />
         ) : null}
       </div>
 

@@ -42,6 +42,9 @@ export interface TaskTreeNode extends TaskRow {
 
 export interface ProjectWithTasks extends ProjectRow {
   tasks: TaskTreeNode[];
+  createdByUser?: UserRef | null;
+  ownerUser?: UserRef | null;
+  completedByUser?: UserRef | null;
 }
 
 export interface DashboardResult {

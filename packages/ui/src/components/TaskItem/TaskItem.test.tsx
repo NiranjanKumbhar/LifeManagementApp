@@ -1,6 +1,7 @@
 import { describe, expect, it, vi } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
+import type { UserRef } from '@lifesync/shared-types';
 import { TaskItem } from './TaskItem';
 
 const baseTask = {
@@ -8,8 +9,8 @@ const baseTask = {
   title: 'Send invitations',
   status: 'pending' as const,
   dueDate: null as string | null,
-  createdByUser: null as import('@lifesync/shared-types').UserRef | null,
-  completedByUser: null as import('@lifesync/shared-types').UserRef | null,
+  createdByUser: null as UserRef | null,
+  completedByUser: null as UserRef | null,
 };
 
 describe('TaskItem', () => {
