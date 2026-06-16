@@ -44,4 +44,14 @@ export class UserService {
     if (!row) return { success: false, error: notFound('User not found') };
     return ok(row);
   }
+
+  static async completeOnboarding(db: Database, userId: string): Promise<Result<UserRow, AppError>> {
+    const [row] = await db
+      .update(users)
+      .set({ onboardedAt: new Date(), updatedAt: new Date() })
+      .where(eq(users.id, userId))
+      .returning();
+    if (!row) return { success: false, error: notFound('User not found') };
+    return ok(row);
+  }
 }

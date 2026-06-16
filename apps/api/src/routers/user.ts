@@ -17,4 +17,8 @@ export const userRouter = router({
     .mutation(async ({ ctx, input }) => {
       return unwrap(await UserService.updateNotificationPrefs(ctx.db, ctx.userId, input));
     }),
+
+  completeOnboarding: protectedProcedure.mutation(async ({ ctx }) => {
+    return unwrap(await UserService.completeOnboarding(ctx.db, ctx.userId));
+  }),
 });
