@@ -15,13 +15,13 @@
 }
 
 .trigger:focus-visible {
-  outline: 2px solid var(--color-primary, #0f766e);
+  outline: 2px solid var(--ls-primary-600);
   outline-offset: 2px;
-  border-radius: var(--radius-sm, 0.25rem);
+  border-radius: var(--ls-radius-sm);
 }
 
 .caret {
-  color: var(--color-text-muted, #6b6258);
+  color: var(--ls-text-secondary);
   font-size: 0.7rem;
 }
 
@@ -34,10 +34,10 @@
   padding: 0.25rem;
   list-style: none;
   min-width: 9rem;
-  background: var(--color-surface, #fff);
-  border: 1px solid var(--color-border, #e3dccf);
-  border-radius: var(--radius-md, 0.5rem);
-  box-shadow: var(--shadow-md, 0 4px 12px rgba(0, 0, 0, 0.12));
+  background: var(--ls-surface-elevated);
+  border: 1px solid var(--ls-surface-border);
+  border-radius: var(--ls-radius-md);
+  box-shadow: var(--ls-shadow-md);
 }
 
 .item {
@@ -47,14 +47,14 @@
   background: transparent;
   border: none;
   padding: 0.4rem 0.6rem;
-  border-radius: var(--radius-sm, 0.25rem);
+  border-radius: var(--ls-radius-sm);
   font: inherit;
-  color: var(--color-text, #2b2620);
+  color: var(--ls-text-primary);
   cursor: pointer;
 }
 
 .item:hover,
 .item:focus-visible {
-  background: var(--color-surface-sunken, #efe9e1);
+  background: var(--ls-surface-sunken);
   outline: none;
 }

@@ -3,18 +3,18 @@
   align-items: center;
   gap: 0.5rem;
   padding: 0.5rem 0.75rem;
-  background: var(--color-surface, #fff);
-  border: 1px solid var(--color-border, #e3dccf);
-  border-radius: var(--radius-md, 0.5rem);
+  background: var(--ls-surface-card);
+  border: 1px solid var(--ls-surface-border);
+  border-radius: var(--ls-radius-md);
 }
 
 .bar:focus-within {
-  border-color: var(--color-primary, #0f766e);
+  border-color: var(--ls-primary-600);
 }
 
 .icon {
   display: inline-flex;
-  color: var(--color-text-muted, #6b6258);
+  color: var(--ls-text-secondary);
 }
 
 .input {
@@ -22,7 +22,7 @@
   border: none;
   background: transparent;
   font: inherit;
-  color: var(--color-text, #2b2620);
+  color: var(--ls-text-primary);
 }
 
 .input:focus {

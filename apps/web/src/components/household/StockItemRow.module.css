@@ -4,11 +4,11 @@
   justify-content: space-between;
   gap: 0.75rem;
   padding: 0.6rem 0.75rem;
-  border-radius: var(--radius-md, 0.5rem);
+  border-radius: var(--ls-radius-md);
 }
 
 .row:hover {
-  background: var(--color-surface-sunken, #efe9e1);
+  background: var(--ls-surface-sunken);
 }
 
 .main {
@@ -27,12 +27,12 @@
 
 .name {
   font-weight: 500;
-  color: var(--color-text, #2b2620);
+  color: var(--ls-text-primary);
 }
 
 .meta {
   font-size: 0.8rem;
-  color: var(--color-text-muted, #6b6258);
+  color: var(--ls-text-secondary);
 }
 
 .controls {
