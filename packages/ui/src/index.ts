@@ -53,3 +53,4 @@ export {
   VisibilityToggle,
   type VisibilityToggleProps,
 } from './components/VisibilityToggle/VisibilityToggle';
+export { PrivacyLock } from './components/PrivacyLock/PrivacyLock';

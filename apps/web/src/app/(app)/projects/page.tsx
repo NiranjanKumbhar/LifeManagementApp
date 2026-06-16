@@ -97,6 +97,7 @@ export default function ProjectsPage() {
                       createdByUser: p.createdByUser ?? null,
                       taskCount: p.taskCount,
                       completedCount: p.completedCount,
+                      visibility: p.visibility,
                     }}
                   />
                 ))}

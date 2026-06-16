@@ -17,6 +17,7 @@ const item = {
   lastPurchasedBy: null,
   addedByUser: { id: 'u1', displayName: 'Jordan Lee', avatarUrl: null },
   lastPurchasedByUser: null,
+  visibility: 'shared' as const,
   sortOrder: 0,
   createdAt: '2026-06-01',
   updatedAt: '2026-06-01',
@@ -75,5 +76,25 @@ describe('StockItemRow', () => {
       <StockItemRow item={stocked} tab="inventory" onPrimary={() => {}} onSetStatus={() => {}} onEdit={() => {}} />,
     );
     expect(screen.getByText('Alex')).toBeInTheDocument();
+  });
+
+  it('shows a lock when the item is private', () => {
+    render(
+      <StockItemRow
+        item={{ ...item, visibility: 'private' }}
+        tab="shopping"
+        onPrimary={() => {}}
+        onSetStatus={() => {}}
+        onEdit={() => {}}
+      />,
+    );
+    expect(screen.getByRole('img', { name: 'Private' })).toBeInTheDocument();
+  });
+
+  it('shows no lock when the item is shared', () => {
+    render(
+      <StockItemRow item={item} tab="shopping" onPrimary={() => {}} onSetStatus={() => {}} onEdit={() => {}} />,
+    );
+    expect(screen.queryByRole('img', { name: 'Private' })).not.toBeInTheDocument();
   });
 });

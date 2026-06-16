@@ -1,9 +1,10 @@
 import type { ElementType, ReactNode } from 'react';
-import type { UserRef } from '@lifesync/shared-types';
+import type { UserRef, Visibility } from '@lifesync/shared-types';
 import { cn } from '../../utils/cn';
 import { formatRelativeDate, daysUntil } from '../../utils/format-date';
 import { urgencyStyle, urgencyFromDays } from '../../utils/urgency-color';
 import { UserChip } from '../UserChip/UserChip';
+import { PrivacyLock } from '../PrivacyLock/PrivacyLock';
 import styles from './ProjectCard.module.css';
 
 export interface ProjectCardData {
@@ -12,6 +13,7 @@ export interface ProjectCardData {
   createdByUser?: UserRef | null;
   taskCount: number;
   completedCount: number;
+  visibility?: Visibility;
 }
 
 export interface ProjectCardProps {
@@ -22,7 +24,7 @@ export interface ProjectCardProps {
 }
 
 export function ProjectCard({ project, href, icon, as: Component = 'a' }: ProjectCardProps) {
-  const { title, dueDate, createdByUser, taskCount, completedCount } = project;
+  const { title, dueDate, createdByUser, taskCount, completedCount, visibility } = project;
   const urgency = urgencyStyle(urgencyFromDays(daysUntil(dueDate)));
   const pct = taskCount > 0 ? Math.round((completedCount / taskCount) * 100) : 0;
 
@@ -35,6 +37,7 @@ export function ProjectCard({ project, href, icon, as: Component = 'a' }: Projec
           </span>
         ) : null}
         <span className={styles.title}>{title}</span>
+        {visibility === 'private' ? <PrivacyLock /> : null}
       </div>
 
       <div className={styles.meta}>

@@ -41,6 +41,7 @@ const task = {
   dueDate: '2026-07-10',
   priority: 'medium',
   ownerId: 'u1',
+  visibility: 'shared',
   children: [],
   createdByUser: { id: 'u1', displayName: 'Alex', avatarUrl: null },
   completedByUser: null,
@@ -71,7 +72,9 @@ describe('TaskForm', () => {
     renderForm();
     await userEvent.clear(screen.getByLabelText('Due date'));
     await userEvent.click(screen.getByRole('button', { name: 'Save' }));
-    expect(updateMutate).toHaveBeenCalledWith(expect.objectContaining({ id: 't1', dueDate: null }));
+    expect(updateMutate).toHaveBeenCalledWith(
+      expect.objectContaining({ id: 't1', dueDate: null, visibility: 'shared' }),
+    );
   });
 
   it('lists existing reminders and dismisses one', async () => {

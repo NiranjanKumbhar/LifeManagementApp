@@ -3,8 +3,8 @@
 import { useState } from 'react';
 import type { inferRouterOutputs } from '@trpc/server';
 import type { AppRouter } from 'api';
-import type { Priority } from '@lifesync/shared-types';
-import { Button, Input, Modal, UserChip, useToast } from '@lifesync/ui';
+import type { Priority, Visibility } from '@lifesync/shared-types';
+import { Button, Input, Modal, UserChip, VisibilityToggle, useToast } from '@lifesync/ui';
 import { trpc } from '@/lib/trpc';
 import styles from './TaskForm.module.css';
 
@@ -36,6 +36,9 @@ export function TaskForm({ isOpen, onClose, task, projectId, workspaceId }: Task
   const [dueDate, setDueDate] = useState(task.dueDate ?? '');
   const [priority, setPriority] = useState<Priority>((task.priority ?? 'none') as Priority);
   const [ownerId, setOwnerId] = useState(task.ownerId ?? '');
+  const [visibility, setVisibility] = useState<Visibility>(
+    (task.visibility as Visibility | undefined) ?? 'shared',
+  );
   const [remindAt, setRemindAt] = useState('');
 
   const members = trpc.workspace.members.useQuery({ workspaceId }, { enabled: isOpen });
@@ -78,6 +81,7 @@ export function TaskForm({ isOpen, onClose, task, projectId, workspaceId }: Task
       dueDate: dueDate || null,
       priority,
       ownerId: ownerId || null,
+      visibility,
     });
   };
 
@@ -120,6 +124,7 @@ export function TaskForm({ isOpen, onClose, task, projectId, workspaceId }: Task
           options={PRIORITIES}
         />
         <Input as="select" label="Owner" value={ownerId} onChange={setOwnerId} options={ownerOptions} />
+        <VisibilityToggle value={visibility} onChange={setVisibility} />
 
         <fieldset className={styles.fieldset}>
           <legend className={styles.legend}>Reminders</legend>

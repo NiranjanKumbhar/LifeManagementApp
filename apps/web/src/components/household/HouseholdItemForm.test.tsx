@@ -25,6 +25,7 @@ const item = {
   autoReplenish: false,
   lastPurchased: null,
   addedBy: null,
+  visibility: 'shared' as const,
   sortOrder: 0,
   createdAt: '2026-06-01',
   updatedAt: '2026-06-01',
@@ -41,6 +42,8 @@ describe('HouseholdItemForm', () => {
     await userEvent.clear(name);
     await userEvent.type(name, 'Plantains');
     await userEvent.click(screen.getByRole('button', { name: 'Save' }));
-    expect(mutate).toHaveBeenCalledWith(expect.objectContaining({ id: 'h1', name: 'Plantains' }));
+    expect(mutate).toHaveBeenCalledWith(
+      expect.objectContaining({ id: 'h1', name: 'Plantains', visibility: 'shared' }),
+    );
   });
 });
