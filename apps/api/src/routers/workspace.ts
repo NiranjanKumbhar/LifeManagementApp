@@ -23,6 +23,10 @@ export const workspaceRouter = router({
     return unwrap(await WorkspaceService.members(ctx.db, input.workspaceId));
   }),
 
+  mine: protectedProcedure.query(async ({ ctx }) => {
+    return unwrap(await WorkspaceService.mine(ctx.db, ctx.userId));
+  }),
+
   // Partner invites are delegated to Clerk Organizations and are not yet wired up.
   invite: workspaceProcedure.input(inviteSchema).mutation(() => {
     throw new TRPCError({

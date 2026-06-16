@@ -1,4 +1,4 @@
-import { eq } from 'drizzle-orm';
+import { asc, eq } from 'drizzle-orm';
 import type { Database } from '../db/client';
 import { users, workspaceMembers, workspaces } from '../db/schema';
 import { internal, notFound, ok, type AppError, type Result } from '../utils/errors';
@@ -9,6 +9,11 @@ type MemberRow = typeof workspaceMembers.$inferSelect;
 
 export interface MemberWithUser extends MemberRow {
   user: { id: string; displayName: string; email: string; avatarUrl: string | null };
+}
+
+export interface MyWorkspace {
+  workspace: WorkspaceRow;
+  role: 'owner' | 'member';
 }
 
 export class WorkspaceService {
@@ -68,5 +73,15 @@ export class WorkspaceService {
       .where(eq(workspaceMembers.workspaceId, workspaceId));
 
     return ok(rows.map((r) => ({ ...r.member, user: r.user })));
+  }
+
+  static async mine(db: Database, userId: string): Promise<Result<MyWorkspace[], AppError>> {
+    const rows = await db
+      .select({ workspace: workspaces, role: workspaceMembers.role })
+      .from(workspaceMembers)
+      .innerJoin(workspaces, eq(workspaceMembers.workspaceId, workspaces.id))
+      .where(eq(workspaceMembers.userId, userId))
+      .orderBy(asc(workspaces.createdAt));
+    return ok(rows.map((r) => ({ workspace: r.workspace, role: r.role })));
   }
 }

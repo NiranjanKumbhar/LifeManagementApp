@@ -80,6 +80,21 @@ describe('workspaceRouter — members', () => {
   });
 });
 
+describe('workspaceRouter — mine', () => {
+  it('returns the workspaces the user belongs to with their role', async () => {
+    const alex = callerFor(ctx.db, world.alex.clerkId);
+    const mine = await alex.workspace.mine();
+    expect(mine).toHaveLength(1);
+    expect(mine[0]).toMatchObject({ workspace: { id: world.workspace.id }, role: 'owner' });
+  });
+
+  it('returns empty for a user in no workspace', async () => {
+    const stranger = await insertUser(ctx.db);
+    const caller = callerFor(ctx.db, stranger.clerkId);
+    expect(await caller.workspace.mine()).toEqual([]);
+  });
+});
+
 describe('workspaceRouter — invite', () => {
   it('is not implemented yet (delegated to Clerk Organizations)', async () => {
     const alex = callerFor(ctx.db, world.alex.clerkId);
