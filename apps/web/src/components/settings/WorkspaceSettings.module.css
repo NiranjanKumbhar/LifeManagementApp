@@ -61,3 +61,22 @@
   font-size: var(--ls-text-xs);
   color: var(--ls-text-tertiary);
 }
+
+.memberActions {
+  display: inline-flex;
+  gap: var(--ls-space-1);
+  margin-left: var(--ls-space-2);
+}
+.leaveRow {
+  margin-top: var(--ls-space-3);
+  padding-top: var(--ls-space-3);
+  border-top: 1px solid var(--ls-surface-border);
+  display: flex;
+  align-items: center;
+  gap: var(--ls-space-2);
+  flex-wrap: wrap;
+}
+.leaveHint {
+  font-size: var(--ls-text-xs);
+  color: var(--ls-text-tertiary);
+}
