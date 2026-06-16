@@ -7,20 +7,9 @@ import type { WorkspaceMember } from '../entities/workspace';
 import type { User, UserRef } from '../entities/user';
 import type { ActivityEvent } from '../entities/activity';
 import type { UrgencyLevel } from '../enums/urgency';
-import type { InviteStatus } from '../enums/status';
 import type { SearchEntityType } from './inputs';
 
 // ── Workspace ─────────────────────────────────────────────────────────────────
-
-export interface WorkspaceInvite {
-  id: string;
-  workspaceId: string;
-  email: string;
-  invitedBy: string; // userId
-  status: InviteStatus;
-  expiresAt: Date;
-  createdAt: Date;
-}
 
 export interface MemberWithUser extends WorkspaceMember {
   user: Pick<User, 'id' | 'displayName' | 'email' | 'avatarUrl'>;
