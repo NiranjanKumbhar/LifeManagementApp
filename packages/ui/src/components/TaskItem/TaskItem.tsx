@@ -1,7 +1,8 @@
-import type { UserRef } from '@lifesync/shared-types';
+import type { UserRef, Visibility } from '@lifesync/shared-types';
 import { cn } from '../../utils/cn';
 import { formatRelativeDate } from '../../utils/format-date';
 import { UserChip } from '../UserChip/UserChip';
+import { PrivacyLock } from '../PrivacyLock/PrivacyLock';
 import styles from './TaskItem.module.css';
 
 export interface TaskItemData {
@@ -11,6 +12,7 @@ export interface TaskItemData {
   dueDate: string | null;
   createdByUser: UserRef | null;
   completedByUser: UserRef | null;
+  visibility?: Visibility;
 }
 
 export interface TaskItemProps {
@@ -42,6 +44,7 @@ export function TaskItem({ task, depth, onToggleComplete, onEdit }: TaskItemProp
       ) : (
         <span className={cn(styles.title, done && styles.done)}>{task.title}</span>
       )}
+      {task.visibility === 'private' ? <PrivacyLock /> : null}
       {task.dueDate ? <span className={styles.due}>{formatRelativeDate(task.dueDate)}</span> : null}
       {task.createdByUser ? <UserChip user={task.createdByUser} /> : null}
       {task.status === 'completed' && task.completedByUser ? (

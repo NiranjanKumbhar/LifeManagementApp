@@ -47,6 +47,13 @@ function childPath(parent: TaskRow): string {
   return parent.path ? `${parent.path}.${parent.id}` : parent.id;
 }
 
+/** Removes private tasks (and their subtrees) that the viewer didn't create. */
+function prunePrivateTasks(nodes: TaskTreeNode[], viewerId: string): TaskTreeNode[] {
+  return nodes
+    .filter((n) => !(n.visibility === 'private' && n.createdBy !== viewerId))
+    .map((n) => ({ ...n, children: prunePrivateTasks(n.children, viewerId) }));
+}
+
 export class TaskService {
   static async list(
     db: Database,
@@ -71,7 +78,7 @@ export class TaskService {
         attach(n.children);
       }
     };
-    const tree = buildTaskTree(rows);
+    const tree = prunePrivateTasks(buildTaskTree(rows), userId);
     attach(tree);
     return ok(tree);
   }
@@ -109,6 +116,7 @@ export class TaskService {
             sortOrder: input.sortOrder ?? 0,
             path,
             createdBy: userId,
+            visibility: input.visibility ?? 'shared',
             isRecurring: input.isRecurring ?? false,
             recurrenceRule: input.recurrenceRule ?? null,
           })
@@ -136,6 +144,9 @@ export class TaskService {
   ): Promise<Result<TaskRow, AppError>> {
     const existing = await db.query.tasks.findFirst({ where: eq(tasks.id, input.id) });
     if (!existing) return { success: false, error: notFound('Task not found') };
+    if (existing.visibility === 'private' && existing.createdBy !== userId) {
+      return { success: false, error: notFound('Task not found') };
+    }
 
     const access = await loadWritableProject(db, userId, existing.projectId);
     if (!access.success) return access;
@@ -204,6 +215,9 @@ export class TaskService {
   ): Promise<Result<TaskRow, AppError>> {
     const existing = await db.query.tasks.findFirst({ where: eq(tasks.id, id) });
     if (!existing) return { success: false, error: notFound('Task not found') };
+    if (existing.visibility === 'private' && existing.createdBy !== userId) {
+      return { success: false, error: notFound('Task not found') };
+    }
 
     const access = await loadWritableProject(db, userId, existing.projectId);
     if (!access.success) return access;
@@ -228,6 +242,9 @@ export class TaskService {
   ): Promise<Result<TaskRow, AppError>> {
     const existing = await db.query.tasks.findFirst({ where: eq(tasks.id, id) });
     if (!existing) return { success: false, error: notFound('Task not found') };
+    if (existing.visibility === 'private' && existing.createdBy !== userId) {
+      return { success: false, error: notFound('Task not found') };
+    }
 
     const access = await loadWritableProject(db, userId, existing.projectId);
     if (!access.success) return access;

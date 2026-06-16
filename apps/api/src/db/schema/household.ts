@@ -1,6 +1,7 @@
 import { pgTable, uuid, text, timestamp, boolean, integer, index } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
 import { workspaces } from './workspaces';
+import type { Visibility } from './projects';
 import { users } from './users';
 
 export type StockStatus = 'stocked' | 'low' | 'out' | 'on_list';
@@ -15,6 +16,7 @@ export const householdItems = pgTable(
     name: text('name').notNull(),
     category: text('category').notNull().default('other'),
     status: text('status').notNull().default('stocked').$type<StockStatus>(),
+    visibility: text('visibility').notNull().default('shared').$type<Visibility>(),
     quantity: integer('quantity'),
     unit: text('unit'),
     autoReplenish: boolean('auto_replenish').notNull().default(false),

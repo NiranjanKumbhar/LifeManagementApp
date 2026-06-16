@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import type { StockStatus } from '@lifesync/shared-types';
-import { Button, Input, Modal, useToast } from '@lifesync/ui';
+import type { StockStatus, Visibility } from '@lifesync/shared-types';
+import { Button, Input, Modal, VisibilityToggle, useToast } from '@lifesync/ui';
 import { trpc } from '@/lib/trpc';
 import { useWorkspaceId } from '@/lib/hooks/useWorkspaceId';
 import { HOUSEHOLD_CATEGORY_ORDER, HOUSEHOLD_STATUS_META } from '@/lib/household/category-meta';
@@ -33,6 +33,9 @@ export function HouseholdItemForm({ isOpen, item, onClose }: HouseholdItemFormPr
   const [quantity, setQuantity] = useState(item?.quantity != null ? String(item.quantity) : '');
   const [unit, setUnit] = useState(item?.unit ?? '');
   const [autoReplenish, setAutoReplenish] = useState(item?.autoReplenish ? 'true' : 'false');
+  const [visibility, setVisibility] = useState<Visibility>(
+    (item?.visibility as Visibility | undefined) ?? 'shared',
+  );
 
   const update = trpc.household.update.useMutation({
     onSuccess: () => {
@@ -53,6 +56,7 @@ export function HouseholdItemForm({ isOpen, item, onClose }: HouseholdItemFormPr
       quantity: quantity === '' ? null : Number(quantity),
       unit: unit.trim() === '' ? null : unit.trim(),
       autoReplenish: autoReplenish === 'true',
+      visibility,
     });
   };
 
@@ -94,6 +98,7 @@ export function HouseholdItemForm({ isOpen, item, onClose }: HouseholdItemFormPr
             { value: 'true', label: 'Yes' },
           ]}
         />
+        <VisibilityToggle value={visibility} onChange={setVisibility} />
       </div>
     </Modal>
   );

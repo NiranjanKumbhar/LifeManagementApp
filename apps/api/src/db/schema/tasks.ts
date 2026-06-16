@@ -12,6 +12,7 @@ import {
 } from 'drizzle-orm/pg-core';
 import { sql } from 'drizzle-orm';
 import { projects } from './projects';
+import type { Visibility } from './projects';
 import { users } from './users';
 
 export type TaskStatus = 'pending' | 'in_progress' | 'completed' | 'cancelled' | 'blocked';
@@ -41,6 +42,7 @@ export const tasks = pgTable(
     completedAt: timestamp('completed_at', { withTimezone: true }),
     completedBy: uuid('completed_by').references(() => users.id),
     createdBy: uuid('created_by').references(() => users.id),
+    visibility: text('visibility').notNull().default('shared').$type<Visibility>(),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
     updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
   },

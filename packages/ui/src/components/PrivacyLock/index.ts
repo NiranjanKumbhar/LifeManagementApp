@@ -1,0 +1,1 @@
+export { PrivacyLock } from './PrivacyLock';

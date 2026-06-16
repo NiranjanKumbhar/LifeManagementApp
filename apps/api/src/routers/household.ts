@@ -11,7 +11,7 @@ import {
 
 export const householdRouter = router({
   list: workspaceProcedure.input(listHouseholdSchema).query(async ({ ctx, input }) => {
-    return unwrap(await HouseholdService.list(ctx.db, input));
+    return unwrap(await HouseholdService.list(ctx.db, ctx.userId, input));
   }),
 
   add: workspaceProcedure.input(createHouseholdSchema).mutation(async ({ ctx, input }) => {

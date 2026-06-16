@@ -34,7 +34,7 @@ export const taskStatusSchema = z.enum([
   'blocked',
 ]);
 export const prioritySchema = z.enum(['urgent', 'high', 'medium', 'low', 'none']);
-export const visibilitySchema = z.enum(['shared', 'mine_visible', 'private']);
+export const visibilitySchema = z.enum(['shared', 'private']);
 
 export const recurrenceRuleSchema = z.object({
   frequency: z.enum(['daily', 'weekly', 'monthly', 'yearly']),
@@ -122,6 +122,7 @@ export const createTaskSchema = z.object({
   description: z.string().max(5000).optional(),
   priority: prioritySchema.optional(),
   ownerId: uuidSchema.optional(),
+  visibility: visibilitySchema.optional(),
   dueDate: dateStringSchema.optional(),
   parentId: uuidSchema.optional(),
   sortOrder: z.number().int().min(0).optional(),
@@ -136,6 +137,7 @@ export const updateTaskSchema = z.object({
   status: taskStatusSchema.optional(),
   priority: prioritySchema.optional(),
   ownerId: uuidSchema.nullable().optional(),
+  visibility: visibilitySchema.optional(),
   dueDate: dateStringSchema.nullable().optional(),
   sortOrder: z.number().int().min(0).optional(),
   parentId: uuidSchema.nullable().optional(),
@@ -184,6 +186,7 @@ export const createHouseholdSchema = z.object({
   name: z.string().min(1).max(200),
   category: z.string().max(100).optional(),
   status: stockStatusSchema.optional(),
+  visibility: visibilitySchema.optional(),
   quantity: z.number().int().min(0).optional(),
   unit: z.string().max(50).optional(),
   autoReplenish: z.boolean().optional(),
@@ -194,6 +197,7 @@ export const updateHouseholdSchema = z.object({
   name: z.string().min(1).max(200).optional(),
   category: z.string().max(100).optional(),
   status: stockStatusSchema.optional(),
+  visibility: visibilitySchema.optional(),
   quantity: z.number().int().min(0).nullable().optional(),
   unit: z.string().max(50).nullable().optional(),
   autoReplenish: z.boolean().optional(),

@@ -92,7 +92,7 @@ function canRead(p: Pick<ProjectRow, 'visibility' | 'ownerId'>, userId: string):
 
 function canWrite(p: Pick<ProjectRow, 'visibility' | 'ownerId'>, userId: string): boolean {
   if (p.visibility === 'shared') return true;
-  // mine_visible and private are editable only by their owner
+  // private is editable only by its owner
   return p.ownerId === userId;
 }
 
@@ -115,6 +115,13 @@ function buildTaskTree(rows: TaskRow[]): TaskTreeNode[] {
   };
   sortRec(roots);
   return roots;
+}
+
+/** Removes private tasks (and their subtrees) that the viewer didn't create. */
+function prunePrivateTasks(nodes: TaskTreeNode[], viewerId: string): TaskTreeNode[] {
+  return nodes
+    .filter((n) => !(n.visibility === 'private' && n.createdBy !== viewerId))
+    .map((n) => ({ ...n, children: prunePrivateTasks(n.children, viewerId) }));
 }
 
 // ── Service ───────────────────────────────────────────────────────────────────
@@ -140,9 +147,10 @@ export class ProjectService {
     const rows = await db
       .select({
         project: projects,
-        // taskCount excludes cancelled tasks so progress reflects actionable work
-        taskCount: sql<number>`count(${tasks.id}) filter (where ${tasks.status} <> 'cancelled')`.mapWith(Number),
-        completedCount: sql<number>`count(${tasks.id}) filter (where ${tasks.status} = 'completed')`.mapWith(Number),
+        // taskCount excludes cancelled tasks so progress reflects actionable work;
+        // others' private tasks are excluded so counts don't leak their existence
+        taskCount: sql<number>`count(${tasks.id}) filter (where ${tasks.status} <> 'cancelled' and (${tasks.visibility} <> 'private' or ${tasks.createdBy} = ${userId}))`.mapWith(Number),
+        completedCount: sql<number>`count(${tasks.id}) filter (where ${tasks.status} = 'completed' and (${tasks.visibility} <> 'private' or ${tasks.createdBy} = ${userId}))`.mapWith(Number),
       })
       .from(projects)
       .leftJoin(tasks, eq(tasks.projectId, projects.id))
@@ -210,7 +218,7 @@ export class ProjectService {
         attach(n.children);
       }
     };
-    const tree = buildTaskTree(taskRows);
+    const tree = prunePrivateTasks(buildTaskTree(taskRows), userId);
     attach(tree);
     return ok({
       ...project,

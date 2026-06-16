@@ -1,1 +1,1 @@
-export type Visibility = 'shared' | 'mine_visible' | 'private';
+export type Visibility = 'shared' | 'private';

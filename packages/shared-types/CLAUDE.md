@@ -64,7 +64,7 @@ export interface CreateProjectInput {
 
 // Enum pattern
 export type ProjectType = 'occasion' | 'compliance' | 'household' | 'health' | 'travel' | 'planning' | 'general';
-export type Visibility = 'shared' | 'mine_visible' | 'private';
+export type Visibility = 'shared' | 'private';
 export type UrgencyLevel = 'overdue' | 'critical' | 'soon' | 'on_track' | 'no_deadline';
 ```
 

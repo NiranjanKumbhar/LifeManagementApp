@@ -184,6 +184,7 @@ export default function ProjectDetailPage() {
                 dueDate: task.dueDate,
                 createdByUser: task.createdByUser ?? null,
                 completedByUser: task.completedByUser ?? null,
+                visibility: task.visibility,
               }}
               depth={0}
               onToggleComplete={() => toggleTask(task)}
@@ -199,6 +200,7 @@ export default function ProjectDetailPage() {
                   dueDate: child.dueDate,
                   createdByUser: child.createdByUser ?? null,
                   completedByUser: child.completedByUser ?? null,
+                  visibility: child.visibility,
                 }}
                 depth={1}
                 onToggleComplete={() => toggleTask(child)}

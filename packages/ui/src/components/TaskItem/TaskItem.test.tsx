@@ -11,6 +11,7 @@ const baseTask = {
   dueDate: null as string | null,
   createdByUser: null as UserRef | null,
   completedByUser: null as UserRef | null,
+  visibility: 'shared' as const,
 };
 
 describe('TaskItem', () => {
@@ -62,5 +63,21 @@ describe('TaskItem', () => {
       />,
     );
     expect(screen.getByText('Alex')).toBeInTheDocument();
+  });
+
+  it('shows a lock when the task is private', () => {
+    render(
+      <TaskItem
+        task={{ ...baseTask, visibility: 'private' }}
+        depth={0}
+        onToggleComplete={() => {}}
+      />,
+    );
+    expect(screen.getByRole('img', { name: 'Private' })).toBeInTheDocument();
+  });
+
+  it('shows no lock when the task is shared', () => {
+    render(<TaskItem task={baseTask} depth={0} onToggleComplete={() => {}} />);
+    expect(screen.queryByRole('img', { name: 'Private' })).not.toBeInTheDocument();
   });
 });

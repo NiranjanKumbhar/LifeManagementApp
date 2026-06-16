@@ -1,5 +1,6 @@
 import type { TaskStatus } from '../enums/status';
 import type { Priority } from '../enums/priority';
+import type { Visibility } from '../enums/visibility';
 import type { RecurrenceRule } from './project';
 import type { UserRef } from './user';
 
@@ -12,6 +13,7 @@ export interface Task {
   status: TaskStatus;
   priority: Priority;
   ownerId: string | null;
+  visibility: Visibility;
   dueDate: string | null;   // ISO date string (YYYY-MM-DD)
   sortOrder: number;
   path: string;             // Materialized path: "ancestor-id.parent-id.task-id"

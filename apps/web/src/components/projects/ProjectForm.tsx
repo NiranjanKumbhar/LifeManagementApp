@@ -4,7 +4,7 @@ import { useMemo, useState } from 'react';
 import type { inferRouterOutputs } from '@trpc/server';
 import type { AppRouter } from 'api';
 import type { Priority, ProjectType, Visibility } from '@lifesync/shared-types';
-import { Button, Input, Modal, useToast } from '@lifesync/ui';
+import { Button, Input, Modal, VisibilityToggle, useToast } from '@lifesync/ui';
 import { trpc } from '@/lib/trpc';
 import { useWorkspaceId } from '@/lib/hooks/useWorkspaceId';
 import { PROJECT_TYPE_META, PROJECT_TYPE_ORDER } from '@/lib/projects/project-meta';
@@ -26,12 +26,6 @@ const PRIORITIES = [
   { value: 'high', label: 'High' },
   { value: 'urgent', label: 'Urgent' },
 ];
-const VISIBILITIES = [
-  { value: 'shared', label: 'Shared' },
-  { value: 'mine_visible', label: 'Visible to partner' },
-  { value: 'private', label: 'Private' },
-];
-
 function customToString(value: unknown): string {
   if (Array.isArray(value)) return value.join(', ');
   if (value == null) return '';
@@ -172,7 +166,7 @@ export function ProjectForm({ mode, isOpen, onClose, project }: ProjectFormProps
         <Input as="textarea" label="Description" value={description} onChange={setDescription} />
         <Input type="date" label="Due date" value={dueDate} onChange={setDueDate} />
         <Input as="select" label="Priority" value={priority} onChange={(v) => setPriority(v as Priority)} options={PRIORITIES} />
-        <Input as="select" label="Visibility" value={visibility} onChange={(v) => setVisibility(v as Visibility)} options={VISIBILITIES} />
+        <VisibilityToggle value={visibility} onChange={setVisibility} />
 
         {fieldDefs.length > 0 ? (
           <fieldset className={styles.fieldset}>

@@ -1,8 +1,16 @@
 'use client';
 
 import { useMemo, useState } from 'react';
-import type { StockStatus } from '@lifesync/shared-types';
-import { EmptyState, LoadingSpinner, PageHeader, PageShell, SegmentedControl, useToast } from '@lifesync/ui';
+import type { StockStatus, Visibility } from '@lifesync/shared-types';
+import {
+  EmptyState,
+  LoadingSpinner,
+  PageHeader,
+  PageShell,
+  SegmentedControl,
+  VisibilityToggle,
+  useToast,
+} from '@lifesync/ui';
 import { trpc } from '@/lib/trpc';
 import { useWorkspaceId } from '@/lib/hooks/useWorkspaceId';
 import { BasketIcon } from '@/components/icons';
@@ -22,6 +30,7 @@ export default function HouseholdPage() {
 
   const [tab, setTab] = useState<Tab>('shopping');
   const [editing, setEditing] = useState<HouseholdItemRow | null>(null);
+  const [addVisibility, setAddVisibility] = useState<Visibility>('shared');
 
   const query = trpc.household.list.useQuery({ workspaceId: workspaceId ?? '' }, { enabled });
 
@@ -44,7 +53,12 @@ export default function HouseholdPage() {
 
   const onAdd = (name: string) => {
     if (!workspaceId) return;
-    add.mutate({ workspaceId, name, status: tab === 'shopping' ? 'on_list' : 'stocked' });
+    add.mutate({
+      workspaceId,
+      name,
+      status: tab === 'shopping' ? 'on_list' : 'stocked',
+      visibility: addVisibility,
+    });
   };
   const onPrimary = (id: string) =>
     tab === 'shopping' ? purchase.mutate({ id }) : restock.mutate({ id });
@@ -73,6 +87,7 @@ export default function HouseholdPage() {
           onAdd={onAdd}
           placeholder={tab === 'shopping' ? 'Add to shopping list…' : 'Add to inventory…'}
         />
+        <VisibilityToggle value={addVisibility} onChange={setAddVisibility} />
       </div>
 
       {query.isLoading ? (

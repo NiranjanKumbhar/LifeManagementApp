@@ -38,6 +38,10 @@ export class ReminderService {
     if (input.taskId) {
       const task = await db.query.tasks.findFirst({ where: eq(tasks.id, input.taskId) });
       if (!task) return { success: false, error: notFound('Task not found') };
+      // A private task is invisible to non-creators — don't let them attach reminders.
+      if (task.visibility === 'private' && task.createdBy !== userId) {
+        return { success: false, error: notFound('Task not found') };
+      }
       projectId = task.projectId;
     }
     if (projectId) {

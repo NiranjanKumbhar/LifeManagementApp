@@ -1,4 +1,5 @@
 import type { StockStatus } from '../enums/status';
+import type { Visibility } from '../enums/visibility';
 
 export interface HouseholdItem {
   id: string;
@@ -6,6 +7,7 @@ export interface HouseholdItem {
   name: string;
   category: string;
   status: StockStatus;
+  visibility: Visibility;
   quantity: number | null;
   unit: string | null;
   autoReplenish: boolean;

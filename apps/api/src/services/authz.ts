@@ -21,7 +21,7 @@ export function canWriteProject(
   userId: string,
 ): boolean {
   if (p.visibility === 'shared') return true;
-  // mine_visible and private are editable only by their owner
+  // private is editable only by its owner
   return p.ownerId === userId;
 }
 

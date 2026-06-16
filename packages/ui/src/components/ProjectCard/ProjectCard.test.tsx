@@ -43,4 +43,14 @@ describe('ProjectCard', () => {
     // UserChip with null user renders an em-dash fallback
     expect(screen.getByText('Added by —')).toBeInTheDocument();
   });
+
+  it('shows a lock when the project is private', () => {
+    render(<ProjectCard project={{ ...project, visibility: 'private' }} href="/projects/p1" />);
+    expect(screen.getByRole('img', { name: 'Private' })).toBeInTheDocument();
+  });
+
+  it('shows no lock when the project is shared', () => {
+    render(<ProjectCard project={{ ...project, visibility: 'shared' }} href="/projects/p1" />);
+    expect(screen.queryByRole('img', { name: 'Private' })).not.toBeInTheDocument();
+  });
 });
