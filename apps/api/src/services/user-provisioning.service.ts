@@ -1,4 +1,4 @@
-import { eq } from 'drizzle-orm';
+import { eq, or } from 'drizzle-orm';
 import type { Database } from '../db/client';
 import { users, workspaceMembers, workspaces } from '../db/schema';
 import { clerkClient } from '../lib/clerk';
@@ -34,7 +34,24 @@ function displayNameFrom(
 }
 
 async function upsertUser(db: Database, input: UserUpsert): Promise<UserRow> {
-  const [user] = await db
+  const existing = await db.query.users.findFirst({
+    where: or(eq(users.clerkId, input.clerkId), eq(users.email, input.email)),
+  });
+  if (existing) {
+    const [row] = await db
+      .update(users)
+      .set({
+        clerkId: input.clerkId,
+        email: input.email,
+        displayName: input.displayName,
+        avatarUrl: input.avatarUrl,
+        updatedAt: new Date(),
+      })
+      .where(eq(users.id, existing.id))
+      .returning();
+    return row as UserRow;
+  }
+  const [row] = await db
     .insert(users)
     .values({
       clerkId: input.clerkId,
@@ -42,43 +59,20 @@ async function upsertUser(db: Database, input: UserUpsert): Promise<UserRow> {
       displayName: input.displayName,
       avatarUrl: input.avatarUrl,
     })
-    .onConflictDoUpdate({
-      target: users.clerkId,
-      set: {
-        email: input.email,
-        displayName: input.displayName,
-        avatarUrl: input.avatarUrl,
-        updatedAt: new Date(),
-      },
-    })
     .returning();
-  // `user` is always defined: insert-or-update returns exactly one row.
-  return user as UserRow;
+  return row as UserRow;
 }
 
 export class UserProvisioningService {
   /**
    * Guarantee the user belongs to at least one workspace. If they already do,
-   * no-op. In dev with DEFAULT_WORKSPACE_ID set, join that (legacy convenience).
-   * Otherwise create a personal workspace they own.
+   * no-op. Otherwise create a personal workspace they own.
    */
   static async ensureOwnWorkspace(db: Database, user: UserRow): Promise<void> {
     const existing = await db.query.workspaceMembers.findFirst({
       where: eq(workspaceMembers.userId, user.id),
     });
     if (existing) return;
-
-    const defaultId = process.env['DEFAULT_WORKSPACE_ID'];
-    if (defaultId && process.env['NODE_ENV'] !== 'production') {
-      const ws = await db.query.workspaces.findFirst({ where: eq(workspaces.id, defaultId) });
-      if (ws) {
-        await db
-          .insert(workspaceMembers)
-          .values({ workspaceId: defaultId, userId: user.id, role: 'member', joinedAt: new Date() })
-          .onConflictDoNothing();
-        return;
-      }
-    }
 
     const firstName = user.displayName.split(' ')[0] || user.displayName;
     await db.transaction(async (tx) => {
