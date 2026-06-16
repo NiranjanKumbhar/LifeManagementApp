@@ -111,7 +111,9 @@ describe('workspaceRouter — invites', () => {
     const alex = callerFor(ctx.db, world.alex.clerkId);
     const { invite } = await alex.workspace.createInvite({ workspaceId: world.workspace.id });
     const stranger = await insertUser(ctx.db);
-    const ws = await callerFor(ctx.db, stranger.clerkId).workspace.acceptInvite({ token: invite.token });
+    const ws = await callerFor(ctx.db, stranger.clerkId).workspace.acceptInvite({
+      token: invite.token,
+    });
     expect(ws.id).toBe(world.workspace.id);
     const members = await alex.workspace.members({ workspaceId: world.workspace.id });
     expect(members.map((m) => m.userId)).toContain(stranger.id);
@@ -145,7 +147,9 @@ describe('workspaceRouter — invites', () => {
     const alex = callerFor(ctx.db, world.alex.clerkId);
     const { invite } = await alex.workspace.createInvite({ workspaceId: world.workspace.id });
     const stranger = await insertUser(ctx.db);
-    const preview = await callerFor(ctx.db, stranger.clerkId).workspace.invitePreview({ token: invite.token });
+    const preview = await callerFor(ctx.db, stranger.clerkId).workspace.invitePreview({
+      token: invite.token,
+    });
     expect(preview).toMatchObject({ workspaceName: world.workspace.name, status: 'pending' });
   });
 
@@ -155,5 +159,17 @@ describe('workspaceRouter — invites', () => {
     const list = await alex.workspace.listInvites({ workspaceId: world.workspace.id });
     expect(list.length).toBeGreaterThanOrEqual(1);
     expect(list.every((i) => i.status === 'pending')).toBe(true);
+  });
+
+  it('rejects reusing an already-accepted invite (single-use)', async () => {
+    const alex = callerFor(ctx.db, world.alex.clerkId);
+    const { invite } = await alex.workspace.createInvite({ workspaceId: world.workspace.id });
+    const first = await insertUser(ctx.db);
+    await callerFor(ctx.db, first.clerkId).workspace.acceptInvite({ token: invite.token });
+
+    const second = await insertUser(ctx.db);
+    await expect(
+      callerFor(ctx.db, second.clerkId).workspace.acceptInvite({ token: invite.token }),
+    ).rejects.toMatchObject({ code: 'NOT_FOUND' });
   });
 });

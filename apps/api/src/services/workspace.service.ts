@@ -62,7 +62,10 @@ export class WorkspaceService {
       });
       return ok(workspace);
     } catch (e) {
-      return { success: false, error: internal('Failed to create workspace', { cause: String(e) }) };
+      return {
+        success: false,
+        error: internal('Failed to create workspace', { cause: String(e) }),
+      };
     }
   }
 
@@ -103,10 +106,14 @@ export class WorkspaceService {
     workspaceId: string,
   ): Promise<Result<true, AppError>> {
     const m = await db.query.workspaceMembers.findFirst({
-      where: and(eq(workspaceMembers.workspaceId, workspaceId), eq(workspaceMembers.userId, userId)),
+      where: and(
+        eq(workspaceMembers.workspaceId, workspaceId),
+        eq(workspaceMembers.userId, userId),
+      ),
     });
     if (!m) return { success: false, error: notFound('Workspace not found') };
-    if (m.role !== 'owner') return { success: false, error: forbidden('Only the owner can manage invites') };
+    if (m.role !== 'owner')
+      return { success: false, error: forbidden('Only the owner can manage invites') };
     return ok(true);
   }
 
@@ -138,9 +145,13 @@ export class WorkspaceService {
     _userId: string,
     token: string,
   ): Promise<Result<{ workspaceName: string; status: string }, AppError>> {
-    const invite = await db.query.workspaceInvites.findFirst({ where: eq(workspaceInvites.token, token) });
+    const invite = await db.query.workspaceInvites.findFirst({
+      where: eq(workspaceInvites.token, token),
+    });
     if (!invite) return { success: false, error: notFound('Invite not found') };
-    const ws = await db.query.workspaces.findFirst({ where: eq(workspaces.id, invite.workspaceId) });
+    const ws = await db.query.workspaces.findFirst({
+      where: eq(workspaces.id, invite.workspaceId),
+    });
     if (!ws) return { success: false, error: notFound('Invite not found') };
     return ok({ workspaceName: ws.name, status: invite.status });
   }
@@ -150,34 +161,49 @@ export class WorkspaceService {
     userId: string,
     token: string,
   ): Promise<Result<WorkspaceRow, AppError>> {
-    const invite = await db.query.workspaceInvites.findFirst({ where: eq(workspaceInvites.token, token) });
+    const invite = await db.query.workspaceInvites.findFirst({
+      where: eq(workspaceInvites.token, token),
+    });
     if (!invite) return { success: false, error: notFound('Invite not found') };
-    if (invite.status === 'revoked') return { success: false, error: notFound('Invite not found') };
-    if (invite.status === 'pending' && invite.expiresAt < new Date()) {
-      await db.update(workspaceInvites).set({ status: 'expired' }).where(eq(workspaceInvites.id, invite.id));
-      return { success: false, error: notFound('Invite has expired') };
-    }
-    const ws = await db.query.workspaces.findFirst({ where: eq(workspaces.id, invite.workspaceId) });
+
+    const ws = await db.query.workspaces.findFirst({
+      where: eq(workspaces.id, invite.workspaceId),
+    });
     if (!ws) return { success: false, error: notFound('Workspace not found') };
 
+    // An existing member (including the original accepter re-opening the link)
+    // gets an idempotent success — no second membership, no error.
     const already = await db.query.workspaceMembers.findFirst({
-      where: and(eq(workspaceMembers.workspaceId, invite.workspaceId), eq(workspaceMembers.userId, userId)),
+      where: and(
+        eq(workspaceMembers.workspaceId, invite.workspaceId),
+        eq(workspaceMembers.userId, userId),
+      ),
     });
-    if (already) {
-      if (invite.status === 'pending') {
-        await db
-          .update(workspaceInvites)
-          .set({ status: 'accepted', acceptedBy: userId, acceptedAt: new Date() })
-          .where(eq(workspaceInvites.id, invite.id));
-      }
-      return ok(ws);
+    if (already) return ok(ws);
+
+    // For a new joiner the invite must still be actionable: pending + unexpired.
+    // (accepted = already consumed by someone else; revoked/expired = dead.)
+    if (invite.status !== 'pending') {
+      return { success: false, error: notFound('Invite not found') };
+    }
+    if (invite.expiresAt < new Date()) {
+      await db
+        .update(workspaceInvites)
+        .set({ status: 'expired' })
+        .where(eq(workspaceInvites.id, invite.id));
+      return { success: false, error: notFound('Invite has expired') };
     }
 
+    // Capacity check then join. Note: this count-then-insert has a benign
+    // TOCTOU race (two simultaneous accepts could momentarily exceed the cap);
+    // acceptable for a small household app.
     const [row] = await db
       .select({ value: count() })
       .from(workspaceMembers)
       .where(eq(workspaceMembers.workspaceId, invite.workspaceId));
-    if ((row?.value ?? 0) >= MAX_MEMBERS) return { success: false, error: conflict('Workspace is full') };
+    if ((row?.value ?? 0) >= MAX_MEMBERS) {
+      return { success: false, error: conflict('Workspace is full') };
+    }
 
     await db.transaction(async (tx) => {
       await tx.insert(workspaceMembers).values({
@@ -194,8 +220,14 @@ export class WorkspaceService {
     return ok(ws);
   }
 
-  static async revokeInvite(db: Database, userId: string, id: string): Promise<Result<void, AppError>> {
-    const invite = await db.query.workspaceInvites.findFirst({ where: eq(workspaceInvites.id, id) });
+  static async revokeInvite(
+    db: Database,
+    userId: string,
+    id: string,
+  ): Promise<Result<void, AppError>> {
+    const invite = await db.query.workspaceInvites.findFirst({
+      where: eq(workspaceInvites.id, id),
+    });
     if (!invite) return { success: false, error: notFound('Invite not found') };
     const owner = await this.requireOwner(db, userId, invite.workspaceId);
     if (!owner.success) return owner;
@@ -213,7 +245,9 @@ export class WorkspaceService {
     const rows = await db
       .select()
       .from(workspaceInvites)
-      .where(and(eq(workspaceInvites.workspaceId, workspaceId), eq(workspaceInvites.status, 'pending')))
+      .where(
+        and(eq(workspaceInvites.workspaceId, workspaceId), eq(workspaceInvites.status, 'pending')),
+      )
       .orderBy(desc(workspaceInvites.createdAt));
     return ok(rows);
   }
