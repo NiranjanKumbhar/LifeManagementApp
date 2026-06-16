@@ -36,7 +36,7 @@ This is **LifeSync**, a shared life management app for couples that combines fas
 8. **DevOps** — no CI/CD (`.github/` empty), no deploy config (Vercel/EAS/API host), no monitoring.
 
 ### Known stubs / shortcuts to revisit
-- `workspace.invite` → throws `NOT_IMPLEMENTED` (needs Clerk Organizations; replaces the `DEFAULT_WORKSPACE_ID` auto-join shortcut for real multi-couple use).
+- **Workspace invites (membership slice A) shipped** — `workspace_invites` table (migration `0004`, hand-written like 0002/0003, **must be applied to live Supabase**), tokenized invite links (`createInvite`/`invitePreview`/`acceptInvite`/`revokeInvite`/`listInvites`, single-use, 6-member cap), `workspace.mine`, `ensureOwnWorkspace` (new users get their own workspace; `DEFAULT_WORKSPACE_ID` auto-join is now a dev-only fallback), web `WorkspaceProvider` + sidebar switcher + `/join/[token]` page + owner invite controls in Settings. Remaining membership work: **slice B** (roles / remove member / change role) and **slice C** (visibility & per-item sharing for >2 members).
 - `person.get` returns `projects: []` (no person↔project FK yet).
 - **`ProjectService.create` now defaults `ownerId` to the creator's userId** (was `null`) — fixes private-project visibility for the owner in list/search/task-list queries.
 - **Migration `0002_reminders_standalone.sql` must be applied to live Supabase** (`pnpm db:migrate`) — it drops the `reminders_check` constraint so standalone reminders (e.g. Calendar's "add a reminder on a day") work. Applied automatically in pglite tests; the production DB still needs it.
