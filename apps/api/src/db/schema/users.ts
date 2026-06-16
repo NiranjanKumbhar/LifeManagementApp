@@ -18,6 +18,7 @@ export const users = pgTable('users', {
     .notNull()
     .default({})
     .$type<NotificationPreferences>(),
+  onboardedAt: timestamp('onboarded_at', { withTimezone: true }),
   createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   updatedAt: timestamp('updated_at', { withTimezone: true }).notNull().defaultNow(),
 });

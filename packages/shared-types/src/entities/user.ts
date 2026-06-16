@@ -31,6 +31,7 @@ export interface User {
   avatarUrl: string | null;
   timezone: string;
   notificationPreferences: NotificationPreferences;
+  onboardedAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
 }

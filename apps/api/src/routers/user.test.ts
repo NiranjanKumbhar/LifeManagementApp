@@ -89,3 +89,17 @@ describe('userRouter — updateNotificationPrefs', () => {
     expect((me.notificationPreferences as Record<string, unknown>)?.digestMode).toBe('weekly');
   });
 });
+
+describe('userRouter — completeOnboarding', () => {
+  it('stamps onboardedAt on the current user', async () => {
+    const alex = callerFor(ctx.db, world.alex.clerkId);
+    const before = await alex.user.me();
+    expect(before.onboardedAt).toBeNull();
+
+    const after = await alex.user.completeOnboarding();
+    expect(after.onboardedAt).not.toBeNull();
+
+    const reloaded = await alex.user.me();
+    expect(reloaded.onboardedAt).not.toBeNull();
+  });
+});
