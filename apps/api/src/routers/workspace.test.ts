@@ -8,7 +8,7 @@ vi.mock('@clerk/backend', () => ({
 import { createTestDb, type TestDb } from '../__tests__/helpers/db.helper';
 import { seedCouple, type SeededCouple } from '../__tests__/helpers/seed.helper';
 import { callerFor } from '../__tests__/helpers/auth.helper';
-import { insertUser } from '../__tests__/factories/user.factory';
+import { addMember, insertUser } from '../__tests__/factories/user.factory';
 
 let ctx: TestDb;
 let world: SeededCouple;
@@ -171,5 +171,58 @@ describe('workspaceRouter — invites', () => {
     await expect(
       callerFor(ctx.db, second.clerkId).workspace.acceptInvite({ token: invite.token }),
     ).rejects.toMatchObject({ code: 'NOT_FOUND' });
+  });
+});
+
+describe('workspaceRouter — role & membership management', () => {
+  it('owner promotes a member to owner; member cannot change roles', async () => {
+    const alex = callerFor(ctx.db, world.alex.clerkId);
+    const stranger = await insertUser(ctx.db);
+    await addMember(ctx.db, world.workspace.id, stranger.id, 'member');
+    const updated = await alex.workspace.changeRole({
+      workspaceId: world.workspace.id, targetUserId: world.jordan.id, role: 'owner',
+    });
+    expect(updated.role).toBe('owner');
+    await expect(
+      callerFor(ctx.db, stranger.clerkId).workspace.changeRole({
+        workspaceId: world.workspace.id, targetUserId: world.alex.id, role: 'member',
+      }),
+    ).rejects.toMatchObject({ code: 'FORBIDDEN' });
+  });
+
+  it('blocks demoting the last owner', async () => {
+    const alex = callerFor(ctx.db, world.alex.clerkId);
+    await expect(
+      alex.workspace.changeRole({ workspaceId: world.workspace.id, targetUserId: world.alex.id, role: 'member' }),
+    ).rejects.toMatchObject({ code: 'CONFLICT' });
+  });
+
+  it('owner removes a member; blocks removing the last owner', async () => {
+    const alex = callerFor(ctx.db, world.alex.clerkId);
+    await alex.workspace.removeMember({ workspaceId: world.workspace.id, targetUserId: world.jordan.id });
+    const members = await alex.workspace.members({ workspaceId: world.workspace.id });
+    expect(members.map((m) => m.userId)).not.toContain(world.jordan.id);
+    await expect(
+      alex.workspace.removeMember({ workspaceId: world.workspace.id, targetUserId: world.alex.id }),
+    ).rejects.toMatchObject({ code: 'CONFLICT' });
+  });
+
+  it('a member can leave; the last owner cannot', async () => {
+    const jordan = callerFor(ctx.db, world.jordan.clerkId);
+    await jordan.workspace.leave({ workspaceId: world.workspace.id });
+    expect(await jordan.workspace.mine()).toEqual([]);
+    const alex = callerFor(ctx.db, world.alex.clerkId);
+    await expect(
+      alex.workspace.leave({ workspaceId: world.workspace.id }),
+    ).rejects.toMatchObject({ code: 'CONFLICT' });
+  });
+
+  it('a non-last owner can leave', async () => {
+    const alex = callerFor(ctx.db, world.alex.clerkId);
+    await alex.workspace.changeRole({ workspaceId: world.workspace.id, targetUserId: world.jordan.id, role: 'owner' });
+    await alex.workspace.leave({ workspaceId: world.workspace.id });
+    const jordan = callerFor(ctx.db, world.jordan.clerkId);
+    const members = await jordan.workspace.members({ workspaceId: world.workspace.id });
+    expect(members.map((m) => m.userId)).not.toContain(world.alex.id);
   });
 });
