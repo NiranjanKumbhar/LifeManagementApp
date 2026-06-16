@@ -20,9 +20,21 @@ beforeEach(() => {
 });
 
 vi.mock('@/lib/hooks/useWorkspaceId', () => ({ useWorkspaceId: () => 'ws-1' }));
+vi.mock('@/lib/workspace-context', () => ({
+  useWorkspace: () => ({
+    role: 'owner',
+    workspaceId: 'ws-1',
+    workspaces: [],
+    setActiveWorkspace: vi.fn(),
+    isLoading: false,
+  }),
+}));
 vi.mock('@/lib/trpc', () => ({
   trpc: {
-    useUtils: () => ({ user: { me: { invalidate: vi.fn() } } }),
+    useUtils: () => ({
+      user: { me: { invalidate: vi.fn() } },
+      workspace: { listInvites: { invalidate: vi.fn() } },
+    }),
     user: {
       me: {
         useQuery: () => ({
@@ -40,6 +52,9 @@ vi.mock('@/lib/trpc', () => ({
     workspace: {
       get: { useQuery: () => ({ data: { id: 'ws-1', name: 'Our Home' } }) },
       members: { useQuery: () => ({ data: [{ role: 'owner', user: { id: 'u1', displayName: 'Alex', email: 'a@b.com', avatarUrl: null } }] }) },
+      createInvite: { useMutation: () => ({ mutate: vi.fn(), isPending: false }) },
+      listInvites: { useQuery: () => ({ data: [] }) },
+      revokeInvite: { useMutation: () => ({ mutate: vi.fn(), isPending: false }) },
     },
   },
 }));
