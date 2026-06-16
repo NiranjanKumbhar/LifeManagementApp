@@ -80,6 +80,59 @@ describe('projectRouter — member flows', () => {
     });
   });
 
+  it('shows a private project to its owner in list and get', async () => {
+    const alex = callerFor(ctx.db, world.alex.clerkId);
+    const secret = await alex.project.create(
+      createProjectInput({
+        workspaceId: world.workspace.id,
+        title: 'Owner-only',
+        visibility: 'private',
+      }),
+    );
+
+    const alexList = await alex.project.list({ workspaceId: world.workspace.id });
+    expect(alexList.map((p) => p.id)).toContain(secret.id);
+
+    const fetched = await alex.project.get({ id: secret.id });
+    expect(fetched.id).toBe(secret.id);
+  });
+
+  it('rejects a partner editing a private project with NOT_FOUND', async () => {
+    const alex = callerFor(ctx.db, world.alex.clerkId);
+    const secret = await alex.project.create(
+      createProjectInput({
+        workspaceId: world.workspace.id,
+        title: 'Do not touch',
+        visibility: 'private',
+      }),
+    );
+
+    const jordan = callerFor(ctx.db, world.jordan.clerkId);
+    await expect(
+      jordan.project.update({ id: secret.id, title: 'Hacked' }),
+    ).rejects.toMatchObject({ code: 'NOT_FOUND' });
+  });
+
+  it('shows a shared project to both partners and lets either edit it', async () => {
+    const alex = callerFor(ctx.db, world.alex.clerkId);
+    const shared = await alex.project.create(
+      createProjectInput({
+        workspaceId: world.workspace.id,
+        title: 'Joint project',
+        visibility: 'shared',
+      }),
+    );
+
+    const jordan = callerFor(ctx.db, world.jordan.clerkId);
+    const alexList = await alex.project.list({ workspaceId: world.workspace.id });
+    const jordanList = await jordan.project.list({ workspaceId: world.workspace.id });
+    expect(alexList.map((p) => p.id)).toContain(shared.id);
+    expect(jordanList.map((p) => p.id)).toContain(shared.id);
+
+    const updated = await jordan.project.update({ id: shared.id, title: 'Joint project (edited)' });
+    expect(updated.title).toBe('Joint project (edited)');
+  });
+
   it('returns task counts on list rows', async () => {
     const caller = callerFor(ctx.db, world.alex.clerkId);
     const project = await caller.project.create(
