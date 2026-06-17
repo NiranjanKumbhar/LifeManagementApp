@@ -13,6 +13,7 @@ import { activityRouter } from './activity';
 import { userRouter } from './user';
 import { inboxRouter } from './inbox';
 import { calendarRouter } from './calendar';
+import { accountRouter } from './account';
 
 /** Root application router — all LifeSync domains. */
 export const appRouter = router({
@@ -30,6 +31,7 @@ export const appRouter = router({
   user: userRouter,
   inbox: inboxRouter,
   calendar: calendarRouter,
+  account: accountRouter,
 });
 
 export type AppRouter = typeof appRouter;
