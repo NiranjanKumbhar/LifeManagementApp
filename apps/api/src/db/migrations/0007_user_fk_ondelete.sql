@@ -31,3 +31,7 @@ ALTER TABLE "resources" DROP CONSTRAINT IF EXISTS "resources_uploaded_by_fkey",
   ADD CONSTRAINT "resources_uploaded_by_fkey" FOREIGN KEY ("uploaded_by") REFERENCES "users"("id") ON DELETE CASCADE;
 ALTER TABLE "workspace_invites" DROP CONSTRAINT IF EXISTS "workspace_invites_invited_by_fkey",
   ADD CONSTRAINT "workspace_invites_invited_by_fkey" FOREIGN KEY ("invited_by") REFERENCES "users"("id") ON DELETE CASCADE;
+-- notifications.user_id is already cascade in the Drizzle schema; ensure prod matches
+-- (idempotent) so a user with notifications can be deleted.
+ALTER TABLE "notifications" DROP CONSTRAINT IF EXISTS "notifications_user_id_fkey",
+  ADD CONSTRAINT "notifications_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE CASCADE;

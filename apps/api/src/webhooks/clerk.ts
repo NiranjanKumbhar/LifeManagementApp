@@ -12,7 +12,10 @@ import { AccountService } from '../services/account.service';
 /** Apply a Clerk `user.deleted` event: remove the corresponding DB user + their data. */
 async function handleUserDeleted(clerkId: string): Promise<void> {
   const user = await db.query.users.findFirst({ where: eq(users.clerkId, clerkId) });
-  if (user) await AccountService.deleteAccount(db, user.id);
+  if (!user) return;
+  const res = await AccountService.deleteAccount(db, user.id);
+  // Surface failures so the handler returns 5xx and Svix retries the webhook.
+  if (!res.success) throw new Error(res.error.message);
 }
 
 interface ClerkWebhookEvent {
