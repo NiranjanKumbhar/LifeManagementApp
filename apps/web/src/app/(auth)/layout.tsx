@@ -15,7 +15,7 @@ const FEATURES = [
   {
     emoji: '🏠',
     title: 'Shared Household',
-    body: 'One shopping list, one inventory. Both of you always know what's stocked and what to grab.',
+    body: "One shopping list, one inventory. Both of you always know what's stocked and what to grab.",
   },
   {
     emoji: '📅',
