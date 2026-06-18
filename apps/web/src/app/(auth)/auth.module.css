@@ -269,22 +269,22 @@
     flex-direction: column;
   }
 
-  /* Hero becomes a compact header strip */
+  /* Hero: taller strip with generous padding so it reads as a designed section */
   .hero {
     flex: none;
-    padding: var(--ls-space-8) var(--ls-space-5) var(--ls-space-7);
+    padding: var(--ls-space-10) var(--ls-space-5) var(--ls-space-8);
     background-image:
-      radial-gradient(ellipse 90% 100% at 50% 110%, rgba(20, 184, 166, 0.18) 0%, transparent 65%);
+      radial-gradient(ellipse 110% 80% at 50% 120%, rgba(20, 184, 166, 0.20) 0%, transparent 60%);
     align-items: flex-start;
   }
 
   .brand {
-    margin-bottom: var(--ls-space-4);
+    margin-bottom: var(--ls-space-5);
   }
 
   .headline {
-    font-size: clamp(2rem, 8vw, 2.6rem);
-    margin-bottom: var(--ls-space-3);
+    font-size: clamp(2.1rem, 8.5vw, 2.8rem);
+    margin-bottom: var(--ls-space-4);
   }
 
   /* Hide pitch and numbered list on mobile */
@@ -296,14 +296,25 @@
     display: none;
   }
 
-  /* Show feature chips instead */
+  /* Chips: single horizontal scroll row — no wrapping, fade-out hint on right */
   .chips {
     display: flex;
-    flex-wrap: wrap;
-    gap: var(--ls-space-2);
-    margin-bottom: var(--ls-space-5);
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+    gap: 0.45rem;
+    margin-bottom: var(--ls-space-2);
+    padding-bottom: 4px; /* prevent border clip on scroll */
+    /* Fade right edge to signal scrollability */
+    -webkit-mask-image: linear-gradient(to right, black 80%, transparent 100%);
+    mask-image: linear-gradient(to right, black 80%, transparent 100%);
     animation: fadeUp 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
     animation-delay: 0.22s;
+  }
+
+  .chips::-webkit-scrollbar {
+    display: none;
   }
 
   .chip {
@@ -313,9 +324,10 @@
     background: rgba(20, 184, 166, 0.12);
     border: 1px solid rgba(20, 184, 166, 0.22);
     border-radius: var(--ls-radius-full);
-    padding: 0.25rem 0.65rem;
+    padding: 0.3rem 0.75rem;
     letter-spacing: 0.01em;
     white-space: nowrap;
+    flex-shrink: 0;
   }
 
   .footnote {
@@ -326,44 +338,40 @@
     display: none;
   }
 
-  /* Auth panel fills remaining viewport */
+  /* Auth panel — fills rest of viewport, left-aligned, generous padding */
   .authPanel {
     flex: 1;
     width: 100%;
     box-shadow: none;
-    padding: var(--ls-space-8) var(--ls-space-5);
+    padding: var(--ls-space-8) var(--ls-space-5) var(--ls-space-10);
     align-items: flex-start;
-    /* Slightly warmer seam between sections */
-    border-top: 1px solid rgba(22, 18, 16, 0.08);
+    justify-content: flex-start;
+    border-top: 1px solid rgba(22, 18, 16, 0.1);
   }
 
   .authInner {
     max-width: 100%;
+    gap: var(--ls-space-4);
   }
 
-  /* Show mobile brand on small screens */
+  /* The dark hero already shows the brand — hide the duplicate below */
   .mobileBrand {
-    display: flex;
+    display: none;
   }
 }
 
 /* ── Very narrow phones (< 420px) ────────────────────────────────────────── */
 @media (max-width: 419px) {
   .hero {
-    padding: var(--ls-space-6) var(--ls-space-4) var(--ls-space-6);
+    padding: var(--ls-space-8) var(--ls-space-4) var(--ls-space-7);
   }
 
   .headline {
-    font-size: 1.85rem;
-  }
-
-  /* Only show the first 3 chips */
-  .chip:nth-child(n+4) {
-    display: none;
+    font-size: 1.9rem;
   }
 
   .authPanel {
-    padding: var(--ls-space-6) var(--ls-space-4);
+    padding: var(--ls-space-7) var(--ls-space-4) var(--ls-space-8);
   }
 }
 
