@@ -3,52 +3,62 @@ import styles from './auth.module.css';
 
 const FEATURES = [
   {
-    emoji: '⚡',
+    num: '01',
     title: 'Quick Capture',
-    body: 'Grab anything in seconds — drop it into your Inbox, the shopping list, or straight into a project.',
+    body: 'Grab anything in seconds — straight to Inbox, shopping, or a project.',
   },
   {
-    emoji: '📋',
-    title: 'Deadline-aware Projects',
-    body: 'Occasions, travel, compliance, health — each project type knows how much lead time it needs.',
+    num: '02',
+    title: 'Smart Projects',
+    body: 'Occasions, travel, compliance — each type knows its own lead time.',
   },
   {
-    emoji: '🏠',
+    num: '03',
     title: 'Shared Household',
-    body: "One shopping list, one inventory. Both of you always know what's stocked and what to grab.",
+    body: "One shopping list, one inventory. Always know what's stocked.",
   },
   {
-    emoji: '📅',
-    title: 'Calendar & People',
-    body: 'Birthdays, anniversaries, and gift ideas — so the dates that matter never sneak up on you.',
+    num: '04',
+    title: 'Dates & People',
+    body: 'Birthdays, anniversaries, gift ideas — nothing sneaks up on you.',
   },
   {
-    emoji: '🔒',
+    num: '05',
     title: 'Private or Shared',
-    body: 'Collaborate openly by default, or lock any item to keep it just for yourself.',
+    body: 'Collaborate by default. Lock any item just for yourself.',
   },
 ];
 
 export default function AuthLayout({ children }: { children: ReactNode }) {
   return (
     <div className={styles.root}>
-      {/* ── Left panel: branding + features ──────────────────────────── */}
+      {/* ── Left: dark editorial hero ─────────────────────────────────── */}
       <aside className={styles.hero}>
         <div className={styles.heroInner}>
+
+          {/* Brand mark */}
           <div className={styles.brand}>
-            <span className={styles.brandMark} aria-hidden="true">✦</span>
-            LifeSync
+            <span className={styles.brandGem} aria-hidden="true" />
+            <span className={styles.brandName}>LifeSync</span>
           </div>
-          <p className={styles.tagline}>Your shared life, calmly handled.</p>
+
+          {/* Display headline */}
+          <h1 className={styles.headline}>
+            Your shared life,<br />
+            <em className={styles.headlineAccent}>calmly handled.</em>
+          </h1>
+
+          {/* Pitch — desktop */}
           <p className={styles.pitch}>
-            A single calm space where couples stay on top of tasks, projects,
-            home, and the moments that matter — together.
+            One calm space for two people — tasks, projects, home, and
+            all the dates that matter, always in sync.
           </p>
 
+          {/* Numbered feature list — desktop */}
           <ul className={styles.features} role="list">
             {FEATURES.map((f) => (
-              <li key={f.title} className={styles.feature}>
-                <span className={styles.featureIcon} aria-hidden="true">{f.emoji}</span>
+              <li key={f.num} className={styles.feature}>
+                <span className={styles.featureNum} aria-hidden="true">{f.num}</span>
                 <div>
                   <strong className={styles.featureTitle}>{f.title}</strong>
                   <p className={styles.featureBody}>{f.body}</p>
@@ -57,21 +67,27 @@ export default function AuthLayout({ children }: { children: ReactNode }) {
             ))}
           </ul>
 
+          {/* Feature chips — mobile only */}
+          <div className={styles.chips} aria-hidden="true">
+            {FEATURES.map((f) => (
+              <span key={f.num} className={styles.chip}>{f.title}</span>
+            ))}
+          </div>
+
           <p className={styles.footnote}>Free to start · No credit card needed</p>
         </div>
 
-        {/* Decorative blobs */}
-        <div className={styles.blob1} aria-hidden="true" />
-        <div className={styles.blob2} aria-hidden="true" />
+        {/* Decorative oversized mark */}
+        <span className={styles.heroDeco} aria-hidden="true">✦</span>
       </aside>
 
-      {/* ── Right panel: Clerk auth widget ───────────────────────────── */}
+      {/* ── Right: minimal cream auth panel ───────────────────────────── */}
       <main className={styles.authPanel}>
         <div className={styles.authInner}>
-          {/* Mobile-only brand shown above widget */}
-          <div className={styles.mobileBrand} aria-hidden="true">
-            <span className={styles.brandMark}>✦</span>
-            LifeSync
+          {/* Mobile brand — shown above Clerk widget on small screens */}
+          <div className={styles.mobileBrand}>
+            <span className={styles.mobileBrandGem} aria-hidden="true" />
+            <span className={styles.mobileBrandName}>LifeSync</span>
           </div>
           {children}
         </div>

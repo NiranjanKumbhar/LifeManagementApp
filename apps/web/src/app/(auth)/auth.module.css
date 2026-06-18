@@ -1,174 +1,269 @@
-/* ── Root: two columns side-by-side on desktop ───────────────────────────── */
+/* ═══════════════════════════════════════════════════════════════════════════
+   LifeSync Auth Layout — Dark Editorial
+   Left: warm-ink hero with Fraunces display type + numbered feature index
+   Right: cream paper, Clerk widget, minimal
+   ═══════════════════════════════════════════════════════════════════════════ */
+
+/* ── Root ─────────────────────────────────────────────────────────────────── */
 .root {
   display: flex;
   min-height: 100dvh;
 }
 
-/* ── Hero (left panel) ───────────────────────────────────────────────────── */
+/* ── Left: Hero ───────────────────────────────────────────────────────────── */
 .hero {
   position: relative;
-  flex: 1 1 55%;
+  flex: 1 1 58%;
   display: flex;
   align-items: center;
-  justify-content: center;
-  background: linear-gradient(
-    145deg,
-    var(--ls-primary-800) 0%,
-    var(--ls-primary-700) 45%,
-    var(--ls-primary-600) 100%
-  );
   overflow: hidden;
-  padding: var(--ls-space-12) var(--ls-space-10);
-  /* Hidden on mobile — stacks below */
+
+  /* Warm ink base with teal gradient glow */
+  background-color: #161210;
+  background-image:
+    radial-gradient(ellipse 55% 45% at 10% 90%, rgba(20, 184, 166, 0.16) 0%, transparent 65%),
+    radial-gradient(ellipse 40% 55% at 90% 10%, rgba(15, 118, 110, 0.10) 0%, transparent 60%);
+
+  padding: var(--ls-space-16) var(--ls-space-12) var(--ls-space-16) var(--ls-space-16);
+}
+
+/* Subtle grain overlay */
+.hero::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='250' height='250'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.8' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='250' height='250' filter='url(%23g)'/%3E%3C/svg%3E");
+  opacity: 0.032;
+  pointer-events: none;
+  z-index: 0;
 }
 
 .heroInner {
   position: relative;
   z-index: 1;
-  max-width: 36rem;
+  max-width: 34rem;
   width: 100%;
-  color: var(--ls-text-inverse);
 }
 
-/* Decorative background blobs */
-.blob1 {
+/* Oversized decorative star — positioned bottom-right as a watermark */
+.heroDeco {
   position: absolute;
-  top: -8rem;
-  right: -6rem;
-  width: 28rem;
-  height: 28rem;
-  border-radius: var(--ls-radius-full);
-  background: rgba(255, 255, 255, 0.06);
+  right: -5rem;
+  bottom: -3rem;
+  font-family: var(--ls-font-display, serif);
+  font-size: 22rem;
+  line-height: 1;
+  color: rgba(20, 184, 166, 0.035);
+  user-select: none;
   pointer-events: none;
+  z-index: 0;
 }
 
-.blob2 {
-  position: absolute;
-  bottom: -10rem;
-  left: -8rem;
-  width: 34rem;
-  height: 34rem;
-  border-radius: var(--ls-radius-full);
-  background: rgba(255, 255, 255, 0.04);
-  pointer-events: none;
-}
-
-/* ── Branding ─────────────────────────────────────────────────────────────── */
+/* ── Brand mark ───────────────────────────────────────────────────────────── */
 .brand {
   display: flex;
   align-items: center;
-  gap: var(--ls-space-2);
-  font-family: var(--ls-font-display);
-  font-size: var(--ls-text-3xl);
-  font-weight: 700;
-  letter-spacing: -0.03em;
-  color: #ffffff;
-  margin-bottom: var(--ls-space-3);
+  gap: 0.6rem;
+  margin-bottom: var(--ls-space-8);
+  animation: fadeUp 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: 0.04s;
 }
 
-.brandMark {
-  font-size: var(--ls-text-2xl);
-  color: var(--ls-primary-300);
+/* Rotated-square gem (pure CSS) */
+.brandGem {
+  display: block;
+  width: 1.35rem;
+  height: 1.35rem;
+  background: linear-gradient(135deg, #2dd4bf 0%, #0d9488 100%);
+  border-radius: 4px;
+  transform: rotate(45deg);
+  flex-shrink: 0;
+  box-shadow: 0 0 12px rgba(20, 184, 166, 0.4);
 }
 
-.tagline {
+.brandName {
+  font-family: var(--ls-font-display, serif);
   font-size: var(--ls-text-lg);
-  font-weight: 500;
-  color: var(--ls-primary-100);
-  margin-bottom: var(--ls-space-3);
+  font-weight: 600;
+  color: rgba(250, 250, 249, 0.9);
+  letter-spacing: -0.01em;
 }
 
+/* ── Display headline ─────────────────────────────────────────────────────── */
+.headline {
+  font-family: var(--ls-font-display, serif);
+  font-size: clamp(2.4rem, 4vw, 3.4rem);
+  line-height: 1.07;
+  font-weight: 600;
+  color: #fafaf9;
+  letter-spacing: -0.035em;
+  margin: 0 0 var(--ls-space-5);
+  font-style: normal;
+  animation: fadeUp 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: 0.11s;
+}
+
+/* Second line — italic teal accent */
+.headlineAccent {
+  font-style: italic;
+  color: #5eead4; /* primary-300 — lighter for contrast on dark bg */
+  font-weight: 500;
+}
+
+/* ── Pitch copy ───────────────────────────────────────────────────────────── */
 .pitch {
   font-size: var(--ls-text-sm);
-  line-height: 1.65;
-  color: rgba(255, 255, 255, 0.72);
-  margin-bottom: var(--ls-space-8);
-  max-width: 30rem;
+  line-height: 1.72;
+  color: rgba(250, 250, 249, 0.48);
+  margin: 0 0 var(--ls-space-10);
+  max-width: 28rem;
+  animation: fadeUp 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: 0.18s;
 }
 
-/* ── Feature list ─────────────────────────────────────────────────────────── */
+/* ── Numbered feature index (desktop) ────────────────────────────────────── */
 .features {
   list-style: none;
   padding: 0;
   margin: 0 0 var(--ls-space-10);
-  display: flex;
-  flex-direction: column;
-  gap: var(--ls-space-5);
 }
 
 .feature {
-  display: flex;
-  align-items: flex-start;
-  gap: var(--ls-space-4);
+  display: grid;
+  grid-template-columns: 2.6rem 1fr;
+  align-items: start;
+  padding: var(--ls-space-4) 0;
+  border-top: 1px solid rgba(255, 255, 255, 0.07);
+  animation: fadeUp 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
 }
 
-.featureIcon {
-  flex-shrink: 0;
-  width: 2.5rem;
-  height: 2.5rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255, 255, 255, 0.12);
-  border-radius: var(--ls-radius-md);
-  font-size: 1.2rem;
-  line-height: 1;
+.feature:last-child {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.feature:nth-child(1) { animation-delay: 0.26s; }
+.feature:nth-child(2) { animation-delay: 0.33s; }
+.feature:nth-child(3) { animation-delay: 0.40s; }
+.feature:nth-child(4) { animation-delay: 0.47s; }
+.feature:nth-child(5) { animation-delay: 0.54s; }
+
+.featureNum {
+  font-family: var(--ls-font-display, serif);
+  font-size: 0.7rem;
+  font-weight: 500;
+  color: #14b8a6;
+  letter-spacing: 0.06em;
+  padding-top: 3px;
+  opacity: 0.85;
 }
 
 .featureTitle {
   display: block;
   font-size: var(--ls-text-sm);
   font-weight: 600;
-  color: #ffffff;
-  margin-bottom: 0.2rem;
+  color: rgba(250, 250, 249, 0.88);
+  margin-bottom: 0.18rem;
+  letter-spacing: -0.01em;
 }
 
 .featureBody {
-  font-size: var(--ls-text-xs);
-  line-height: 1.6;
-  color: rgba(255, 255, 255, 0.65);
+  font-size: 0.8rem;
+  line-height: 1.55;
+  color: rgba(250, 250, 249, 0.38);
   margin: 0;
 }
 
-.footnote {
-  font-size: var(--ls-text-xs);
-  color: rgba(255, 255, 255, 0.45);
-  letter-spacing: 0.01em;
+/* Feature chips — mobile only, hidden on desktop */
+.chips {
+  display: none;
 }
 
-/* ── Auth panel (right) ───────────────────────────────────────────────────── */
+/* ── Footnote ─────────────────────────────────────────────────────────────── */
+.footnote {
+  font-size: 0.72rem;
+  color: rgba(250, 250, 249, 0.28);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  animation: fadeUp 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: 0.62s;
+}
+
+/* ── Right: auth panel ────────────────────────────────────────────────────── */
 .authPanel {
-  flex: 0 0 auto;
-  width: 45%;
+  flex: 0 0 42%;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: var(--ls-surface-background);
-  padding: var(--ls-space-10) var(--ls-space-8);
+
+  /* Warm cream paper */
+  background-color: #faf8f5;
+
+  /* Depth: inset shadow from left edge */
+  box-shadow: inset 10px 0 40px rgba(22, 18, 16, 0.07);
+
+  padding: var(--ls-space-12) var(--ls-space-10);
 }
 
 .authInner {
   width: 100%;
-  max-width: 26rem;
+  max-width: 23rem;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: var(--ls-space-5);
+  animation: fadeUp 0.55s cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: 0.08s;
 }
 
-/* Mobile brand shown above the widget on small screens */
+/* Mobile brand above the Clerk widget — hidden on desktop */
 .mobileBrand {
   display: none;
   align-items: center;
-  gap: var(--ls-space-2);
-  font-family: var(--ls-font-display);
-  font-size: var(--ls-text-2xl);
-  font-weight: 700;
-  letter-spacing: -0.02em;
-  color: var(--ls-primary-700);
+  gap: 0.55rem;
 }
 
-/* ── Mobile layout (< 880px) ─────────────────────────────────────────────── */
+.mobileBrandGem {
+  display: block;
+  width: 1.1rem;
+  height: 1.1rem;
+  background: linear-gradient(135deg, #2dd4bf, #0d9488);
+  border-radius: 3px;
+  transform: rotate(45deg);
+  flex-shrink: 0;
+}
+
+.mobileBrandName {
+  font-family: var(--ls-font-display, serif);
+  font-size: var(--ls-text-xl);
+  font-weight: 600;
+  color: #1c1917;
+  letter-spacing: -0.02em;
+}
+
+/* ── Fade-up animation ────────────────────────────────────────────────────── */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(18px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ── Tablet (880px–1100px): tighten hero padding ──────────────────────────── */
+@media (max-width: 1100px) {
+  .hero {
+    padding: var(--ls-space-12) var(--ls-space-8) var(--ls-space-12) var(--ls-space-10);
+  }
+
+  .authPanel {
+    padding: var(--ls-space-10) var(--ls-space-6);
+  }
+}
+
+/* ── Mobile (< 880px) ─────────────────────────────────────────────────────── */
 @media (max-width: 879px) {
   .root {
     flex-direction: column;
@@ -177,80 +272,110 @@
   /* Hero becomes a compact header strip */
   .hero {
     flex: none;
-    padding: var(--ls-space-8) var(--ls-space-6) var(--ls-space-10);
-  }
-
-  .heroInner {
-    max-width: 100%;
+    padding: var(--ls-space-8) var(--ls-space-5) var(--ls-space-7);
+    background-image:
+      radial-gradient(ellipse 90% 100% at 50% 110%, rgba(20, 184, 166, 0.18) 0%, transparent 65%);
+    align-items: flex-start;
   }
 
   .brand {
-    font-size: var(--ls-text-2xl);
-    margin-bottom: var(--ls-space-2);
+    margin-bottom: var(--ls-space-4);
   }
 
-  .tagline {
-    font-size: var(--ls-text-base);
-    margin-bottom: var(--ls-space-2);
+  .headline {
+    font-size: clamp(2rem, 8vw, 2.6rem);
+    margin-bottom: var(--ls-space-3);
   }
 
+  /* Hide pitch and numbered list on mobile */
   .pitch {
-    font-size: var(--ls-text-xs);
-    margin-bottom: var(--ls-space-6);
-  }
-
-  /* Show only 3 features on mobile to keep the header compact */
-  .features {
-    gap: var(--ls-space-4);
-    margin-bottom: var(--ls-space-6);
-  }
-
-  .feature:nth-child(n+4) {
     display: none;
   }
 
-  .featureIcon {
-    width: 2rem;
-    height: 2rem;
-    font-size: 1rem;
+  .features {
+    display: none;
+  }
+
+  /* Show feature chips instead */
+  .chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--ls-space-2);
+    margin-bottom: var(--ls-space-5);
+    animation: fadeUp 0.45s cubic-bezier(0.22, 1, 0.36, 1) both;
+    animation-delay: 0.22s;
+  }
+
+  .chip {
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: #2dd4bf;
+    background: rgba(20, 184, 166, 0.12);
+    border: 1px solid rgba(20, 184, 166, 0.22);
+    border-radius: var(--ls-radius-full);
+    padding: 0.25rem 0.65rem;
+    letter-spacing: 0.01em;
+    white-space: nowrap;
   }
 
   .footnote {
     display: none;
   }
 
-  /* Auth panel becomes full-width below the hero */
+  .heroDeco {
+    display: none;
+  }
+
+  /* Auth panel fills remaining viewport */
   .authPanel {
-    width: 100%;
     flex: 1;
+    width: 100%;
+    box-shadow: none;
     padding: var(--ls-space-8) var(--ls-space-5);
     align-items: flex-start;
+    /* Slightly warmer seam between sections */
+    border-top: 1px solid rgba(22, 18, 16, 0.08);
   }
 
   .authInner {
     max-width: 100%;
   }
 
-  /* Hide mobile brand duplication (hero already shows it) */
+  /* Show mobile brand on small screens */
   .mobileBrand {
-    display: none;
-  }
-
-  .blob1,
-  .blob2 {
-    display: none;
+    display: flex;
   }
 }
 
 /* ── Very narrow phones (< 420px) ────────────────────────────────────────── */
 @media (max-width: 419px) {
   .hero {
-    padding: var(--ls-space-6) var(--ls-space-5) var(--ls-space-8);
+    padding: var(--ls-space-6) var(--ls-space-4) var(--ls-space-6);
   }
 
-  /* On the narrowest screens collapse to just brand + tagline */
-  .pitch,
-  .features {
+  .headline {
+    font-size: 1.85rem;
+  }
+
+  /* Only show the first 3 chips */
+  .chip:nth-child(n+4) {
     display: none;
+  }
+
+  .authPanel {
+    padding: var(--ls-space-6) var(--ls-space-4);
+  }
+}
+
+/* ── Respect reduced motion ───────────────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  .brand,
+  .headline,
+  .pitch,
+  .feature,
+  .chips,
+  .footnote,
+  .authInner {
+    animation: none;
   }
 }
