@@ -58,7 +58,7 @@
 
 @media (max-width: 879px) {
   .content {
-    padding: var(--ls-space-6) var(--ls-space-4) 6rem;
+    padding: var(--ls-space-6) 0 6rem;
   }
 }
 

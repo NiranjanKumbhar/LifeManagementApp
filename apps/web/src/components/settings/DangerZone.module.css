@@ -30,3 +30,14 @@
   padding-top: var(--ls-space-3);
   border-top: 1px solid var(--ls-surface-border);
 }
+
+@media (max-width: 600px) {
+  .row {
+    flex-direction: column;
+    gap: var(--ls-space-3);
+  }
+
+  .actions {
+    align-self: flex-start;
+  }
+}

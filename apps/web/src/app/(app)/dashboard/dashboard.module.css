@@ -27,9 +27,14 @@
 
 .grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
   gap: var(--ls-space-5);
   align-items: start;
+}
+
+/* When the last block is alone on its row (odd child count), span both columns */
+.grid > *:last-child:nth-child(odd) {
+  grid-column: 1 / -1;
 }
 
 .center {

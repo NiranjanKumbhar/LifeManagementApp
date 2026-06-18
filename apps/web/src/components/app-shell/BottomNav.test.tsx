@@ -4,6 +4,9 @@ import userEvent from '@testing-library/user-event';
 
 vi.mock('next/navigation', () => ({ usePathname: () => '/dashboard' }));
 vi.mock('./AccountControl', () => ({ AccountControl: () => <div>account</div> }));
+vi.mock('@/lib/workspace-context', () => ({
+  useWorkspace: () => ({ workspaceId: 'ws1', workspaces: [], role: 'owner', setActiveWorkspace: vi.fn(), isLoading: false }),
+}));
 
 import { NavPrefsProvider } from '@/lib/nav-prefs';
 import { BottomNav } from './BottomNav';

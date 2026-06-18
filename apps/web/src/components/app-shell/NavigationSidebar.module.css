@@ -40,6 +40,8 @@
   flex-direction: column;
   gap: 0.15rem;
   flex: 1;
+  overflow-y: auto;
+  min-height: 0;
 }
 
 .link {

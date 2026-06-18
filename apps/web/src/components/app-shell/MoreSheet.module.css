@@ -46,3 +46,9 @@
   padding-top: var(--ls-space-3);
   border-top: 1px solid var(--ls-surface-border);
 }
+
+.workspaceSection {
+  padding: 0 var(--ls-space-3) var(--ls-space-3);
+  border-bottom: 1px solid var(--ls-surface-border);
+  margin-bottom: var(--ls-space-1);
+}
