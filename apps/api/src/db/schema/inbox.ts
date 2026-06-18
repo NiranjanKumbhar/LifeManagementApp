@@ -20,8 +20,8 @@ export const inboxItems = pgTable(
     content: text('content').notNull(),
     capturedBy: uuid('captured_by')
       .notNull()
-      .references(() => users.id),
-    ownerId: uuid('owner_id').references(() => users.id),
+      .references(() => users.id, { onDelete: 'cascade' }),
+    ownerId: uuid('owner_id').references(() => users.id, { onDelete: 'set null' }),
     visibility: text('visibility').notNull().default('shared').$type<Visibility>(),
     status: text('status').notNull().default('pending').$type<InboxStatus>(),
     triagedToProjectId: uuid('triaged_to_project_id').references(() => projects.id, {

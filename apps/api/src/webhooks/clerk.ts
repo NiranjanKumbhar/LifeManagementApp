@@ -1,10 +1,22 @@
 import type { IncomingMessage, ServerResponse } from 'node:http';
+import { eq } from 'drizzle-orm';
 import { Webhook } from 'svix';
 import { db } from '../db/client';
+import { users } from '../db/schema';
 import {
   UserProvisioningService,
   type ClerkWebhookUser,
 } from '../services/user-provisioning.service';
+import { AccountService } from '../services/account.service';
+
+/** Apply a Clerk `user.deleted` event: remove the corresponding DB user + their data. */
+async function handleUserDeleted(clerkId: string): Promise<void> {
+  const user = await db.query.users.findFirst({ where: eq(users.clerkId, clerkId) });
+  if (!user) return;
+  const res = await AccountService.deleteAccount(db, user.id);
+  // Surface failures so the handler returns 5xx and Svix retries the webhook.
+  if (!res.success) throw new Error(res.error.message);
+}
 
 interface ClerkWebhookEvent {
   type: string;
@@ -59,6 +71,9 @@ export async function handleClerkWebhookFetch(req: Request): Promise<Response> {
       case 'user.updated':
         await UserProvisioningService.upsertFromWebhook(db, event.data);
         break;
+      case 'user.deleted':
+        await handleUserDeleted(event.data.id);
+        break;
     }
     return new Response('ok', { status: 200 });
   } catch {
@@ -68,7 +83,8 @@ export async function handleClerkWebhookFetch(req: Request): Promise<Response> {
 
 /**
  * Verifies a Clerk (Svix-signed) webhook and syncs the user into the database.
- * Handles `user.created` and `user.updated`; other events are acknowledged.
+ * Handles `user.created` / `user.updated` (upsert) and `user.deleted` (account
+ * removal); other events are acknowledged.
  */
 export async function handleClerkWebhook(
   req: IncomingMessage,
@@ -106,9 +122,8 @@ export async function handleClerkWebhook(
       case 'user.updated':
         await UserProvisioningService.upsertFromWebhook(db, event.data);
         break;
-      default:
-        // user.deleted and others: acknowledged but intentionally not acted on
-        // (deleting a user with owned projects would violate FK constraints).
+      case 'user.deleted':
+        await handleUserDeleted(event.data.id);
         break;
     }
     send(res, 200, 'ok');

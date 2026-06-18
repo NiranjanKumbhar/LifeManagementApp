@@ -20,6 +20,7 @@ beforeEach(() => {
 });
 
 vi.mock('next/navigation', () => ({ useRouter: () => ({ push: vi.fn() }) }));
+vi.mock('@clerk/nextjs', () => ({ useClerk: () => ({ signOut: vi.fn() }) }));
 vi.mock('@/lib/hooks/useWorkspaceId', () => ({ useWorkspaceId: () => 'ws-1' }));
 vi.mock('@/lib/workspace-context', () => ({
   useWorkspace: () => ({
@@ -64,6 +65,10 @@ vi.mock('@/lib/trpc', () => ({
       removeMember: { useMutation: () => ({ mutate: vi.fn(), isPending: false }) },
       leave: { useMutation: () => ({ mutate: vi.fn(), isPending: false }) },
     },
+    account: {
+      delete: { useMutation: () => ({ mutate: vi.fn(), isPending: false }) },
+      clearData: { useMutation: () => ({ mutate: vi.fn(), isPending: false }) },
+    },
   },
 }));
 
@@ -89,6 +94,7 @@ describe('SettingsPage', () => {
     expect(screen.getByRole('heading', { name: 'Profile' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Notifications' })).toBeInTheDocument();
     expect(screen.getByRole('heading', { name: 'Workspace' })).toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: /Danger zone/i })).toBeInTheDocument();
     expect(screen.getByText('Our Home')).toBeInTheDocument();
   });
 });

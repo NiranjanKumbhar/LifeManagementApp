@@ -13,7 +13,9 @@ export const reminders = pgTable(
     id: uuid('id').primaryKey().default(sql`gen_random_uuid()`),
     projectId: uuid('project_id').references(() => projects.id, { onDelete: 'cascade' }),
     taskId: uuid('task_id').references(() => tasks.id, { onDelete: 'cascade' }),
-    userId: uuid('user_id').notNull().references(() => users.id),
+    userId: uuid('user_id')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
     remindAt: timestamp('remind_at', { withTimezone: true }).notNull(),
     type: text('type').notNull().default('standard').$type<ReminderType>(),
     severity: text('severity').notNull().default('info').$type<Severity>(),

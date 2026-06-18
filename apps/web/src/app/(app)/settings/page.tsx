@@ -9,6 +9,7 @@ import { NavSettings } from '@/components/settings/NavSettings';
 import { ProfileSettings } from '@/components/settings/ProfileSettings';
 import { NotificationSettings } from '@/components/settings/NotificationSettings';
 import { WorkspaceSettings } from '@/components/settings/WorkspaceSettings';
+import { DangerZone } from '@/components/settings/DangerZone';
 import styles from './settings.module.css';
 
 export default function SettingsPage() {
@@ -50,6 +51,7 @@ export default function SettingsPage() {
         currentUserId={me.id}
         role={role}
       />
+      <DangerZone email={me.email} />
     </PageShell>
   );
 }

@@ -1,0 +1,32 @@
+.row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--ls-space-4);
+  padding: var(--ls-space-3) 0;
+}
+.row + .row {
+  border-top: 1px solid var(--ls-surface-border);
+}
+.copy {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ls-space-1);
+}
+.hint {
+  font-size: var(--ls-text-sm);
+  color: var(--ls-text-secondary);
+  max-width: 32rem;
+}
+.actions {
+  display: inline-flex;
+  gap: var(--ls-space-2);
+  flex: none;
+}
+.confirm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ls-space-3);
+  padding-top: var(--ls-space-3);
+  border-top: 1px solid var(--ls-surface-border);
+}

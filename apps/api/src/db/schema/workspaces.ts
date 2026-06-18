@@ -49,9 +49,11 @@ export const workspaceInvites = pgTable(
       .notNull()
       .default('pending')
       .$type<'pending' | 'accepted' | 'revoked' | 'expired'>(),
-    invitedBy: uuid('invited_by').notNull().references(() => users.id),
+    invitedBy: uuid('invited_by')
+      .notNull()
+      .references(() => users.id, { onDelete: 'cascade' }),
     expiresAt: timestamp('expires_at', { withTimezone: true }).notNull(),
-    acceptedBy: uuid('accepted_by').references(() => users.id),
+    acceptedBy: uuid('accepted_by').references(() => users.id, { onDelete: 'set null' }),
     acceptedAt: timestamp('accepted_at', { withTimezone: true }),
     createdAt: timestamp('created_at', { withTimezone: true }).notNull().defaultNow(),
   },
