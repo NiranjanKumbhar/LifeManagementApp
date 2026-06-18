@@ -64,13 +64,10 @@ export function OnboardingTour({ onDone }: OnboardingTourProps) {
   return (
     <Modal
       isOpen
-      onClose={onDone}
+      onClose={() => {}}
       title={current.title}
       footer={
         <div className={styles.footer}>
-          <Button variant="ghost" size="sm" onClick={onDone}>
-            Skip
-          </Button>
           <div className={styles.dots} aria-hidden="true">
             {STEPS.map((_, i) => (
               <span key={i} className={i === step ? styles.dotActive : styles.dot} />

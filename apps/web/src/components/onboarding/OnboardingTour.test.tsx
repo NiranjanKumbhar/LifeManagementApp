@@ -15,19 +15,15 @@ describe('OnboardingTour', () => {
     expect(screen.getByText(/Welcome to LifeSync/i)).toBeInTheDocument();
   });
 
-  it('calls onDone from Skip and from the final step', async () => {
+  it('calls onDone only from the final Get started button', async () => {
     const onDone = vi.fn();
-    const { unmount } = render(<OnboardingTour onDone={onDone} />);
-    await userEvent.click(screen.getByRole('button', { name: /skip/i }));
-    expect(onDone).toHaveBeenCalledTimes(1);
-    unmount();
+    render(<OnboardingTour onDone={onDone} />);
+    expect(screen.queryByRole('button', { name: /skip/i })).not.toBeInTheDocument();
 
-    const onDone2 = vi.fn();
-    render(<OnboardingTour onDone={onDone2} />);
     for (let i = 0; i < 5; i++) {
       await userEvent.click(screen.getByRole('button', { name: /next/i }));
     }
     await userEvent.click(screen.getByRole('button', { name: /get started/i }));
-    expect(onDone2).toHaveBeenCalledTimes(1);
+    expect(onDone).toHaveBeenCalledTimes(1);
   });
 });

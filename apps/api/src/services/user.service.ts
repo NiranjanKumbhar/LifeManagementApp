@@ -4,6 +4,7 @@ import type { Database } from '../db/client';
 import { users } from '../db/schema';
 import { notFound, ok, type AppError, type Result } from '../utils/errors';
 import type { updateNotificationPrefsSchema, updateProfileSchema } from '../utils/validation';
+import { seedSampleData } from './onboarding-sample-data';
 
 type UserRow = typeof users.$inferSelect;
 type UpdateProfileInput = z.infer<typeof updateProfileSchema>;
@@ -52,6 +53,7 @@ export class UserService {
       .where(eq(users.id, userId))
       .returning();
     if (!row) return { success: false, error: notFound('User not found') };
+    await seedSampleData(db, userId);
     return ok(row);
   }
 }
