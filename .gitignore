@@ -43,3 +43,16 @@ pnpm-debug.log*
 
 # Superpowers brainstorm companion
 .superpowers/
+.vercel
+.env*.local
+
+# Local tooling (Claude Flow, agent scaffolding)
+.claude-flow/
+.claude/agents/
+.claude/commands/
+.claude/helpers/
+.claude/skills/
+.claude/worktrees/
+
+# Misc
+image.png
