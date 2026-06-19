@@ -20,6 +20,15 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: 'LifeSync — your shared life, handled',
   description: 'A calm, shared place for the two of you to stay on top of life together.',
+  themeColor: '#2a9d8f',
+  appleWebApp: {
+    capable: true,
+    title: 'LifeSync',
+    statusBarStyle: 'default',
+  },
+  icons: {
+    apple: '/icons/icon-192.png',
+  },
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
