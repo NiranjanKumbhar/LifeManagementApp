@@ -1,4 +1,4 @@
-import type { Metadata } from 'next';
+import type { Metadata, Viewport } from 'next';
 import type { ReactNode } from 'react';
 import { Fraunces, Inter } from 'next/font/google';
 import { Analytics } from '@vercel/analytics/next';
@@ -20,7 +20,6 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: 'LifeSync — your shared life, handled',
   description: 'A calm, shared place for the two of you to stay on top of life together.',
-  themeColor: '#2a9d8f',
   appleWebApp: {
     capable: true,
     title: 'LifeSync',
@@ -29,6 +28,10 @@ export const metadata: Metadata = {
   icons: {
     apple: '/icons/icon-192.png',
   },
+};
+
+export const viewport: Viewport = {
+  themeColor: '#2a9d8f',
 };
 
 export default function RootLayout({ children }: { children: ReactNode }) {
